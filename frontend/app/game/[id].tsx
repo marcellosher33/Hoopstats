@@ -284,29 +284,21 @@ export default function LiveGameScreen() {
                 <StatButton
                   label="REB"
                   value={stats?.rebounds}
-                  color={colors.rebounds}
-                  icon="basketball"
                   onPress={() => handleStatPress('rebounds')}
                 />
                 <StatButton
                   label="AST"
                   value={stats?.assists}
-                  color={colors.assists}
-                  icon="hand-left"
                   onPress={() => handleStatPress('assists')}
                 />
                 <StatButton
                   label="STL"
                   value={stats?.steals}
-                  color={colors.steals}
-                  icon="flash"
                   onPress={() => handleStatPress('steals')}
                 />
                 <StatButton
                   label="BLK"
                   value={stats?.blocks}
-                  color={colors.blocks}
-                  icon="hand-right"
                   onPress={() => handleStatPress('blocks')}
                 />
               </View>
@@ -314,13 +306,11 @@ export default function LiveGameScreen() {
                 <StatButton
                   label="TO"
                   value={stats?.turnovers}
-                  color={colors.turnovers}
                   onPress={() => handleStatPress('turnovers')}
                 />
                 <StatButton
                   label="FOUL"
                   value={stats?.fouls}
-                  color={colors.warning}
                   onPress={() => handleStatPress('fouls')}
                 />
               </View>
