@@ -78,7 +78,9 @@ export interface Game {
   team_id?: string;
   opponent_name: string;
   game_date: string;
-  location?: string;
+  location?: 'home' | 'away';
+  game_type?: 'preseason' | 'tournament' | 'regular_season' | 'playoffs';
+  venue?: string;
   our_score: number;
   opponent_score: number;
   status: 'in_progress' | 'completed';
