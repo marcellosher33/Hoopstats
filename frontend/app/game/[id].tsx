@@ -638,7 +638,25 @@ export default function LiveGameScreen() {
 
       {/* Camera Modal */}
       <Modal visible={showCamera} animationType="slide">
-        <View style={styles.cameraContainer}>
+        <View style={[
+          styles.cameraContainer,
+          cameraMode === 'video' && styles.cameraContainerVideo
+        ]}>
+          {/* Mode Banner */}
+          <View style={[
+            styles.modeBanner,
+            cameraMode === 'video' ? styles.modeBannerVideo : styles.modeBannerPhoto
+          ]}>
+            <Ionicons 
+              name={cameraMode === 'video' ? 'videocam' : 'camera'} 
+              size={24} 
+              color="white" 
+            />
+            <Text style={styles.modeBannerText}>
+              {cameraMode === 'video' ? 'VIDEO MODE' : 'PHOTO MODE'}
+            </Text>
+          </View>
+
           <CameraView
             ref={cameraRef}
             style={styles.camera}
@@ -646,37 +664,53 @@ export default function LiveGameScreen() {
             mode={cameraMode === 'video' ? 'video' : 'picture'}
           >
             <View style={styles.cameraHeader}>
-              <TouchableOpacity onPress={() => {
-                if (isRecording) {
-                  handleStopRecording();
-                }
-                setShowCamera(false);
-              }}>
-                <Ionicons name="close" size={32} color="white" />
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => {
+                  if (isRecording) {
+                    handleStopRecording();
+                  }
+                  setShowCamera(false);
+                }}
+              >
+                <Ionicons name="close" size={28} color="white" />
               </TouchableOpacity>
-              <Text style={styles.cameraModeText}>
-                {cameraMode === 'video' ? '📹 VIDEO' : '📷 PHOTO'}
-              </Text>
             </View>
+            
             <View style={styles.cameraControls}>
+              {/* Recording indicator */}
+              {isRecording && (
+                <View style={styles.recordingIndicator}>
+                  <View style={styles.recordingDot} />
+                  <Text style={styles.recordingText}>REC</Text>
+                </View>
+              )}
+              
+              {/* Capture button */}
               {cameraMode === 'photo' ? (
                 <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
                   <View style={styles.captureBtnInner} />
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity 
-                  style={[styles.captureBtn, isRecording && styles.recordingBtn]} 
+                  style={[styles.captureBtn, styles.videoCaptureBtn, isRecording && styles.recordingBtn]} 
                   onPress={isRecording ? handleStopRecording : handleStartRecording}
                 >
                   <View style={[
                     styles.captureBtnInner, 
+                    styles.videoBtnInner,
                     isRecording && styles.recordingBtnInner
                   ]} />
                 </TouchableOpacity>
               )}
-              {isRecording && (
-                <Text style={styles.recordingText}>● Recording...</Text>
-              )}
+              
+              {/* Mode label */}
+              <Text style={styles.captureModeLabel}>
+                {cameraMode === 'video' 
+                  ? (isRecording ? 'Tap to stop' : 'Tap to record')
+                  : 'Tap to capture'
+                }
+              </Text>
             </View>
           </CameraView>
         </View>
