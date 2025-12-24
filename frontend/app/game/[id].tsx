@@ -38,6 +38,7 @@ export default function LiveGameScreen() {
   const [cameraMode, setCameraMode] = useState<'photo' | 'video'>('photo');
   const [showShotChart, setShowShotChart] = useState(false);
   const [pendingShotType, setPendingShotType] = useState<'2pt' | '3pt' | null>(null);
+  const [pendingShotMade, setPendingShotMade] = useState(true);
   const [showEndGameModal, setShowEndGameModal] = useState(false);
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [opponentScore, setOpponentScore] = useState('0');
@@ -77,10 +78,18 @@ export default function LiveGameScreen() {
 
   const handleShotChartPress = (x: number, y: number) => {
     if (!pendingShotType) return;
-    const statType: StatType = pendingShotType === '3pt' ? 'points_3' : 'points_2';
+    
+    let statType: StatType;
+    if (pendingShotMade) {
+      statType = pendingShotType === '3pt' ? 'points_3' : 'points_2';
+    } else {
+      statType = pendingShotType === '3pt' ? 'miss_3' : 'miss_2';
+    }
+    
     handleStatPress(statType, { x, y });
     setShowShotChart(false);
     setPendingShotType(null);
+    setPendingShotMade(true);
   };
 
   const handleTakePhoto = async () => {
