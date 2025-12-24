@@ -559,6 +559,8 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
         opponent_name=game_data.opponent_name,
         game_date=game_data.game_date,
         location=game_data.location,
+        game_type=game_data.game_type,
+        venue=game_data.venue,
         player_stats=player_stats
     )
     
