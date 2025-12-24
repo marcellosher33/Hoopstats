@@ -109,9 +109,9 @@ export default function LiveGameScreen() {
     setShowCamera(false);
   };
 
-  const handleQuarterChange = async (newQuarter: number) => {
+  const handleQuarterChange = async (newPeriod: number) => {
     if (!token || !id) return;
-    await updateGame(id, { current_quarter: newQuarter }, token);
+    await updateGame(id, { current_period: newPeriod }, token);
   };
 
   const handleScoreUpdate = async () => {
