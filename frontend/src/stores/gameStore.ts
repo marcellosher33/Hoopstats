@@ -159,6 +159,9 @@ export const useGameStore = create<GameState>((set, get) => ({
         body.shot_location = shotLocation;
       }
       
+      console.log('[GameStore] Recording stat:', { gameId, playerId, statType, body });
+      console.log('[GameStore] API URL:', `${API_URL}/api/games/${gameId}/stats`);
+      
       const response = await fetch(`${API_URL}/api/games/${gameId}/stats`, {
         method: 'POST',
         headers: {
@@ -168,16 +171,21 @@ export const useGameStore = create<GameState>((set, get) => ({
         body: JSON.stringify(body),
       });
       
+      console.log('[GameStore] Response status:', response.status);
+      
       if (response.ok) {
         const updatedGame = await response.json();
+        console.log('[GameStore] Stat recorded successfully, new score:', updatedGame.our_score);
         set((state) => ({
           currentGame: updatedGame,
           games: state.games.map((g) => (g.id === gameId ? updatedGame : g)),
         }));
       } else {
-        console.error('Failed to record stat:', await response.text());
+        const errorText = await response.text();
+        console.error('[GameStore] Failed to record stat:', response.status, errorText);
       }
     } catch (error) {
+      console.error('[GameStore] Network error recording stat:', error);
       // Queue for offline sync
       const queue = get().offlineQueue;
       queue.push({ type: 'stat', gameId, playerId, statType, shotLocation });
