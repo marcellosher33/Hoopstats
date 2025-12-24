@@ -883,9 +883,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalSubtitle: {
-    color: colors.textSecondary,
+    color: colors.success,
     marginBottom: spacing.md,
     textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  missedShotSubtitle: {
+    color: colors.error,
   },
   endGameModal: {
     backgroundColor: colors.surface,
