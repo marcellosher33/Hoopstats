@@ -245,19 +245,13 @@ export default function LiveGameScreen() {
                   points={2}
                   label="2PT"
                   value={stats?.fg_made}
-                  onPress={() => {
-                    setPendingShotType('2pt');
-                    setShowShotChart(true);
-                  }}
+                  onPress={() => handleStatPress('points_2')}
                 />
                 <ScoringButton
                   points={3}
                   label="3PT"
                   value={stats?.three_pt_made}
-                  onPress={() => {
-                    setPendingShotType('3pt');
-                    setShowShotChart(true);
-                  }}
+                  onPress={() => handleStatPress('points_3')}
                 />
                 <ScoringButton
                   points={1}
