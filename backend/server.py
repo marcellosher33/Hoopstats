@@ -705,7 +705,8 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
         {"$set": {"player_stats": player_stats, "our_score": total_points}}
     )
     
-    return await db.games.find_one({"id": game_id})
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
 
 @api_router.post("/games/{game_id}/media")
 async def add_game_media(
