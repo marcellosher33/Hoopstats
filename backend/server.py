@@ -705,6 +705,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                     })
             elif stat.stat_type == "miss_3":
                 stats["three_pt_attempted"] = stats.get("three_pt_attempted", 0) + 1
+                stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1  # 3pt shots count as field goals
                 if stat.shot_location:
                     ps.setdefault("shots", []).append({
                         "x": stat.shot_location["x"],
