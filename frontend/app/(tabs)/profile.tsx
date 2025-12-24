@@ -43,6 +43,42 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleDowngrade = async (tier: 'free' | 'pro') => {
+    const tierName = tier === 'free' ? 'Free' : 'Pro';
+    Alert.alert(
+      'Downgrade Subscription',
+      `Are you sure you want to downgrade to ${tierName}? You will lose access to premium features.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Downgrade',
+          style: 'destructive',
+          onPress: async () => {
+            setUpgrading(true);
+            try {
+              const response = await fetch(`${API_URL}/api/subscriptions/test-upgrade?tier=${tier}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+              });
+              
+              if (response.ok) {
+                await refreshUser();
+                Alert.alert('Success', `Downgraded to ${tierName} tier`);
+              } else {
+                const error = await response.json();
+                Alert.alert('Error', error.detail || 'Failed to downgrade');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'Failed to downgrade subscription');
+            } finally {
+              setUpgrading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleLogout = () => {
     Alert.alert(
       'Logout',
