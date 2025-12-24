@@ -205,7 +205,9 @@ class Game(BaseModel):
     team_id: Optional[str] = None
     opponent_name: str
     game_date: datetime
-    location: Optional[str] = None
+    location: Optional[str] = None  # home, away
+    game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
+    venue: Optional[str] = None  # Custom venue name
     
     # Scores
     our_score: int = 0
@@ -237,7 +239,9 @@ class GameCreate(BaseModel):
     team_id: Optional[str] = None
     opponent_name: str
     game_date: datetime
-    location: Optional[str] = None
+    location: Optional[str] = None  # home, away
+    game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
+    venue: Optional[str] = None  # Custom venue name
     player_ids: List[str] = []
 
 class StatUpdate(BaseModel):
