@@ -470,8 +470,11 @@ export default function LiveGameScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.shotChartModal}>
             <Text style={styles.modalTitle}>Tap Shot Location</Text>
-            <Text style={styles.modalSubtitle}>
-              {pendingShotType === '3pt' ? '3-Point Shot' : '2-Point Shot'}
+            <Text style={[
+              styles.modalSubtitle,
+              !pendingShotMade && styles.missedShotSubtitle
+            ]}>
+              {pendingShotMade ? '✓ Made' : '✗ Missed'} {pendingShotType === '3pt' ? '3-Point Shot' : '2-Point Shot'}
             </Text>
             <ShotChart
               shots={selectedPlayerStats?.shots || []}
@@ -485,6 +488,7 @@ export default function LiveGameScreen() {
               onPress={() => {
                 setShowShotChart(false);
                 setPendingShotType(null);
+                setPendingShotMade(true);
               }}
               variant="ghost"
             />
