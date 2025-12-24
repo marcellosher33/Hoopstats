@@ -248,6 +248,32 @@ export default function GameSummaryScreen() {
         </View>
       )}
 
+      {/* Videos */}
+      {videos.length > 0 && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Videos ({videos.length})</Text>
+          </View>
+          <View style={styles.videoList}>
+            {videos.map((video, index) => (
+              <View key={video.id} style={styles.videoItem}>
+                <Video
+                  source={{ uri: video.data }}
+                  style={styles.video}
+                  useNativeControls
+                  resizeMode={ResizeMode.CONTAIN}
+                  isLooping={false}
+                />
+                <View style={styles.videoOverlay}>
+                  <Ionicons name="videocam" size={24} color="white" />
+                  <Text style={styles.videoLabel}>Clip {index + 1}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
+
       {/* Game Notes */}
       {currentGame.notes && (
         <View style={styles.section}>
