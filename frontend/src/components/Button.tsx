@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   Text,
   StyleSheet,
   ActivityIndicator,
@@ -48,11 +48,13 @@ export const Button: React.FC<ButtonProps> = ({
   ];
 
   return (
-    <TouchableOpacity
-      style={buttonStyles}
+    <Pressable
+      style={({ pressed }) => [
+        ...buttonStyles,
+        pressed && { opacity: 0.8 }
+      ]}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}
     >
       {loading ? (
         <ActivityIndicator color={variant === 'outline' ? colors.primary : colors.text} />
@@ -62,7 +64,7 @@ export const Button: React.FC<ButtonProps> = ({
           <Text style={textStyles}>{title}</Text>
         </>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
