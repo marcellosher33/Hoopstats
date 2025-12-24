@@ -43,6 +43,7 @@ export default function LiveGameScreen() {
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [opponentScore, setOpponentScore] = useState('0');
   const [ourScore, setOurScore] = useState('0');
+  const [teamMode, setTeamMode] = useState(false);  // Track all players at once
   
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
