@@ -182,6 +182,40 @@ export default function NewGameScreen() {
             </View>
           </View>
 
+          {/* Period Type Selector */}
+          <View style={styles.dropdownSection}>
+            <Text style={styles.label}>Game Format</Text>
+            <View style={styles.optionsRow}>
+              {PERIOD_TYPE_OPTIONS.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.periodButton,
+                    periodType === option.value && styles.periodButtonActive,
+                  ]}
+                  onPress={() => setPeriodType(option.value)}
+                >
+                  <Text
+                    style={[
+                      styles.periodLabel,
+                      periodType === option.value && styles.periodLabelActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.periodDescription,
+                      periodType === option.value && styles.periodDescriptionActive,
+                    ]}
+                  >
+                    {option.description}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
           {/* Venue (optional text input) */}
           <Input
             label="Venue (Optional)"
