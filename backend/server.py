@@ -622,6 +622,21 @@ async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(
     updated_game = await db.games.find_one({"id": game_id})
     return serialize_doc(updated_game)
 
+# Debug endpoint to see raw request body
+from fastapi import Request
+@api_router.post("/games/{game_id}/stats-debug")
+async def record_stat_debug(game_id: str, request: Request, user: dict = Depends(get_current_user)):
+    """Debug endpoint to see raw request body"""
+    body = await request.body()
+    print(f"[DEBUG] Raw body: {body}")
+    try:
+        import json
+        data = json.loads(body)
+        print(f"[DEBUG] Parsed JSON: {data}")
+    except Exception as e:
+        print(f"[DEBUG] JSON parse error: {e}")
+    return {"received": str(body)}
+
 @api_router.post("/games/{game_id}/stats")
 async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_current_user)):
     """Record a stat during live game"""
