@@ -245,13 +245,21 @@ export default function LiveGameScreen() {
                   points={2}
                   label="2PT"
                   value={stats?.fg_made}
-                  onPress={() => handleStatPress('points_2')}
+                  onPress={() => {
+                    setPendingShotType('2pt');
+                    setPendingShotMade(true);
+                    setShowShotChart(true);
+                  }}
                 />
                 <ScoringButton
                   points={3}
                   label="3PT"
                   value={stats?.three_pt_made}
-                  onPress={() => handleStatPress('points_3')}
+                  onPress={() => {
+                    setPendingShotType('3pt');
+                    setPendingShotMade(true);
+                    setShowShotChart(true);
+                  }}
                 />
                 <ScoringButton
                   points={1}
@@ -261,8 +269,22 @@ export default function LiveGameScreen() {
                 />
               </View>
               <View style={styles.missRow}>
-                <MissButton label="Miss 2PT" onPress={() => handleStatPress('miss_2')} />
-                <MissButton label="Miss 3PT" onPress={() => handleStatPress('miss_3')} />
+                <MissButton 
+                  label="Miss 2PT" 
+                  onPress={() => {
+                    setPendingShotType('2pt');
+                    setPendingShotMade(false);
+                    setShowShotChart(true);
+                  }} 
+                />
+                <MissButton 
+                  label="Miss 3PT" 
+                  onPress={() => {
+                    setPendingShotType('3pt');
+                    setPendingShotMade(false);
+                    setShowShotChart(true);
+                  }} 
+                />
                 <MissButton label="Miss FT" onPress={() => handleStatPress('ft_missed')} />
               </View>
             </View>
