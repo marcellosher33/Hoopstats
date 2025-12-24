@@ -1004,6 +1004,13 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.xxl,
   },
+  cameraModeText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
+  },
   cameraControls: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -1024,5 +1031,20 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: 27,
     backgroundColor: 'white',
+  },
+  recordingBtn: {
+    borderColor: colors.error,
+  },
+  recordingBtnInner: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    backgroundColor: colors.error,
+  },
+  recordingText: {
+    color: colors.error,
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop: spacing.sm,
   },
 });
