@@ -155,11 +155,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented stat recording for all stats: points, rebounds, assists, steals, blocks, turnovers, fouls, FG, 3PT, FT, shot locations."
+      - working: true
+        agent: "main"
+        comment: "Fixed 2pt/3pt stat tracking. Backend API tested via curl - confirmed working. Frontend gameStore.ts updated to conditionally include shot_location only when provided. Added debug logging for troubleshooting."
 
   - task: "AI Game Summary (OpenAI)"
     implemented: true
