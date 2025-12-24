@@ -519,6 +519,8 @@ export default function LiveGameScreen() {
           </View>
         )}
       </ScrollView>
+        </>
+      )}
 
       {/* Bottom Action Bar */}
       <LinearGradient
