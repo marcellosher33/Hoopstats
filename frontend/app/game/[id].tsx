@@ -1144,4 +1144,96 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: spacing.sm,
   },
+  // Mode Toggle Styles
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: 4,
+    marginHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  modeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    gap: spacing.xs,
+  },
+  modeBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  modeBtnText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  modeBtnTextActive: {
+    color: colors.text,
+  },
+  // Team Mode Styles
+  teamModeContainer: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+  },
+  teamModeTitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: 'center',
+    marginVertical: spacing.sm,
+  },
+  teamModePlayerRow: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  teamModePlayerInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  teamModeAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  teamModeAvatarText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  teamModePlayerName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  teamModePlayerStats: {
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  teamModeQuickStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: spacing.xs,
+  },
+  teamModeStatBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  teamModeStatBtnText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
 });
