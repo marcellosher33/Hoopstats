@@ -261,33 +261,127 @@ export default function LiveGameScreen() {
         </View>
       </LinearGradient>
 
-      {/* Player Selection */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.playerScroll}>
-        {currentGame.player_stats.map((ps) => (
-          <TouchableOpacity
-            key={ps.player_id}
-            style={[
-              styles.playerChip,
-              selectedPlayer === ps.player_id && styles.playerChipActive,
-            ]}
-            onPress={() => setSelectedPlayer(ps.player_id)}
-          >
-            <View style={[styles.playerAvatar, selectedPlayer === ps.player_id && styles.playerAvatarActive]}>
-              <Text style={styles.playerInitial}>{ps.player_name.charAt(0)}</Text>
-            </View>
-            <Text style={[
-              styles.playerChipText,
-              selectedPlayer === ps.player_id && styles.playerChipTextActive,
-            ]}>
-              {ps.player_name}
-            </Text>
-            <Text style={styles.playerPoints}>{ps.stats.points || 0} pts</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* Mode Toggle */}
+      <View style={styles.modeToggle}>
+        <TouchableOpacity
+          style={[styles.modeBtn, !teamMode && styles.modeBtnActive]}
+          onPress={() => setTeamMode(false)}
+        >
+          <Ionicons name="person" size={16} color={!teamMode ? colors.text : colors.textSecondary} />
+          <Text style={[styles.modeBtnText, !teamMode && styles.modeBtnTextActive]}>Single Player</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.modeBtn, teamMode && styles.modeBtnActive]}
+          onPress={() => setTeamMode(true)}
+        >
+          <Ionicons name="people" size={16} color={teamMode ? colors.text : colors.textSecondary} />
+          <Text style={[styles.modeBtnText, teamMode && styles.modeBtnTextActive]}>Team Mode</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Stats Dashboard */}
-      <ScrollView style={styles.statsArea} contentContainerStyle={styles.statsContent}>
+      {teamMode ? (
+        /* Team Mode - All Players View */
+        <ScrollView style={styles.teamModeContainer}>
+          <Text style={styles.teamModeTitle}>Tap player + stat to record</Text>
+          {currentGame.player_stats.map((ps) => (
+            <View key={ps.player_id} style={styles.teamModePlayerRow}>
+              <View style={styles.teamModePlayerInfo}>
+                <View style={styles.teamModeAvatar}>
+                  <Text style={styles.teamModeAvatarText}>{ps.player_name.charAt(0)}</Text>
+                </View>
+                <View>
+                  <Text style={styles.teamModePlayerName}>{ps.player_name}</Text>
+                  <Text style={styles.teamModePlayerStats}>
+                    {ps.stats.points || 0} pts | {ps.stats.rebounds || 0} reb | {ps.stats.assists || 0} ast
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.teamModeQuickStats}>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(255, 107, 53, 0.2)' }]}
+                  onPress={() => {
+                    setSelectedPlayer(ps.player_id);
+                    setPendingShotType('2pt');
+                    setPendingShotMade(true);
+                    setShowShotChart(true);
+                  }}
+                >
+                  <Text style={styles.teamModeStatBtnText}>+2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}
+                  onPress={() => {
+                    setSelectedPlayer(ps.player_id);
+                    setPendingShotType('3pt');
+                    setPendingShotMade(true);
+                    setShowShotChart(true);
+                  }}
+                >
+                  <Text style={styles.teamModeStatBtnText}>+3</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(16, 185, 129, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'rebounds', token);
+                    }
+                  }}
+                >
+                  <Text style={styles.teamModeStatBtnText}>REB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'assists', token);
+                    }
+                  }}
+                >
+                  <Text style={styles.teamModeStatBtnText}>AST</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'turnovers', token);
+                    }
+                  }}
+                >
+                  <Text style={styles.teamModeStatBtnText}>TO</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      ) : (
+        <>
+          {/* Player Selection */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.playerScroll}>
+            {currentGame.player_stats.map((ps) => (
+              <TouchableOpacity
+                key={ps.player_id}
+                style={[
+                  styles.playerChip,
+                  selectedPlayer === ps.player_id && styles.playerChipActive,
+                ]}
+                onPress={() => setSelectedPlayer(ps.player_id)}
+              >
+                <View style={[styles.playerAvatar, selectedPlayer === ps.player_id && styles.playerAvatarActive]}>
+                  <Text style={styles.playerInitial}>{ps.player_name.charAt(0)}</Text>
+                </View>
+                <Text style={[
+                  styles.playerChipText,
+                  selectedPlayer === ps.player_id && styles.playerChipTextActive,
+                ]}>
+                  {ps.player_name}
+                </Text>
+                <Text style={styles.playerPoints}>{ps.stats.points || 0} pts</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          {/* Stats Dashboard */}
+          <ScrollView style={styles.statsArea} contentContainerStyle={styles.statsContent}>
         {selectedPlayer ? (
           <>
             {/* Scoring Buttons */}
