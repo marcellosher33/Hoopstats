@@ -95,6 +95,7 @@ export default function GameSummaryScreen() {
 
   const isWin = currentGame.our_score > currentGame.opponent_score;
   const photos = currentGame.media.filter(m => m.type === 'photo');
+  const videos = currentGame.media.filter(m => m.type === 'video');
   const allShots = currentGame.player_stats.flatMap(ps => ps.shots || []);
 
   return (
