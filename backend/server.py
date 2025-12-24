@@ -805,9 +805,6 @@ async def generate_ai_summary(game_id: str, user: dict = Depends(get_current_use
     if not check_subscription(user, "pro"):
         raise HTTPException(status_code=403, detail="Pro subscription required for AI summaries")
     
-    if not openai_client:
-        raise HTTPException(status_code=500, detail="AI service not configured")
-    
     game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
@@ -842,12 +839,13 @@ Please provide:
 """
     
     try:
-        response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=500
+        # Use emergent integrations library
+        config = LLMConfig(
+            api_key=EMERGENT_LLM_KEY,
+            model="gpt-4o-mini"
         )
-        summary = response.choices[0].message.content
+        messages = [Message(role="user", content=prompt)]
+        summary = await chat(config=config, messages=messages)
         
         # Save summary to game
         await db.games.update_one(
