@@ -566,6 +566,7 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
         location=game_data.location,
         game_type=game_data.game_type,
         venue=game_data.venue,
+        period_type=game_data.period_type,
         player_stats=player_stats
     )
     
