@@ -30,7 +30,8 @@ export interface ShotAttempt {
   y: number;
   made: boolean;
   shot_type: '2pt' | '3pt' | 'ft';
-  quarter: number;
+  period?: number;
+  quarter?: number;  // Legacy support
   timestamp: string;
 }
 
