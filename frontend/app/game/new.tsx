@@ -8,6 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,13 +20,30 @@ import { Input } from '../../src/components/Input';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Player } from '../../src/types';
 
+type LocationType = 'home' | 'away' | null;
+type GameType = 'preseason' | 'tournament' | 'regular_season' | 'playoffs' | null;
+
+const LOCATION_OPTIONS: { value: LocationType; label: string; icon: string }[] = [
+  { value: 'home', label: 'Home', icon: 'home' },
+  { value: 'away', label: 'Away', icon: 'airplane' },
+];
+
+const GAME_TYPE_OPTIONS: { value: GameType; label: string; icon: string }[] = [
+  { value: 'preseason', label: 'Preseason', icon: 'fitness' },
+  { value: 'regular_season', label: 'Regular Season', icon: 'basketball' },
+  { value: 'tournament', label: 'Tournament', icon: 'trophy' },
+  { value: 'playoffs', label: 'Playoffs', icon: 'star' },
+];
+
 export default function NewGameScreen() {
   const router = useRouter();
   const { token } = useAuthStore();
   const { players, fetchPlayers, createGame } = useGameStore();
 
   const [opponentName, setOpponentName] = useState('');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState<LocationType>(null);
+  const [gameType, setGameType] = useState<GameType>(null);
+  const [venue, setVenue] = useState('');
   const [gameDate, setGameDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
@@ -61,7 +79,9 @@ export default function NewGameScreen() {
       const game = await createGame(
         {
           opponent_name: opponentName.trim(),
-          location: location.trim() || undefined,
+          location: location || undefined,
+          game_type: gameType || undefined,
+          venue: venue.trim() || undefined,
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
         },
@@ -92,11 +112,74 @@ export default function NewGameScreen() {
             placeholder="e.g., Lakers, Eagles"
           />
 
+          {/* Location Dropdown */}
+          <View style={styles.dropdownSection}>
+            <Text style={styles.label}>Location</Text>
+            <View style={styles.optionsRow}>
+              {LOCATION_OPTIONS.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.optionButton,
+                    location === option.value && styles.optionButtonActive,
+                  ]}
+                  onPress={() => setLocation(location === option.value ? null : option.value)}
+                >
+                  <Ionicons
+                    name={option.icon as any}
+                    size={20}
+                    color={location === option.value ? colors.text : colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.optionText,
+                      location === option.value && styles.optionTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Game Type Dropdown */}
+          <View style={styles.dropdownSection}>
+            <Text style={styles.label}>Game Type</Text>
+            <View style={styles.optionsGrid}>
+              {GAME_TYPE_OPTIONS.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.gameTypeButton,
+                    gameType === option.value && styles.gameTypeButtonActive,
+                  ]}
+                  onPress={() => setGameType(gameType === option.value ? null : option.value)}
+                >
+                  <Ionicons
+                    name={option.icon as any}
+                    size={18}
+                    color={gameType === option.value ? colors.text : colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.gameTypeText,
+                      gameType === option.value && styles.gameTypeTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Venue (optional text input) */}
           <Input
-            label="Location"
-            value={location}
-            onChangeText={setLocation}
-            placeholder="e.g., Home Court, Main Gym"
+            label="Venue (Optional)"
+            value={venue}
+            onChangeText={setVenue}
+            placeholder="e.g., Main Gym, City Arena"
           />
 
           <View style={styles.dateRow}>
@@ -247,6 +330,65 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginBottom: spacing.xs,
+  },
+  dropdownSection: {
+    marginBottom: spacing.md,
+  },
+  optionsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  optionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  optionButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  optionText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  optionTextActive: {
+    color: colors.text,
+  },
+  optionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  gameTypeButton: {
+    width: '48%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  gameTypeButtonActive: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+  },
+  gameTypeText: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  gameTypeTextActive: {
+    color: colors.text,
   },
   dateRow: {
     marginBottom: spacing.md,
