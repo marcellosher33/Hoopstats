@@ -11,59 +11,58 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
-import { useGameStore } from '../../src/stores/gameStore';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+
+const TEAM_COLORS = [
+  '#FF6B35', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6',
+  '#EF4444', '#EC4899', '#06B6D4', '#84CC16', '#6366F1',
+];
+
 export default function NewTeamScreen() {
   const router = useRouter();
-  const { token, user } = useAuthStore();
-  const { createTeam } = useGameStore();
-
+  const { token } = useAuthStore();
   const [name, setName] = useState('');
+  const [primaryColor, setPrimaryColor] = useState(TEAM_COLORS[0]);
   const [loading, setLoading] = useState(false);
 
-  const handleCreateTeam = async () => {
-    if (user?.subscription_tier !== 'team') {
-      Alert.alert('Team Tier Required', 'Creating teams requires the Team subscription ($199.99/year)');
-      return;
-    }
-
+  const handleCreate = async () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter team name');
+      Alert.alert('Error', 'Please enter a team name');
       return;
     }
 
     setLoading(true);
     try {
-      await createTeam({ name: name.trim() }, token!);
-      router.back();
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to create team');
+      const response = await fetch(`${API_URL}/api/teams`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          color_primary: primaryColor,
+          color_secondary: '#FFFFFF',
+        }),
+      });
+
+      if (response.ok) {
+        const team = await response.json();
+        router.replace(`/team/${team.id}`);
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to create team');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create team');
     } finally {
       setLoading(false);
     }
   };
-
-  if (user?.subscription_tier !== 'team') {
-    return (
-      <View style={styles.container}>
-        <View style={styles.locked}>
-          <Ionicons name="lock-closed" size={64} color={colors.warning} />
-          <Text style={styles.lockedTitle}>Team Tier Required</Text>
-          <Text style={styles.lockedText}>
-            Creating and managing teams requires the Team subscription at $199.99/year.
-          </Text>
-          <Button
-            title="Upgrade to Team"
-            onPress={() => router.push('/(tabs)/profile')}
-            style={{ marginTop: spacing.lg }}
-          />
-        </View>
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -71,8 +70,13 @@ export default function NewTeamScreen() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="people" size={48} color={colors.primary} />
+        <View style={styles.previewCard}>
+          <View style={[styles.previewIcon, { backgroundColor: primaryColor }]}>
+            <Text style={styles.previewIconText}>
+              {name ? name.charAt(0).toUpperCase() : 'T'}
+            </Text>
+          </View>
+          <Text style={styles.previewName}>{name || 'Team Name'}</Text>
         </View>
 
         <Input
@@ -82,12 +86,35 @@ export default function NewTeamScreen() {
           placeholder="Enter team name"
         />
 
+        <Text style={styles.label}>Team Color</Text>
+        <View style={styles.colorGrid}>
+          {TEAM_COLORS.map((color) => (
+            <View
+              key={color}
+              style={[
+                styles.colorOption,
+                primaryColor === color && styles.colorSelected,
+              ]}
+            >
+              <View
+                style={[styles.colorCircle, { backgroundColor: color }]}
+                onTouchEnd={() => setPrimaryColor(color)}
+              >
+                {primaryColor === color && (
+                  <Ionicons name="checkmark" size={20} color="white" />
+                )}
+              </View>
+            </View>
+          ))}
+        </View>
+
         <Button
           title="Create Team"
-          onPress={handleCreateTeam}
+          onPress={handleCreate}
           loading={loading}
           disabled={!name.trim()}
-          size="large"
+          style={{ marginTop: spacing.xl }}
+          icon={<Ionicons name="people" size={20} color={colors.text} />}
         />
       </ScrollView>
     </KeyboardAvoidingView>
@@ -102,26 +129,57 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
   },
-  iconContainer: {
+  previewCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
     alignItems: 'center',
-    marginVertical: spacing.xl,
+    marginBottom: spacing.xl,
   },
-  locked: {
-    flex: 1,
+  previewIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.xl,
+    marginBottom: spacing.md,
   },
-  lockedTitle: {
+  previewIconText: {
+    fontSize: 36,
+    fontWeight: 'bold',
     color: colors.text,
+  },
+  previewName: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginTop: spacing.lg,
+    color: colors.text,
   },
-  lockedText: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    textAlign: 'center',
+  label: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: spacing.sm,
     marginTop: spacing.md,
+  },
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  colorOption: {
+    padding: 4,
+    borderRadius: borderRadius.full,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  colorSelected: {
+    borderColor: colors.text,
+  },
+  colorCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
