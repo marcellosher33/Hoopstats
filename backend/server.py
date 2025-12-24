@@ -54,14 +54,17 @@ def serialize_doc(doc):
 # Stripe setup (test mode)
 stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_placeholder')
 
-# OpenAI setup with Emergent key
+# OpenAI/Emergent LLM setup
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 openai_client = None
 if EMERGENT_LLM_KEY:
-    openai_client = OpenAI(
-        api_key=EMERGENT_LLM_KEY,
-        base_url="https://api.openai.com/v1"
-    )
+    # Try multiple base URLs for compatibility
+    try:
+        openai_client = OpenAI(
+            api_key=EMERGENT_LLM_KEY
+        )
+    except Exception as e:
+        logger.warning(f"Failed to initialize OpenAI client: {e}")
 
 # JWT settings
 JWT_SECRET = os.environ.get('JWT_SECRET', 'basketball-tracker-secret-key-2025')
