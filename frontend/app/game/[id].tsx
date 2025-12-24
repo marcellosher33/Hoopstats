@@ -1128,6 +1128,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
   },
+  cameraContainerVideo: {
+    backgroundColor: '#1a0000',
+  },
+  modeBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
+  },
+  modeBannerPhoto: {
+    backgroundColor: colors.primary,
+  },
+  modeBannerVideo: {
+    backgroundColor: colors.error,
+  },
+  modeBannerText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
   camera: {
     flex: 1,
   },
