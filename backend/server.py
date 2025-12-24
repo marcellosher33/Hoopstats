@@ -548,6 +548,42 @@ async def delete_team(team_id: str, user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Team not found")
     return {"message": "Team deleted"}
 
+@api_router.get("/teams/{team_id}/players")
+async def get_team_players(team_id: str, user: dict = Depends(get_current_user)):
+    """Get all players in a team"""
+    team = await db.teams.find_one({"id": team_id, "user_id": user["id"]})
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    
+    players = await db.players.find({"team_id": team_id, "user_id": user["id"]}).to_list(100)
+    return serialize_doc(players)
+
+@api_router.post("/teams/{team_id}/players/{player_id}")
+async def add_player_to_team(team_id: str, player_id: str, user: dict = Depends(get_current_user)):
+    """Add a player to a team"""
+    team = await db.teams.find_one({"id": team_id, "user_id": user["id"]})
+    if not team:
+        raise HTTPException(status_code=404, detail="Team not found")
+    
+    player = await db.players.find_one({"id": player_id, "user_id": user["id"]})
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+    
+    await db.players.update_one(
+        {"id": player_id},
+        {"$set": {"team_id": team_id}}
+    )
+    return {"message": "Player added to team"}
+
+@api_router.delete("/teams/{team_id}/players/{player_id}")
+async def remove_player_from_team(team_id: str, player_id: str, user: dict = Depends(get_current_user)):
+    """Remove a player from a team"""
+    await db.players.update_one(
+        {"id": player_id, "user_id": user["id"], "team_id": team_id},
+        {"$set": {"team_id": None}}
+    )
+    return {"message": "Player removed from team"}
+
 # ==================== GAME ROUTES ====================
 
 @api_router.post("/games")
