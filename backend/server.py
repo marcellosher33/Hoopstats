@@ -622,6 +622,8 @@ async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(
 @api_router.post("/games/{game_id}/stats")
 async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_current_user)):
     """Record a stat during live game"""
+    print(f"[record_stat] Received: game_id={game_id}, stat={stat.dict()}")
+    
     game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
