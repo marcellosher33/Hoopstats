@@ -22,6 +22,7 @@ export const colors = {
   
   // Court colors
   court: '#CD853F',
+  courtDark: '#A0682B',
   courtLines: '#FFFFFF',
   shotMade: '#10B981',
   shotMissed: '#EF4444',
