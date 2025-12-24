@@ -81,10 +81,11 @@ export interface Game {
   location?: 'home' | 'away';
   game_type?: 'preseason' | 'tournament' | 'regular_season' | 'playoffs';
   venue?: string;
+  period_type: 'quarters' | 'halves';
   our_score: number;
   opponent_score: number;
   status: 'in_progress' | 'completed';
-  current_quarter: number;
+  current_period: number;
   player_stats: GamePlayerStats[];
   media: GameMedia[];
   scoreboard_photo?: string;
