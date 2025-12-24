@@ -89,6 +89,7 @@ export default function NewGameScreen() {
           location: location || undefined,
           game_type: gameType || undefined,
           venue: venue.trim() || undefined,
+          period_type: periodType,
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
         },
