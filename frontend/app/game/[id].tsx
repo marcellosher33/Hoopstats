@@ -233,7 +233,6 @@ export default function LiveGameScreen() {
                 <StatButton
                   label="+2"
                   value={stats?.fg_made}
-                  color={colors.points}
                   onPress={() => {
                     setPendingShotType('2pt');
                     setShowShotChart(true);
@@ -242,23 +241,15 @@ export default function LiveGameScreen() {
                 <StatButton
                   label="+3"
                   value={stats?.three_pt_made}
-                  color="#8B5CF6"
                   onPress={() => {
                     setPendingShotType('3pt');
                     setShowShotChart(true);
                   }}
                 />
                 <StatButton
-                  label="FT"
+                  label="+1"
                   value={stats?.ft_made}
-                  color={colors.success}
                   onPress={() => handleStatPress('ft_made')}
-                />
-                <StatButton
-                  label="Miss FT"
-                  color={colors.error}
-                  onPress={() => handleStatPress('ft_missed')}
-                  size="small"
                 />
               </View>
               <View style={styles.statRow}>
@@ -267,12 +258,21 @@ export default function LiveGameScreen() {
                   color={colors.surfaceLight}
                   onPress={() => handleStatPress('miss_2')}
                   size="small"
+                  showBasketball={false}
                 />
                 <StatButton
                   label="Miss 3"
                   color={colors.surfaceLight}
                   onPress={() => handleStatPress('miss_3')}
                   size="small"
+                  showBasketball={false}
+                />
+                <StatButton
+                  label="Miss FT"
+                  color={colors.error}
+                  onPress={() => handleStatPress('ft_missed')}
+                  size="small"
+                  showBasketball={false}
                 />
               </View>
             </View>
