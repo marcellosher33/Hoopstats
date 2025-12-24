@@ -9,6 +9,7 @@ import {
   Share,
   Image,
 } from 'react-native';
+import { Video, ResizeMode } from 'expo-av';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../../src/stores/authStore';
