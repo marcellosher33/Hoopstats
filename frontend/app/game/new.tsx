@@ -432,6 +432,37 @@ const styles = StyleSheet.create({
   gameTypeTextActive: {
     color: colors.text,
   },
+  periodButton: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  periodButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  periodLabel: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  periodLabelActive: {
+    color: colors.text,
+  },
+  periodDescription: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    opacity: 0.7,
+  },
+  periodDescriptionActive: {
+    color: colors.text,
+    opacity: 0.8,
+  },
   dateRow: {
     marginBottom: spacing.md,
   },
