@@ -553,6 +553,37 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  videoList: {
+    gap: spacing.md,
+  },
+  videoItem: {
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
+    position: 'relative',
+  },
+  video: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#000',
+  },
+  videoOverlay: {
+    position: 'absolute',
+    top: spacing.sm,
+    left: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.md,
+  },
+  videoLabel: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '500',
+  },
   notesCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
