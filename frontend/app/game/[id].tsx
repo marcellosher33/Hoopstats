@@ -177,7 +177,11 @@ export default function LiveGameScreen() {
           </View>
           <View style={styles.gameInfo}>
             <View style={styles.quarterBadge}>
-              <Text style={styles.quarterText}>Q{currentGame.current_quarter}</Text>
+              <Text style={styles.quarterText}>
+                {currentGame.period_type === 'halves' 
+                  ? `H${currentGame.current_period || 1}` 
+                  : `Q${currentGame.current_period || currentGame.current_quarter || 1}`}
+              </Text>
             </View>
             <Text style={styles.vsText}>VS</Text>
             <TouchableOpacity style={styles.editScoreHint}>
@@ -191,21 +195,23 @@ export default function LiveGameScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Quarter Controls */}
+        {/* Period Controls */}
         <View style={styles.quarterControls}>
-          {[1, 2, 3, 4].map(q => (
+          {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
             <TouchableOpacity
-              key={q}
+              key={p}
               style={[
                 styles.quarterBtn,
-                currentGame.current_quarter === q && styles.quarterBtnActive,
+                (currentGame.current_period || currentGame.current_quarter || 1) === p && styles.quarterBtnActive,
               ]}
-              onPress={() => handleQuarterChange(q)}
+              onPress={() => handleQuarterChange(p)}
             >
               <Text style={[
                 styles.quarterBtnText,
-                currentGame.current_quarter === q && styles.quarterBtnTextActive,
-              ]}>Q{q}</Text>
+                (currentGame.current_period || currentGame.current_quarter || 1) === p && styles.quarterBtnTextActive,
+              ]}>
+                {currentGame.period_type === 'halves' ? `H${p}` : `Q${p}`}
+              </Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity
