@@ -249,6 +249,9 @@ class StatUpdate(BaseModel):
     stat_type: str  # points, rebounds, assists, etc.
     value: int = 1
     shot_location: Optional[Dict[str, float]] = None  # {x, y} for shot chart
+    
+    class Config:
+        extra = "ignore"  # Ignore any extra fields
 
 class GameUpdate(BaseModel):
     our_score: Optional[int] = None
