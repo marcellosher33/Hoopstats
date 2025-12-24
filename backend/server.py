@@ -840,12 +840,10 @@ Please provide:
     
     try:
         # Use emergent integrations library
-        config = LLMConfig(
-            api_key=EMERGENT_LLM_KEY,
-            model="gpt-4o-mini"
-        )
-        messages = [Message(role="user", content=prompt)]
-        summary = await chat(config=config, messages=messages)
+        llm = LlmChat(api_key=EMERGENT_LLM_KEY, model="gpt-4o-mini")
+        message = UserMessage(content=prompt)
+        response = await llm.chat(messages=[message])
+        summary = response.content
         
         # Save summary to game
         await db.games.update_one(
