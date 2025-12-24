@@ -117,7 +117,7 @@ export default function RegisterScreen() {
           />
 
           <Button
-            title="Create Account"
+            title="Sign Up"
             onPress={handleRegister}
             loading={loading}
             size="large"
