@@ -657,6 +657,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
         if ps["player_id"] == stat.player_id:
             player_found = True
             stats = ps.get("stats", {})
+            current_period = game.get("current_period", game.get("current_quarter", 1))
             
             # Handle different stat types
             if stat.stat_type == "points_2":
@@ -669,7 +670,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                         "y": stat.shot_location["y"],
                         "made": True,
                         "shot_type": "2pt",
-                        "quarter": game.get("current_quarter", 1),
+                        "period": current_period,
                         "timestamp": datetime.utcnow().isoformat()
                     })
             elif stat.stat_type == "points_3":
@@ -682,7 +683,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                         "y": stat.shot_location["y"],
                         "made": True,
                         "shot_type": "3pt",
-                        "quarter": game.get("current_quarter", 1),
+                        "period": current_period,
                         "timestamp": datetime.utcnow().isoformat()
                     })
             elif stat.stat_type == "ft_made":
@@ -699,7 +700,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                         "y": stat.shot_location["y"],
                         "made": False,
                         "shot_type": "2pt",
-                        "quarter": game.get("current_quarter", 1),
+                        "period": current_period,
                         "timestamp": datetime.utcnow().isoformat()
                     })
             elif stat.stat_type == "miss_3":
@@ -710,7 +711,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                         "y": stat.shot_location["y"],
                         "made": False,
                         "shot_type": "3pt",
-                        "quarter": game.get("current_quarter", 1),
+                        "period": current_period,
                         "timestamp": datetime.utcnow().isoformat()
                     })
             elif stat.stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
