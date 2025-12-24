@@ -580,17 +580,17 @@ async def get_games(
         in_progress = await db.games.find({**query, "status": "in_progress"}).sort("created_at", -1).to_list(50)
         # Get last 2 completed games
         completed = await db.games.find({**query, "status": "completed"}).sort("completed_at", -1).to_list(2)
-        return in_progress + completed
+        return serialize_doc(in_progress + completed)
     
     games = await db.games.find(query).sort("game_date", -1).to_list(limit)
-    return games
+    return serialize_doc(games)
 
 @api_router.get("/games/{game_id}")
 async def get_game(game_id: str, user: dict = Depends(get_current_user)):
     game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-    return game
+    return serialize_doc(game)
 
 @api_router.put("/games/{game_id}")
 async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(get_current_user)):
@@ -610,7 +610,8 @@ async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(
         {"id": game_id, "user_id": user["id"]},
         {"$set": update_data}
     )
-    return await db.games.find_one({"id": game_id})
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
 
 @api_router.post("/games/{game_id}/stats")
 async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_current_user)):
