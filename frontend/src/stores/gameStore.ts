@@ -148,18 +148,24 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   recordStat: async (gameId: string, playerId: string, statType: StatType, token: string, shotLocation?: { x: number; y: number }) => {
     try {
+      const body: any = {
+        player_id: playerId,
+        stat_type: statType,
+        value: 1,
+      };
+      
+      // Only include shot_location if it's provided
+      if (shotLocation) {
+        body.shot_location = shotLocation;
+      }
+      
       const response = await fetch(`${API_URL}/api/games/${gameId}/stats`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          player_id: playerId,
-          stat_type: statType,
-          value: 1,
-          shot_location: shotLocation,
-        }),
+        body: JSON.stringify(body),
       });
       
       if (response.ok) {
@@ -168,6 +174,8 @@ export const useGameStore = create<GameState>((set, get) => ({
           currentGame: updatedGame,
           games: state.games.map((g) => (g.id === gameId ? updatedGame : g)),
         }));
+      } else {
+        console.error('Failed to record stat:', await response.text());
       }
     } catch (error) {
       // Queue for offline sync
