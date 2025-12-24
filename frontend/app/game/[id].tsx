@@ -546,16 +546,40 @@ export default function LiveGameScreen() {
             ref={cameraRef}
             style={styles.camera}
             facing="back"
+            mode={cameraMode === 'video' ? 'video' : 'picture'}
           >
             <View style={styles.cameraHeader}>
-              <TouchableOpacity onPress={() => setShowCamera(false)}>
+              <TouchableOpacity onPress={() => {
+                if (isRecording) {
+                  handleStopRecording();
+                }
+                setShowCamera(false);
+              }}>
                 <Ionicons name="close" size={32} color="white" />
               </TouchableOpacity>
+              <Text style={styles.cameraModeText}>
+                {cameraMode === 'video' ? '📹 VIDEO' : '📷 PHOTO'}
+              </Text>
             </View>
             <View style={styles.cameraControls}>
-              <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
-                <View style={styles.captureBtnInner} />
-              </TouchableOpacity>
+              {cameraMode === 'photo' ? (
+                <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
+                  <View style={styles.captureBtnInner} />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity 
+                  style={[styles.captureBtn, isRecording && styles.recordingBtn]} 
+                  onPress={isRecording ? handleStopRecording : handleStartRecording}
+                >
+                  <View style={[
+                    styles.captureBtnInner, 
+                    isRecording && styles.recordingBtnInner
+                  ]} />
+                </TouchableOpacity>
+              )}
+              {isRecording && (
+                <Text style={styles.recordingText}>● Recording...</Text>
+              )}
             </View>
           </CameraView>
         </View>
