@@ -22,6 +22,7 @@ import { Player } from '../../src/types';
 
 type LocationType = 'home' | 'away' | null;
 type GameType = 'preseason' | 'tournament' | 'regular_season' | 'playoffs' | null;
+type PeriodType = 'quarters' | 'halves';
 
 const LOCATION_OPTIONS: { value: LocationType; label: string; icon: string }[] = [
   { value: 'home', label: 'Home', icon: 'home' },
@@ -35,6 +36,11 @@ const GAME_TYPE_OPTIONS: { value: GameType; label: string; icon: string }[] = [
   { value: 'playoffs', label: 'Playoffs', icon: 'star' },
 ];
 
+const PERIOD_TYPE_OPTIONS: { value: PeriodType; label: string; description: string }[] = [
+  { value: 'quarters', label: '4 Quarters', description: 'NBA, HS, Youth' },
+  { value: 'halves', label: '2 Halves', description: 'College, FIBA' },
+];
+
 export default function NewGameScreen() {
   const router = useRouter();
   const { token } = useAuthStore();
@@ -43,6 +49,7 @@ export default function NewGameScreen() {
   const [opponentName, setOpponentName] = useState('');
   const [location, setLocation] = useState<LocationType>(null);
   const [gameType, setGameType] = useState<GameType>(null);
+  const [periodType, setPeriodType] = useState<PeriodType>('quarters');
   const [venue, setVenue] = useState('');
   const [gameDate, setGameDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
