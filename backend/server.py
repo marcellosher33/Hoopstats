@@ -463,14 +463,14 @@ async def get_players(team_id: Optional[str] = None, user: dict = Depends(get_cu
     if team_id:
         query["team_id"] = team_id
     players = await db.players.find(query).to_list(100)
-    return players
+    return serialize_doc(players)
 
 @api_router.get("/players/{player_id}")
 async def get_player(player_id: str, user: dict = Depends(get_current_user)):
     player = await db.players.find_one({"id": player_id, "user_id": user["id"]})
     if not player:
         raise HTTPException(status_code=404, detail="Player not found")
-    return player
+    return serialize_doc(player)
 
 @api_router.put("/players/{player_id}")
 async def update_player(player_id: str, player_data: PlayerCreate, user: dict = Depends(get_current_user)):
