@@ -258,7 +258,7 @@ class StatUpdate(BaseModel):
 class GameUpdate(BaseModel):
     our_score: Optional[int] = None
     opponent_score: Optional[int] = None
-    current_quarter: Optional[int] = None
+    current_period: Optional[int] = None  # Current quarter or half
     notes: Optional[str] = None
     tags: Optional[List[str]] = None
     scoreboard_photo: Optional[str] = None
