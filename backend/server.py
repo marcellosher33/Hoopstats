@@ -839,11 +839,15 @@ Please provide:
 """
     
     try:
-        # Use emergent integrations library
-        llm = LlmChat(api_key=EMERGENT_LLM_KEY, model="gpt-4o-mini")
-        message = UserMessage(content=prompt)
-        response = await llm.chat(messages=[message])
-        summary = response.content
+        # Use emergent integrations library with correct API
+        session_id = f"game-summary-{game_id}"
+        llm = LlmChat(
+            api_key=EMERGENT_LLM_KEY, 
+            session_id=session_id, 
+            system_message="You are a sports journalist specializing in basketball game summaries."
+        )
+        message = UserMessage(text=prompt)
+        summary = await llm.send_message(message)
         
         # Save summary to game
         await db.games.update_one(
