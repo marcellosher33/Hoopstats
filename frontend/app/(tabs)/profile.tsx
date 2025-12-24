@@ -135,10 +135,18 @@ export default function ProfileScreen() {
             <PlanFeature text="AI summaries" />
             <PlanFeature text="Highlight reels" />
           </View>
-          {user?.subscription_tier === 'free' && (
+          {user?.subscription_tier === 'free' ? (
             <View style={styles.currentPlan}>
               <Text style={styles.currentPlanText}>Current Plan</Text>
             </View>
+          ) : (
+            <Button
+              title="Downgrade to Free"
+              onPress={() => handleDowngrade('free')}
+              variant="ghost"
+              loading={upgrading}
+              style={{ marginTop: spacing.md }}
+            />
           )}
         </View>
 
@@ -164,7 +172,15 @@ export default function ProfileScreen() {
             <View style={styles.currentPlan}>
               <Text style={styles.currentPlanText}>Current Plan</Text>
             </View>
-          ) : user?.subscription_tier !== 'team' && (
+          ) : user?.subscription_tier === 'team' ? (
+            <Button
+              title="Downgrade to Pro"
+              onPress={() => handleDowngrade('pro')}
+              variant="ghost"
+              loading={upgrading}
+              style={{ marginTop: spacing.md }}
+            />
+          ) : (
             <Button
               title="Upgrade to Pro"
               onPress={() => handleUpgrade('pro')}
