@@ -208,6 +208,7 @@ class Game(BaseModel):
     location: Optional[str] = None  # home, away
     game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
     venue: Optional[str] = None  # Custom venue name
+    period_type: str = "quarters"  # quarters (4 periods) or halves (2 periods)
     
     # Scores
     our_score: int = 0
@@ -215,7 +216,7 @@ class Game(BaseModel):
     
     # Game state
     status: str = "in_progress"  # in_progress, completed
-    current_quarter: int = 1
+    current_period: int = 1  # Current quarter (1-4) or half (1-2)
     
     # Player stats
     player_stats: List[GamePlayerStats] = []
@@ -242,6 +243,7 @@ class GameCreate(BaseModel):
     location: Optional[str] = None  # home, away
     game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
     venue: Optional[str] = None  # Custom venue name
+    period_type: str = "quarters"  # quarters or halves
     player_ids: List[str] = []
 
 class StatUpdate(BaseModel):
