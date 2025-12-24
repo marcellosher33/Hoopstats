@@ -60,7 +60,7 @@ openai_client = None
 if EMERGENT_LLM_KEY:
     openai_client = OpenAI(
         api_key=EMERGENT_LLM_KEY,
-        base_url="https://api.emergentmethods.ai/v1"
+        base_url="https://api.openai.com/v1"
     )
 
 # JWT settings
