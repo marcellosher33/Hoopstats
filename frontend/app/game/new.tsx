@@ -1,0 +1,368 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useAuthStore } from '../../src/stores/authStore';
+import { useGameStore } from '../../src/stores/gameStore';
+import { Button } from '../../src/components/Button';
+import { Input } from '../../src/components/Input';
+import { colors, spacing, borderRadius } from '../../src/utils/theme';
+import { Player } from '../../src/types';
+
+export default function NewGameScreen() {
+  const router = useRouter();
+  const { token } = useAuthStore();
+  const { players, fetchPlayers, createGame } = useGameStore();
+
+  const [opponentName, setOpponentName] = useState('');
+  const [location, setLocation] = useState('');
+  const [gameDate, setGameDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      fetchPlayers(token);
+    }
+  }, [token]);
+
+  const togglePlayer = (playerId: string) => {
+    setSelectedPlayers(prev =>
+      prev.includes(playerId)
+        ? prev.filter(id => id !== playerId)
+        : [...prev, playerId]
+    );
+  };
+
+  const handleCreateGame = async () => {
+    if (!opponentName.trim()) {
+      Alert.alert('Error', 'Please enter opponent name');
+      return;
+    }
+
+    if (selectedPlayers.length === 0) {
+      Alert.alert('Error', 'Please select at least one player');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const game = await createGame(
+        {
+          opponent_name: opponentName.trim(),
+          location: location.trim() || undefined,
+          game_date: gameDate.toISOString(),
+          player_ids: selectedPlayers,
+        },
+        token!
+      );
+      router.replace(`/game/${game.id}`);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to create game');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* Game Info */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Game Info</Text>
+
+          <Input
+            label="Opponent Name *"
+            value={opponentName}
+            onChangeText={setOpponentName}
+            placeholder="e.g., Lakers, Eagles"
+          />
+
+          <Input
+            label="Location"
+            value={location}
+            onChangeText={setLocation}
+            placeholder="e.g., Home Court, Main Gym"
+          />
+
+          <View style={styles.dateRow}>
+            <Text style={styles.label}>Game Date</Text>
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.dateText}>
+                {gameDate.toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={gameDate}
+              mode="date"
+              display="default"
+              onChange={(event, date) => {
+                setShowDatePicker(false);
+                if (date) setGameDate(date);
+              }}
+            />
+          )}
+        </View>
+
+        {/* Player Selection */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Select Players</Text>
+            <Text style={styles.selectedCount}>
+              {selectedPlayers.length} selected
+            </Text>
+          </View>
+
+          {players.length === 0 ? (
+            <View style={styles.emptyPlayers}>
+              <Ionicons name="people-outline" size={48} color={colors.textSecondary} />
+              <Text style={styles.emptyText}>No players yet</Text>
+              <Button
+                title="Add Player"
+                onPress={() => router.push('/player/new')}
+                variant="outline"
+                size="small"
+                style={{ marginTop: spacing.md }}
+              />
+            </View>
+          ) : (
+            <View style={styles.playerGrid}>
+              {players.map((player) => (
+                <TouchableOpacity
+                  key={player.id}
+                  style={[
+                    styles.playerCard,
+                    selectedPlayers.includes(player.id) && styles.playerSelected,
+                  ]}
+                  onPress={() => togglePlayer(player.id)}
+                >
+                  <View style={styles.playerAvatar}>
+                    <Text style={styles.avatarText}>
+                      {player.name.charAt(0).toUpperCase()}
+                    </Text>
+                    {player.number && (
+                      <View style={styles.numberBadge}>
+                        <Text style={styles.numberText}>#{player.number}</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.playerName} numberOfLines={1}>
+                    {player.name}
+                  </Text>
+                  {player.position && (
+                    <Text style={styles.playerPosition}>{player.position}</Text>
+                  )}
+                  {selectedPlayers.includes(player.id) && (
+                    <View style={styles.checkmark}>
+                      <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Quick Add Player */}
+        <TouchableOpacity
+          style={styles.addPlayerButton}
+          onPress={() => router.push('/player/new')}
+        >
+          <Ionicons name="person-add" size={20} color={colors.primary} />
+          <Text style={styles.addPlayerText}>Add New Player</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      {/* Start Game Button */}
+      <View style={styles.footer}>
+        <Button
+          title="Start Game"
+          onPress={handleCreateGame}
+          loading={loading}
+          disabled={!opponentName.trim() || selectedPlayers.length === 0}
+          size="large"
+          icon={<Ionicons name="play" size={20} color={colors.text} />}
+        />
+      </View>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  content: {
+    padding: spacing.md,
+    paddingBottom: 100,
+  },
+  section: {
+    marginBottom: spacing.lg,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: spacing.sm,
+  },
+  selectedCount: {
+    color: colors.primary,
+    fontSize: 14,
+  },
+  label: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: spacing.xs,
+  },
+  dateRow: {
+    marginBottom: spacing.md,
+  },
+  dateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  dateText: {
+    color: colors.text,
+    fontSize: 16,
+  },
+  emptyPlayers: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+  },
+  playerGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  playerCard: {
+    width: '31%',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    alignItems: 'center',
+    position: 'relative',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  playerSelected: {
+    borderColor: colors.success,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+  },
+  playerAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+    position: 'relative',
+  },
+  avatarText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  numberBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: colors.secondary,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: borderRadius.full,
+    borderWidth: 2,
+    borderColor: colors.surface,
+  },
+  numberText: {
+    color: colors.text,
+    fontSize: 8,
+    fontWeight: 'bold',
+  },
+  playerName: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  playerPosition: {
+    color: colors.textSecondary,
+    fontSize: 10,
+  },
+  checkmark: {
+    position: 'absolute',
+    top: spacing.xs,
+    right: spacing.xs,
+  },
+  addPlayerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderStyle: 'dashed',
+  },
+  addPlayerText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.background,
+    padding: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+  },
+});
