@@ -36,12 +36,57 @@ export default function GameSummaryScreen() {
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<GameMedia | null>(null);
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [videoLoading, setVideoLoading] = useState(false);
+  const videoRef = useRef<Video>(null);
 
   useEffect(() => {
     if (token && id) {
       fetchGame(id, token);
     }
   }, [token, id]);
+
+  // Convert base64 video to file URI for playback
+  useEffect(() => {
+    const prepareVideo = async () => {
+      if (selectedMedia?.type === 'video' && selectedMedia.data) {
+        setVideoLoading(true);
+        try {
+          // Check if it's a base64 data URI
+          if (selectedMedia.data.startsWith('data:')) {
+            // Extract base64 content
+            const base64Data = selectedMedia.data.split(',')[1];
+            const fileUri = `${FileSystem.cacheDirectory}video_${selectedMedia.id}.mp4`;
+            
+            // Write to file system
+            await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            
+            setVideoUri(fileUri);
+          } else {
+            // Already a URI
+            setVideoUri(selectedMedia.data);
+          }
+        } catch (error) {
+          console.error('Error preparing video:', error);
+          Alert.alert('Error', 'Failed to load video');
+        } finally {
+          setVideoLoading(false);
+        }
+      } else {
+        setVideoUri(null);
+      }
+    };
+
+    prepareVideo();
+  }, [selectedMedia]);
+
+  // Cleanup video URI when modal closes
+  const handleCloseMediaModal = () => {
+    setSelectedMedia(null);
+    setVideoUri(null);
+  };
 
   const handleGenerateSummary = async () => {
     if (!token || !id) return;
