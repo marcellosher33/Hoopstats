@@ -471,7 +471,9 @@ async def create_player(player_data: PlayerCreate, user: dict = Depends(get_curr
         number=player_data.number,
         position=player_data.position,
         team_id=player_data.team_id,
-        photo=player_data.photo
+        photo=player_data.photo,
+        height=player_data.height,
+        weight=player_data.weight
     )
     await db.players.insert_one(player.dict())
     return player
