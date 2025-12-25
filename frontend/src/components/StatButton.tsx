@@ -40,6 +40,7 @@ export const StatButton: React.FC<StatButtonProps> = ({
   sublabel,
   value,
   onPress,
+  onLongPress,
   variant = 'scoring',
   icon,
   size = 'medium',
