@@ -509,14 +509,31 @@ async def get_player(player_id: str, user: dict = Depends(get_current_user)):
     return serialize_doc(player)
 
 @api_router.put("/players/{player_id}")
-async def update_player(player_id: str, player_data: PlayerCreate, user: dict = Depends(get_current_user)):
+async def update_player(player_id: str, player_data: PlayerUpdate, user: dict = Depends(get_current_user)):
+    # Build update dict, only including fields that were actually provided
+    update_data = {}
+    data_dict = player_data.dict()
+    
+    for key, value in data_dict.items():
+        # Include the field if it was explicitly set (even if to None for team_id)
+        if key == 'team_id':
+            # Always include team_id to allow removing from team
+            update_data[key] = value
+        elif value is not None:
+            update_data[key] = value
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
     result = await db.players.update_one(
         {"id": player_id, "user_id": user["id"]},
-        {"$set": player_data.dict(exclude_unset=True)}
+        {"$set": update_data}
     )
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Player not found")
-    return await db.players.find_one({"id": player_id})
+    
+    updated_player = await db.players.find_one({"id": player_id})
+    return serialize_doc(updated_player)
 
 @api_router.delete("/players/{player_id}")
 async def delete_player(player_id: str, user: dict = Depends(get_current_user)):
