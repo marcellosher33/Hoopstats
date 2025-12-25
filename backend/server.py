@@ -694,7 +694,9 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
     
     # Find player in game stats
     player_stats = game.get("player_stats", [])
+    stat_history = game.get("stat_history", [])
     player_found = False
+    shot_id = None
     
     for ps in player_stats:
         if ps["player_id"] == stat.player_id:
@@ -708,7 +710,9 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 stats["fg_made"] = stats.get("fg_made", 0) + 1
                 stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1
                 if stat.shot_location:
+                    shot_id = str(uuid.uuid4())
                     ps.setdefault("shots", []).append({
+                        "id": shot_id,
                         "x": stat.shot_location["x"],
                         "y": stat.shot_location["y"],
                         "made": True,
@@ -723,7 +727,9 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 stats["fg_made"] = stats.get("fg_made", 0) + 1  # 3pt shots count as field goals
                 stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1  # 3pt shots count as field goals
                 if stat.shot_location:
+                    shot_id = str(uuid.uuid4())
                     ps.setdefault("shots", []).append({
+                        "id": shot_id,
                         "x": stat.shot_location["x"],
                         "y": stat.shot_location["y"],
                         "made": True,
@@ -740,7 +746,9 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
             elif stat.stat_type == "miss_2":
                 stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1
                 if stat.shot_location:
+                    shot_id = str(uuid.uuid4())
                     ps.setdefault("shots", []).append({
+                        "id": shot_id,
                         "x": stat.shot_location["x"],
                         "y": stat.shot_location["y"],
                         "made": False,
@@ -752,7 +760,9 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 stats["three_pt_attempted"] = stats.get("three_pt_attempted", 0) + 1
                 stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1  # 3pt shots count as field goals
                 if stat.shot_location:
+                    shot_id = str(uuid.uuid4())
                     ps.setdefault("shots", []).append({
+                        "id": shot_id,
                         "x": stat.shot_location["x"],
                         "y": stat.shot_location["y"],
                         "made": False,
@@ -768,6 +778,15 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 stats["minutes_played"] = stats.get("minutes_played", 0) + stat.value
             
             ps["stats"] = stats
+            
+            # Add to stat_history for undo functionality
+            stat_history.append({
+                "player_id": stat.player_id,
+                "stat_type": stat.stat_type,
+                "value": stat.value,
+                "shot_id": shot_id,
+                "timestamp": datetime.utcnow().isoformat()
+            })
             break
     
     if not player_found:
@@ -778,7 +797,7 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
     
     await db.games.update_one(
         {"id": game_id},
-        {"$set": {"player_stats": player_stats, "our_score": total_points}}
+        {"$set": {"player_stats": player_stats, "our_score": total_points, "stat_history": stat_history}}
     )
     
     updated_game = await db.games.find_one({"id": game_id})
