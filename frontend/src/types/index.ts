@@ -77,6 +77,7 @@ export interface Game {
   id: string;
   user_id: string;
   team_id?: string;
+  home_team_name: string;
   opponent_name: string;
   game_date: string;
   location?: 'home' | 'away';
