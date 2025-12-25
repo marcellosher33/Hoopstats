@@ -784,6 +784,228 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
     updated_game = await db.games.find_one({"id": game_id})
     return serialize_doc(updated_game)
 
+# Stat adjustment model
+class StatAdjustment(BaseModel):
+    player_id: str
+    stat_type: str
+    adjustment: int  # positive or negative value
+
+@api_router.post("/games/{game_id}/stats/adjust")
+async def adjust_stat(game_id: str, adjustment: StatAdjustment, user: dict = Depends(get_current_user)):
+    """Manually adjust a stat value (add or subtract)"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    player_stats = game.get("player_stats", [])
+    player_found = False
+    
+    for ps in player_stats:
+        if ps["player_id"] == adjustment.player_id:
+            player_found = True
+            stats = ps.get("stats", {})
+            
+            # Handle point adjustments specially
+            if adjustment.stat_type == "points":
+                stats["points"] = max(0, stats.get("points", 0) + adjustment.adjustment)
+            elif adjustment.stat_type == "fg_made":
+                stats["fg_made"] = max(0, stats.get("fg_made", 0) + adjustment.adjustment)
+                if adjustment.adjustment > 0:
+                    stats["fg_attempted"] = stats.get("fg_attempted", 0) + adjustment.adjustment
+                    stats["points"] = stats.get("points", 0) + (2 * adjustment.adjustment)
+                else:
+                    stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) + adjustment.adjustment)
+                    stats["points"] = max(0, stats.get("points", 0) + (2 * adjustment.adjustment))
+            elif adjustment.stat_type == "three_pt_made":
+                stats["three_pt_made"] = max(0, stats.get("three_pt_made", 0) + adjustment.adjustment)
+                stats["fg_made"] = max(0, stats.get("fg_made", 0) + adjustment.adjustment)
+                if adjustment.adjustment > 0:
+                    stats["three_pt_attempted"] = stats.get("three_pt_attempted", 0) + adjustment.adjustment
+                    stats["fg_attempted"] = stats.get("fg_attempted", 0) + adjustment.adjustment
+                    stats["points"] = stats.get("points", 0) + (3 * adjustment.adjustment)
+                else:
+                    stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) + adjustment.adjustment)
+                    stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) + adjustment.adjustment)
+                    stats["points"] = max(0, stats.get("points", 0) + (3 * adjustment.adjustment))
+            elif adjustment.stat_type == "ft_made":
+                stats["ft_made"] = max(0, stats.get("ft_made", 0) + adjustment.adjustment)
+                if adjustment.adjustment > 0:
+                    stats["ft_attempted"] = stats.get("ft_attempted", 0) + adjustment.adjustment
+                    stats["points"] = stats.get("points", 0) + adjustment.adjustment
+                else:
+                    stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) + adjustment.adjustment)
+                    stats["points"] = max(0, stats.get("points", 0) + adjustment.adjustment)
+            elif adjustment.stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
+                stats[adjustment.stat_type] = max(0, stats.get(adjustment.stat_type, 0) + adjustment.adjustment)
+            
+            ps["stats"] = stats
+            break
+    
+    if not player_found:
+        raise HTTPException(status_code=404, detail="Player not in this game")
+    
+    total_points = sum(ps.get("stats", {}).get("points", 0) for ps in player_stats)
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"player_stats": player_stats, "our_score": total_points}}
+    )
+    
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
+
+@api_router.post("/games/{game_id}/stats/undo")
+async def undo_last_stat(game_id: str, user: dict = Depends(get_current_user)):
+    """Undo the last recorded stat by removing from stat_history"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    stat_history = game.get("stat_history", [])
+    if not stat_history:
+        raise HTTPException(status_code=400, detail="No stats to undo")
+    
+    last_stat = stat_history.pop()
+    player_stats = game.get("player_stats", [])
+    
+    # Reverse the last stat
+    for ps in player_stats:
+        if ps["player_id"] == last_stat["player_id"]:
+            stats = ps.get("stats", {})
+            stat_type = last_stat["stat_type"]
+            
+            if stat_type == "points_2":
+                stats["points"] = max(0, stats.get("points", 0) - 2)
+                stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+            elif stat_type == "points_3":
+                stats["points"] = max(0, stats.get("points", 0) - 3)
+                stats["three_pt_made"] = max(0, stats.get("three_pt_made", 0) - 1)
+                stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) - 1)
+                stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+            elif stat_type == "ft_made":
+                stats["points"] = max(0, stats.get("points", 0) - 1)
+                stats["ft_made"] = max(0, stats.get("ft_made", 0) - 1)
+                stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) - 1)
+            elif stat_type == "ft_missed":
+                stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) - 1)
+            elif stat_type == "miss_2":
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+            elif stat_type == "miss_3":
+                stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+            elif stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
+                stats[stat_type] = max(0, stats.get(stat_type, 0) - 1)
+            
+            # Remove shot from shots array if it was a shot
+            if last_stat.get("shot_id"):
+                ps["shots"] = [s for s in ps.get("shots", []) if s.get("id") != last_stat["shot_id"]]
+            
+            ps["stats"] = stats
+            break
+    
+    total_points = sum(ps.get("stats", {}).get("points", 0) for ps in player_stats)
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"player_stats": player_stats, "our_score": total_points, "stat_history": stat_history}}
+    )
+    
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
+
+# Shot management
+class ShotUpdate(BaseModel):
+    x: float
+    y: float
+
+@api_router.put("/games/{game_id}/players/{player_id}/shots/{shot_index}")
+async def update_shot_location(
+    game_id: str, 
+    player_id: str, 
+    shot_index: int, 
+    shot_update: ShotUpdate,
+    user: dict = Depends(get_current_user)
+):
+    """Update a shot's location on the chart"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    player_stats = game.get("player_stats", [])
+    
+    for ps in player_stats:
+        if ps["player_id"] == player_id:
+            shots = ps.get("shots", [])
+            if shot_index < 0 or shot_index >= len(shots):
+                raise HTTPException(status_code=404, detail="Shot not found")
+            
+            shots[shot_index]["x"] = shot_update.x
+            shots[shot_index]["y"] = shot_update.y
+            ps["shots"] = shots
+            break
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"player_stats": player_stats}}
+    )
+    
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
+
+@api_router.delete("/games/{game_id}/players/{player_id}/shots/{shot_index}")
+async def delete_shot(
+    game_id: str,
+    player_id: str,
+    shot_index: int,
+    user: dict = Depends(get_current_user)
+):
+    """Delete a shot from the chart and adjust stats accordingly"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    player_stats = game.get("player_stats", [])
+    
+    for ps in player_stats:
+        if ps["player_id"] == player_id:
+            shots = ps.get("shots", [])
+            if shot_index < 0 or shot_index >= len(shots):
+                raise HTTPException(status_code=404, detail="Shot not found")
+            
+            shot = shots[shot_index]
+            stats = ps.get("stats", {})
+            
+            # Adjust stats based on shot type
+            if shot["shot_type"] == "2pt":
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+                if shot["made"]:
+                    stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                    stats["points"] = max(0, stats.get("points", 0) - 2)
+            elif shot["shot_type"] == "3pt":
+                stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+                if shot["made"]:
+                    stats["three_pt_made"] = max(0, stats.get("three_pt_made", 0) - 1)
+                    stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                    stats["points"] = max(0, stats.get("points", 0) - 3)
+            
+            shots.pop(shot_index)
+            ps["shots"] = shots
+            ps["stats"] = stats
+            break
+    
+    total_points = sum(ps.get("stats", {}).get("points", 0) for ps in player_stats)
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"player_stats": player_stats, "our_score": total_points}}
+    )
+    
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
+
 @api_router.post("/games/{game_id}/media")
 async def add_game_media(
     game_id: str,
