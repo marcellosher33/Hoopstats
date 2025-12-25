@@ -121,6 +121,13 @@ export default function NewGameScreen() {
           <Text style={styles.sectionTitle}>Game Info</Text>
 
           <Input
+            label="Your Team Name *"
+            value={homeTeamName}
+            onChangeText={setHomeTeamName}
+            placeholder="e.g., Warriors, Hornets"
+          />
+
+          <Input
             label="Opponent Name *"
             value={opponentName}
             onChangeText={setOpponentName}
