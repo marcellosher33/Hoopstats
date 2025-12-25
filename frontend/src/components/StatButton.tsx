@@ -60,6 +60,8 @@ export const StatButton: React.FC<StatButtonProps> = ({
     <TouchableOpacity
       style={[styles.container, { width, height }, disabled && styles.disabled]}
       onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={500}
       disabled={disabled}
       activeOpacity={0.8}
     >
