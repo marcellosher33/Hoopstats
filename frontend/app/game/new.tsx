@@ -37,8 +37,8 @@ const GAME_TYPE_OPTIONS: { value: GameType; label: string; icon: string }[] = [
 ];
 
 const PERIOD_TYPE_OPTIONS: { value: PeriodType; label: string; description: string }[] = [
-  { value: 'quarters', label: '4 Quarters', description: 'NBA, HS, Youth' },
-  { value: 'halves', label: '2 Halves', description: 'College, FIBA' },
+  { value: 'quarters', label: '4 Quarters', description: 'NBA, HS' },
+  { value: 'halves', label: '2 Halves', description: 'College, FIBA, Youth' },
 ];
 
 export default function NewGameScreen() {
