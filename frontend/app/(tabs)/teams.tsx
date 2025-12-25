@@ -60,6 +60,20 @@ export default function TeamsScreen() {
     setRefreshing(false);
   };
 
+  const handlePickLogo = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets[0].base64) {
+      setNewTeamLogo(`data:image/jpeg;base64,${result.assets[0].base64}`);
+    }
+  };
+
   const handleCreateTeam = async () => {
     if (!newTeamName.trim()) {
       Alert.alert('Error', 'Please enter a team name');
@@ -72,17 +86,79 @@ export default function TeamsScreen() {
         {
           name: newTeamName.trim(),
           color_primary: newTeamColor,
+          logo: newTeamLogo || undefined,
         },
         token!
       );
       setShowCreateModal(false);
       setNewTeamName('');
       setNewTeamColor(COLOR_OPTIONS[0]);
+      setNewTeamLogo(null);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to create team');
     } finally {
       setLoading(false);
     }
+  };
+
+  const getUnassignedPlayers = (): Player[] => {
+    return players.filter(p => !p.team_id);
+  };
+
+  const openAddPlayersModal = (team: Team) => {
+    setSelectedTeam(team);
+    setSelectedPlayersToAdd([]);
+    setShowAddPlayersModal(true);
+  };
+
+  const togglePlayerSelection = (playerId: string) => {
+    setSelectedPlayersToAdd(prev =>
+      prev.includes(playerId)
+        ? prev.filter(id => id !== playerId)
+        : [...prev, playerId]
+    );
+  };
+
+  const handleAddPlayersToTeam = async () => {
+    if (!selectedTeam || selectedPlayersToAdd.length === 0) return;
+
+    setLoading(true);
+    try {
+      // Update each selected player's team_id
+      for (const playerId of selectedPlayersToAdd) {
+        await updatePlayer(playerId, { team_id: selectedTeam.id }, token!);
+      }
+      await fetchPlayers(token!);
+      setShowAddPlayersModal(false);
+      setSelectedPlayersToAdd([]);
+      Alert.alert('Success', `Added ${selectedPlayersToAdd.length} player(s) to ${selectedTeam.name}`);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to add players');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemovePlayerFromTeam = async (player: Player) => {
+    Alert.alert(
+      'Remove Player',
+      `Remove ${player.name} from this team?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await updatePlayer(player.id, { team_id: null }, token!);
+              await fetchPlayers(token!);
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to remove player');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const handleDeleteTeam = (team: Team) => {
