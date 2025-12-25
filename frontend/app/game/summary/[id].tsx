@@ -296,7 +296,7 @@ export default function GameSummaryScreen() {
         <Text style={styles.resultLabel}>{isWin ? 'VICTORY' : 'DEFEAT'}</Text>
         <View style={styles.teamsRow}>
           <View style={styles.teamColumn}>
-            <Text style={styles.teamName}>{currentGame.home_team_name || 'My Team'}</Text>
+            <Text style={styles.teamName}>{currentGame.home_team_name || 'Home Team'}</Text>
             <Text style={styles.bigScore}>{currentGame.our_score}</Text>
           </View>
           <Text style={styles.scoreDash}>-</Text>
