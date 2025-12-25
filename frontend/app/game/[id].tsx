@@ -1426,6 +1426,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.text,
   },
+  teamModePlayerDetails: {
+    flex: 1,
+  },
   teamModePlayerName: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -1434,6 +1437,11 @@ const styles = StyleSheet.create({
   teamModePlayerStats: {
     fontSize: 12,
     color: colors.textSecondary,
+  },
+  teamModePlayerStatsRow2: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
   },
   teamModeQuickStats: {
     flexDirection: 'row',
