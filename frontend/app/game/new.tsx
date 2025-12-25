@@ -139,6 +139,48 @@ export default function NewGameScreen() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Team Selection */}
+        {teams.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Select Your Team</Text>
+            <Text style={styles.sectionSubtitle}>Choose a team to auto-load roster</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.teamScroll}>
+              <TouchableOpacity
+                style={[
+                  styles.teamCard,
+                  !selectedTeam && styles.teamCardActive,
+                ]}
+                onPress={() => handleTeamSelect(null)}
+              >
+                <Ionicons name="people-outline" size={24} color={!selectedTeam ? colors.text : colors.textSecondary} />
+                <Text style={[styles.teamCardText, !selectedTeam && styles.teamCardTextActive]}>
+                  All Players
+                </Text>
+              </TouchableOpacity>
+              {teams.map((team) => (
+                <TouchableOpacity
+                  key={team.id}
+                  style={[
+                    styles.teamCard,
+                    selectedTeam?.id === team.id && styles.teamCardActive,
+                  ]}
+                  onPress={() => handleTeamSelect(team)}
+                >
+                  <View style={[styles.teamBadge, { backgroundColor: team.color_primary || colors.primary }]}>
+                    <Text style={styles.teamBadgeText}>{team.name.charAt(0)}</Text>
+                  </View>
+                  <Text style={[styles.teamCardText, selectedTeam?.id === team.id && styles.teamCardTextActive]}>
+                    {team.name}
+                  </Text>
+                  <Text style={styles.teamPlayerCount}>
+                    {players.filter(p => p.team_id === team.id).length} players
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         {/* Game Info */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Game Info</Text>
