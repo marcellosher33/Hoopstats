@@ -783,6 +783,42 @@ export default function LiveGameScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Stat Adjustment Modal */}
+      <Modal visible={showAdjustModal} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.adjustModal}>
+            <Text style={styles.modalTitle}>Adjust {adjustStatLabel}</Text>
+            <Text style={styles.modalSubtitle}>Current: {
+              adjustStatType && selectedPlayerStats?.stats 
+                ? (selectedPlayerStats.stats as any)[adjustStatType] || 0 
+                : 0
+            }</Text>
+            <View style={styles.adjustButtons}>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleAdjustStat(-1)}
+              >
+                <Ionicons name="remove-circle" size={48} color={colors.error} />
+                <Text style={styles.adjustBtnLabel}>-1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleAdjustStat(1)}
+              >
+                <Ionicons name="add-circle" size={48} color={colors.success} />
+                <Text style={styles.adjustBtnLabel}>+1</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.adjustCloseBtn}
+              onPress={() => setShowAdjustModal(false)}
+            >
+              <Text style={styles.adjustCloseBtnText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
