@@ -50,6 +50,7 @@ export default function NewGameScreen() {
   const [location, setLocation] = useState<LocationType>(null);
   const [gameType, setGameType] = useState<GameType>(null);
   const [periodType, setPeriodType] = useState<PeriodType>('quarters');
+  const [homeTeamName, setHomeTeamName] = useState('');
   const [venue, setVenue] = useState('');
   const [gameDate, setGameDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -71,6 +72,11 @@ export default function NewGameScreen() {
   };
 
   const handleCreateGame = async () => {
+    if (!homeTeamName.trim()) {
+      Alert.alert('Error', 'Please enter your team name');
+      return;
+    }
+    
     if (!opponentName.trim()) {
       Alert.alert('Error', 'Please enter opponent name');
       return;
