@@ -455,7 +455,7 @@ export default function LiveGameScreen() {
           <>
             {/* Scoring Buttons */}
             <View style={styles.statSection}>
-              <Text style={styles.statSectionTitle}>SCORING</Text>
+              <Text style={styles.statSectionTitle}>SCORING (Long-press to adjust)</Text>
               <View style={styles.scoringRow}>
                 <ScoringButton
                   points={2}
@@ -466,6 +466,7 @@ export default function LiveGameScreen() {
                     setPendingShotMade(true);
                     setShowShotChart(true);
                   }}
+                  onLongPress={() => handleLongPressAdjust('points', 'Points')}
                 />
                 <ScoringButton
                   points={3}
@@ -476,12 +477,14 @@ export default function LiveGameScreen() {
                     setPendingShotMade(true);
                     setShowShotChart(true);
                   }}
+                  onLongPress={() => handleLongPressAdjust('points', 'Points')}
                 />
                 <ScoringButton
                   points={1}
                   label="FT"
                   value={stats?.ft_made}
                   onPress={() => handleStatPress('ft_made')}
+                  onLongPress={() => handleLongPressAdjust('ft_made', 'Free Throws Made')}
                 />
               </View>
               <View style={styles.missRow}>
@@ -491,7 +494,8 @@ export default function LiveGameScreen() {
                     setPendingShotType('2pt');
                     setPendingShotMade(false);
                     setShowShotChart(true);
-                  }} 
+                  }}
+                  onLongPress={() => handleLongPressAdjust('fg_attempted', 'FG Attempted')}
                 />
                 <MissButton 
                   label="Miss 3PT" 
@@ -499,9 +503,14 @@ export default function LiveGameScreen() {
                     setPendingShotType('3pt');
                     setPendingShotMade(false);
                     setShowShotChart(true);
-                  }} 
+                  }}
+                  onLongPress={() => handleLongPressAdjust('three_pt_attempted', '3PT Attempted')}
                 />
-                <MissButton label="Miss FT" onPress={() => handleStatPress('ft_missed')} />
+                <MissButton 
+                  label="Miss FT" 
+                  onPress={() => handleStatPress('ft_missed')}
+                  onLongPress={() => handleLongPressAdjust('ft_attempted', 'FT Attempted')}
+                />
               </View>
             </View>
 
