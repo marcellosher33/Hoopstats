@@ -413,7 +413,7 @@ export default function GameSummaryScreen() {
                 style={styles.photoItem}
                 onPress={() => setSelectedMedia(photo)}
               >
-                <Image source={{ uri: photo.data }} style={styles.photo} />
+                <Image source={{ uri: getMediaSource(photo) }} style={styles.photo} />
                 <View style={styles.mediaPlayOverlay}>
                   <Ionicons name="expand" size={24} color="white" />
                 </View>
