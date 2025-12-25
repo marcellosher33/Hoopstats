@@ -75,28 +75,15 @@ export default function GameSummaryScreen() {
         setVideoLoading(true);
         try {
           // Check if data exists and is a base64 data URI
-          if (selectedMedia.data && typeof selectedMedia.data === 'string' && selectedMedia.data.startsWith('data:')) {
-            // Extract base64 content
-            const parts = selectedMedia.data.split(',');
-            if (parts.length > 1) {
-              const base64Data = parts[1];
-              const fileUri = `${FileSystem.cacheDirectory}video_${selectedMedia.id || Date.now()}.mp4`;
-              
-              // Write to file system
-              await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-                encoding: FileSystem.EncodingType.Base64,
-              });
-              
+          if (selectedMedia.data && typeof selectedMedia.data === 'string') {
+            const filename = `video_${selectedMedia.id || Date.now()}.mp4`;
+            const fileUri = await base64ToFileUri(selectedMedia.data, filename);
+            
+            if (fileUri) {
               setVideoUri(fileUri);
             } else {
-              console.error('Invalid base64 data format');
-              Alert.alert('Error', 'Invalid video format');
-              setVideoLoading(false);
-              return;
+              Alert.alert('Error', 'Failed to prepare video');
             }
-          } else if (selectedMedia.data && typeof selectedMedia.data === 'string') {
-            // Already a URI or other format - try to use directly
-            setVideoUri(selectedMedia.data);
           } else {
             console.error('No video data available');
             Alert.alert('Error', 'Video data not available');
