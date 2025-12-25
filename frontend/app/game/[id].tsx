@@ -90,10 +90,15 @@ export default function LiveGameScreen() {
     }
   };
 
-  const handleLongPressAdjust = (statType: string, label: string) => {
-    if (!selectedPlayer) {
+  const handleLongPressAdjust = (statType: string, label: string, playerId?: string) => {
+    const targetPlayer = playerId || selectedPlayer;
+    if (!targetPlayer) {
       Alert.alert('Select Player', 'Please select a player first');
       return;
+    }
+    // Set the selected player if provided (for team mode)
+    if (playerId) {
+      setSelectedPlayer(playerId);
     }
     setAdjustStatType(statType);
     setAdjustStatLabel(label);
