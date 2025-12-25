@@ -110,12 +110,17 @@ export default function GameSummaryScreen() {
       {/* Game Result Header */}
       <View style={[styles.resultCard, isWin ? styles.resultWin : styles.resultLoss]}>
         <Text style={styles.resultLabel}>{isWin ? 'VICTORY' : 'DEFEAT'}</Text>
-        <View style={styles.scoreRow}>
-          <Text style={styles.bigScore}>{currentGame.our_score}</Text>
+        <View style={styles.teamsRow}>
+          <View style={styles.teamColumn}>
+            <Text style={styles.teamName}>{currentGame.home_team_name || 'My Team'}</Text>
+            <Text style={styles.bigScore}>{currentGame.our_score}</Text>
+          </View>
           <Text style={styles.scoreDash}>-</Text>
-          <Text style={styles.bigScore}>{currentGame.opponent_score}</Text>
+          <View style={styles.teamColumn}>
+            <Text style={styles.teamName}>{currentGame.opponent_name}</Text>
+            <Text style={styles.bigScore}>{currentGame.opponent_score}</Text>
+          </View>
         </View>
-        <Text style={styles.opponentName}>vs {currentGame.opponent_name}</Text>
         <Text style={styles.gameDate}>
           {new Date(currentGame.game_date).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -127,7 +132,10 @@ export default function GameSummaryScreen() {
         {currentGame.location && (
           <View style={styles.locationRow}>
             <Ionicons name="location" size={14} color="rgba(255,255,255,0.7)" />
-            <Text style={styles.locationText}>{currentGame.location}</Text>
+            <Text style={styles.locationText}>
+              {currentGame.location === 'home' ? 'Home Game' : 'Away Game'}
+              {currentGame.venue && ` • ${currentGame.venue}`}
+            </Text>
           </View>
         )}
       </View>
