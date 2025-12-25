@@ -468,31 +468,35 @@ export default function LiveGameScreen() {
 
             {/* Other Stats */}
             <View style={styles.statSection}>
-              <Text style={styles.statSectionTitle}>STATS</Text>
+              <Text style={styles.statSectionTitle}>STATS (Long-press to adjust)</Text>
               <View style={styles.statGrid}>
                 <StatButton
                   label="REB"
                   value={stats?.rebounds}
                   variant="stat"
                   onPress={() => handleStatPress('rebounds')}
+                  onLongPress={() => handleLongPressAdjust('rebounds', 'Rebounds')}
                 />
                 <StatButton
                   label="AST"
                   value={stats?.assists}
                   variant="stat"
                   onPress={() => handleStatPress('assists')}
+                  onLongPress={() => handleLongPressAdjust('assists', 'Assists')}
                 />
                 <StatButton
                   label="STL"
                   value={stats?.steals}
                   variant="stat"
                   onPress={() => handleStatPress('steals')}
+                  onLongPress={() => handleLongPressAdjust('steals', 'Steals')}
                 />
                 <StatButton
                   label="BLK"
                   value={stats?.blocks}
                   variant="stat"
                   onPress={() => handleStatPress('blocks')}
+                  onLongPress={() => handleLongPressAdjust('blocks', 'Blocks')}
                 />
               </View>
               <View style={styles.statGrid}>
@@ -501,12 +505,14 @@ export default function LiveGameScreen() {
                   value={stats?.turnovers}
                   variant="negative"
                   onPress={() => handleStatPress('turnovers')}
+                  onLongPress={() => handleLongPressAdjust('turnovers', 'Turnovers')}
                 />
                 <StatButton
                   label="FOUL"
                   value={stats?.fouls}
                   variant="negative"
                   onPress={() => handleStatPress('fouls')}
+                  onLongPress={() => handleLongPressAdjust('fouls', 'Fouls')}
                 />
               </View>
             </View>
