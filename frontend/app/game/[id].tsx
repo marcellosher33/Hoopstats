@@ -557,6 +557,10 @@ export default function LiveGameScreen() {
         colors={['#1A1A2E', '#0F0F1A']}
         style={styles.actionBar}
       >
+        <TouchableOpacity style={styles.actionBtn} onPress={handleUndo}>
+          <Ionicons name="arrow-undo" size={26} color={colors.primary} />
+          <Text style={[styles.actionBtnText, { color: colors.primary }]}>Undo</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => openCamera('photo')}>
           <Ionicons name="camera" size={26} color={colors.text} />
           <Text style={styles.actionBtnText}>Photo</Text>
