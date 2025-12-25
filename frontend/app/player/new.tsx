@@ -78,6 +78,7 @@ export default function NewPlayerScreen() {
           position: position || undefined,
           height: height || undefined,
           weight: weight ? parseInt(weight, 10) : undefined,
+          team_id: selectedTeamId || undefined,
           photo: photo || undefined,
         },
         token!
@@ -96,6 +97,51 @@ export default function NewPlayerScreen() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Team Assignment */}
+        {teams.length > 0 && (
+          <View style={styles.teamSection}>
+            <Text style={styles.label}>Assign to Team</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.teamScroll}>
+              <TouchableOpacity
+                style={[
+                  styles.teamOption,
+                  !selectedTeamId && styles.teamOptionActive,
+                ]}
+                onPress={() => setSelectedTeamId(null)}
+              >
+                <Ionicons name="person-outline" size={20} color={!selectedTeamId ? colors.text : colors.textSecondary} />
+                <Text style={[styles.teamOptionText, !selectedTeamId && styles.teamOptionTextActive]}>
+                  No Team
+                </Text>
+              </TouchableOpacity>
+              {teams.map((team) => (
+                <TouchableOpacity
+                  key={team.id}
+                  style={[
+                    styles.teamOption,
+                    selectedTeamId === team.id && styles.teamOptionActive,
+                    { borderColor: team.color_primary },
+                  ]}
+                  onPress={() => setSelectedTeamId(team.id)}
+                >
+                  <View style={[styles.teamDot, { backgroundColor: team.color_primary }]} />
+                  <Text style={[
+                    styles.teamOptionText,
+                    selectedTeamId === team.id && styles.teamOptionTextActive
+                  ]}>
+                    {team.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {selectedTeam && (
+              <Text style={styles.teamNote}>
+                Player will be added to {selectedTeam.name}
+              </Text>
+            )}
+          </View>
+        )}
+
         {/* Photo */}
         <View style={styles.photoSection}>
           <TouchableOpacity style={styles.photoContainer} onPress={handlePickImage}>
