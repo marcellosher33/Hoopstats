@@ -463,7 +463,7 @@ export default function LiveGameScreen() {
                 <ScoringButton
                   points={2}
                   label="2PT"
-                  value={stats?.fg_made}
+                  value={(stats?.fg_made || 0) - (stats?.three_pt_made || 0)}
                   onPress={() => {
                     setPendingShotType('2pt');
                     setPendingShotMade(true);
