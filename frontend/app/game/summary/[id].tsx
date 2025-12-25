@@ -430,12 +430,25 @@ export default function GameSummaryScreen() {
       {/* Full Screen Media Viewer Modal */}
       <Modal visible={selectedMedia !== null} animationType="fade" transparent>
         <View style={styles.mediaViewerOverlay}>
-          <TouchableOpacity 
-            style={styles.mediaViewerClose}
-            onPress={handleCloseMediaModal}
-          >
-            <Ionicons name="close" size={32} color="white" />
-          </TouchableOpacity>
+          <View style={styles.mediaViewerActions}>
+            <TouchableOpacity 
+              style={styles.mediaViewerClose}
+              onPress={handleCloseMediaModal}
+            >
+              <Ionicons name="close" size={32} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.mediaViewerSave}
+              onPress={() => selectedMedia && handleSaveMedia(selectedMedia)}
+              disabled={savingMedia}
+            >
+              {savingMedia ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Ionicons name="download" size={28} color="white" />
+              )}
+            </TouchableOpacity>
+          </View>
           
           {selectedMedia?.type === 'photo' ? (
             <Image 
