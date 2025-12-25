@@ -90,10 +90,41 @@ export default function GameSummaryScreen() {
         return;
       }
 
-      // Create file from base64
       const extension = media.type === 'video' ? 'mp4' : 'jpg';
       const filename = `hoopstats_${media.id || Date.now()}.${extension}`;
-      const fileUri = await base64ToFileUri(media.data, filename);
+      let fileUri: string | null = null;
+
+      // If URL-based media, download it first
+      if (media.url) {
+        const fullUrl = `${process.env.EXPO_PUBLIC_BACKEND_URL || ''}${media.url}`;
+        // For URL-based media, we can use MediaLibrary directly with the URL
+        // or download it first - let's download for consistency
+        try {
+          const response = await fetch(fullUrl);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          
+          // Convert blob to base64
+          const base64 = await new Promise<string>((resolve, reject) => {
+            reader.onloadend = () => {
+              const result = reader.result as string;
+              resolve(result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          
+          fileUri = await base64ToFileUri(base64, filename);
+        } catch (err) {
+          console.error('Error downloading media:', err);
+          Alert.alert('Error', 'Failed to download media');
+          setSavingMedia(false);
+          return;
+        }
+      } else if (media.data) {
+        // Legacy base64 data
+        fileUri = await base64ToFileUri(media.data, filename);
+      }
       
       if (!fileUri) {
         Alert.alert('Error', 'Failed to save media');
