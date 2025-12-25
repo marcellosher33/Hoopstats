@@ -287,6 +287,16 @@ const styles = StyleSheet.create({
   positionBtnTextActive: {
     color: colors.text,
   },
+  physicalSection: {
+    marginTop: spacing.md,
+  },
+  physicalRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  physicalField: {
+    flex: 1,
+  },
   preview: {
     marginBottom: spacing.lg,
   },
