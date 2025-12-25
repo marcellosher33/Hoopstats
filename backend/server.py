@@ -207,6 +207,7 @@ class Game(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     team_id: Optional[str] = None
+    home_team_name: str = "My Team"  # Name of the user's team
     opponent_name: str
     game_date: datetime
     location: Optional[str] = None  # home, away
@@ -242,6 +243,7 @@ class Game(BaseModel):
 
 class GameCreate(BaseModel):
     team_id: Optional[str] = None
+    home_team_name: str = "My Team"  # Name of the user's team
     opponent_name: str
     game_date: datetime
     location: Optional[str] = None  # home, away
