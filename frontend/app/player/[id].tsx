@@ -349,6 +349,28 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 16,
   },
+  playerPhysical: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    marginTop: spacing.xs,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  editButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
   section: {
     marginBottom: spacing.lg,
   },
