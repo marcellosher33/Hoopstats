@@ -31,7 +31,7 @@ export default function LiveGameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { currentGame, fetchGame, recordStat, updateGame, addMedia } = useGameStore();
+  const { currentGame, fetchGame, recordStat, updateGame, addMedia, undoLastStat, adjustStat } = useGameStore();
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
@@ -44,6 +44,9 @@ export default function LiveGameScreen() {
   const [opponentScore, setOpponentScore] = useState('0');
   const [ourScore, setOurScore] = useState('0');
   const [teamMode, setTeamMode] = useState(false);  // Track all players at once
+  const [showAdjustModal, setShowAdjustModal] = useState(false);
+  const [adjustStatType, setAdjustStatType] = useState<string | null>(null);
+  const [adjustStatLabel, setAdjustStatLabel] = useState<string>('');
   
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
