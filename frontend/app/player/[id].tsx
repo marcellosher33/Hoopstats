@@ -5,8 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BarChart, LineChart } from 'react-native-gifted-charts';
 import { useAuthStore } from '../../src/stores/authStore';
