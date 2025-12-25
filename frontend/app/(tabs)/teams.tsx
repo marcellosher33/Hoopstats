@@ -453,6 +453,74 @@ export default function TeamsScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Add Players Modal */}
+      <Modal visible={showAddPlayersModal} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Add Players to {selectedTeam?.name}</Text>
+              <TouchableOpacity onPress={() => setShowAddPlayersModal(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            {getUnassignedPlayers().length === 0 ? (
+              <View style={styles.emptyPlayersModal}>
+                <Ionicons name="people-outline" size={48} color={colors.textSecondary} />
+                <Text style={styles.emptyPlayersText}>All players are already assigned to teams</Text>
+                <Button
+                  title="Create New Player"
+                  onPress={() => {
+                    setShowAddPlayersModal(false);
+                    router.push(`/player/new?teamId=${selectedTeam?.id}`);
+                  }}
+                  variant="outline"
+                  style={{ marginTop: spacing.md }}
+                />
+              </View>
+            ) : (
+              <>
+                <Text style={styles.modalSubtitle}>Select players to add:</Text>
+                <ScrollView style={styles.playerSelectList}>
+                  {getUnassignedPlayers().map((player) => (
+                    <TouchableOpacity
+                      key={player.id}
+                      style={[
+                        styles.playerSelectItem,
+                        selectedPlayersToAdd.includes(player.id) && styles.playerSelectItemActive,
+                      ]}
+                      onPress={() => togglePlayerSelection(player.id)}
+                    >
+                      <View style={styles.playerAvatar}>
+                        <Text style={styles.playerAvatarText}>{player.name.charAt(0)}</Text>
+                      </View>
+                      <View style={styles.playerInfo}>
+                        <Text style={styles.playerName}>{player.name}</Text>
+                        <Text style={styles.playerMeta}>
+                          {player.number ? `#${player.number}` : ''} {player.position || ''}
+                        </Text>
+                      </View>
+                      {selectedPlayersToAdd.includes(player.id) ? (
+                        <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+                      ) : (
+                        <Ionicons name="ellipse-outline" size={24} color={colors.textSecondary} />
+                      )}
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                <Button
+                  title={`Add ${selectedPlayersToAdd.length} Player(s)`}
+                  onPress={handleAddPlayersToTeam}
+                  loading={loading}
+                  disabled={selectedPlayersToAdd.length === 0}
+                  style={{ marginTop: spacing.md }}
+                />
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
