@@ -52,21 +52,32 @@ export default function GameSummaryScreen() {
       if (selectedMedia?.type === 'video' && selectedMedia.data) {
         setVideoLoading(true);
         try {
-          // Check if it's a base64 data URI
-          if (selectedMedia.data.startsWith('data:')) {
+          // Check if data exists and is a base64 data URI
+          if (selectedMedia.data && typeof selectedMedia.data === 'string' && selectedMedia.data.startsWith('data:')) {
             // Extract base64 content
-            const base64Data = selectedMedia.data.split(',')[1];
-            const fileUri = `${FileSystem.cacheDirectory}video_${selectedMedia.id}.mp4`;
-            
-            // Write to file system
-            await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-            
-            setVideoUri(fileUri);
-          } else {
-            // Already a URI
+            const parts = selectedMedia.data.split(',');
+            if (parts.length > 1) {
+              const base64Data = parts[1];
+              const fileUri = `${FileSystem.cacheDirectory}video_${selectedMedia.id || Date.now()}.mp4`;
+              
+              // Write to file system
+              await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+                encoding: FileSystem.EncodingType.Base64,
+              });
+              
+              setVideoUri(fileUri);
+            } else {
+              console.error('Invalid base64 data format');
+              Alert.alert('Error', 'Invalid video format');
+              setVideoLoading(false);
+              return;
+            }
+          } else if (selectedMedia.data && typeof selectedMedia.data === 'string') {
+            // Already a URI or other format - try to use directly
             setVideoUri(selectedMedia.data);
+          } else {
+            console.error('No video data available');
+            Alert.alert('Error', 'Video data not available');
           }
         } catch (error) {
           console.error('Error preparing video:', error);
