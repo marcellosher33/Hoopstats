@@ -367,13 +367,23 @@ export default function TeamsScreen() {
                           </View>
                         )}
 
-                        <TouchableOpacity
-                          style={styles.addPlayerBtn}
-                          onPress={() => router.push('/player/new')}
-                        >
-                          <Ionicons name="person-add" size={18} color={colors.primary} />
-                          <Text style={styles.addPlayerText}>Add Player to Team</Text>
-                        </TouchableOpacity>
+                        <View style={styles.addPlayerActions}>
+                          <TouchableOpacity
+                            style={styles.addPlayerBtn}
+                            onPress={() => openAddPlayersModal(team)}
+                          >
+                            <Ionicons name="person-add" size={18} color={colors.primary} />
+                            <Text style={styles.addPlayerText}>Add Existing Players</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.addPlayerBtn}
+                            onPress={() => router.push(`/player/new?teamId=${team.id}`)}
+                          >
+                            <Ionicons name="add-circle" size={18} color={colors.success} />
+                            <Text style={[styles.addPlayerText, { color: colors.success }]}>Create New Player</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.hintText}>Long-press player to remove from team</Text>
                       </View>
                     )}
                   </TouchableOpacity>
@@ -390,10 +400,22 @@ export default function TeamsScreen() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Create Team</Text>
-              <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+              <TouchableOpacity onPress={() => { setShowCreateModal(false); setNewTeamLogo(null); }}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
+
+            {/* Team Logo */}
+            <TouchableOpacity style={styles.logoPickerContainer} onPress={handlePickLogo}>
+              {newTeamLogo ? (
+                <Image source={{ uri: newTeamLogo }} style={styles.logoPicker} />
+              ) : (
+                <View style={[styles.logoPlaceholder, { backgroundColor: newTeamColor }]}>
+                  <Ionicons name="camera" size={32} color="white" />
+                  <Text style={styles.logoPlaceholderText}>Add Logo</Text>
+                </View>
+              )}
+            </TouchableOpacity>
 
             <Input
               label="Team Name"
