@@ -152,6 +152,8 @@ class Player(BaseModel):
     name: str
     number: Optional[int] = None
     position: Optional[str] = None
+    height: Optional[str] = None  # e.g., "6'2" or "188cm"
+    weight: Optional[int] = None  # in lbs
     photo: Optional[str] = None  # base64
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -161,6 +163,8 @@ class PlayerCreate(BaseModel):
     position: Optional[str] = None
     team_id: Optional[str] = None
     photo: Optional[str] = None
+    height: Optional[str] = None
+    weight: Optional[int] = None
 
 # Team Models
 class Team(BaseModel):
