@@ -1395,4 +1395,41 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  // Adjustment Modal Styles
+  adjustModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    width: '80%',
+    maxWidth: 320,
+    alignItems: 'center',
+  },
+  adjustButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginVertical: spacing.lg,
+  },
+  adjustBtn: {
+    alignItems: 'center',
+    padding: spacing.md,
+  },
+  adjustBtnLabel: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: spacing.xs,
+  },
+  adjustCloseBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxl,
+    borderRadius: borderRadius.lg,
+    marginTop: spacing.sm,
+  },
+  adjustCloseBtnText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
