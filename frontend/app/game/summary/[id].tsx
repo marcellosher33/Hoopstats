@@ -350,7 +350,7 @@ export default function GameSummaryScreen() {
         <View style={styles.mediaViewerOverlay}>
           <TouchableOpacity 
             style={styles.mediaViewerClose}
-            onPress={() => setSelectedMedia(null)}
+            onPress={handleCloseMediaModal}
           >
             <Ionicons name="close" size={32} color="white" />
           </TouchableOpacity>
@@ -362,14 +362,33 @@ export default function GameSummaryScreen() {
               resizeMode="contain"
             />
           ) : selectedMedia?.type === 'video' ? (
-            <Video
-              source={{ uri: selectedMedia.data }}
-              style={styles.fullScreenVideo}
-              useNativeControls
-              resizeMode={ResizeMode.CONTAIN}
-              shouldPlay
-              isLooping={false}
-            />
+            <View style={styles.videoContainer}>
+              {videoLoading ? (
+                <View style={styles.videoLoadingContainer}>
+                  <ActivityIndicator size="large" color={colors.primary} />
+                  <Text style={styles.videoLoadingText}>Loading video...</Text>
+                </View>
+              ) : videoUri ? (
+                <Video
+                  ref={videoRef}
+                  source={{ uri: videoUri }}
+                  style={styles.fullScreenVideo}
+                  useNativeControls
+                  resizeMode={ResizeMode.CONTAIN}
+                  shouldPlay
+                  isLooping={false}
+                  onError={(error) => {
+                    console.error('Video playback error:', error);
+                    Alert.alert('Error', 'Failed to play video');
+                  }}
+                />
+              ) : (
+                <View style={styles.videoLoadingContainer}>
+                  <Ionicons name="alert-circle" size={48} color={colors.error} />
+                  <Text style={styles.videoLoadingText}>Failed to load video</Text>
+                </View>
+              )}
+            </View>
           ) : null}
         </View>
       </Modal>
