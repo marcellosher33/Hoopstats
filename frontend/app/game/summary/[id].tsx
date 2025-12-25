@@ -457,6 +457,12 @@ export default function GameSummaryScreen() {
       {/* Actions */}
       <View style={styles.actions}>
         <Button
+          title="Edit Stats"
+          onPress={() => setShowEditStats(!showEditStats)}
+          variant={showEditStats ? 'primary' : 'outline'}
+          icon={<Ionicons name="pencil" size={20} color={showEditStats ? colors.text : colors.primary} />}
+        />
+        <Button
           title="Share Game"
           onPress={handleShare}
           variant="outline"
@@ -467,6 +473,103 @@ export default function GameSummaryScreen() {
           <Text style={styles.deleteBtnText}>Delete Game</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Edit Stats Section */}
+      {showEditStats && (
+        <View style={styles.editStatsSection}>
+          <Text style={styles.editStatsTitle}>Tap any stat to adjust (+/-)</Text>
+          {currentGame.player_stats.map((ps) => (
+            <View key={ps.player_id} style={styles.editPlayerCard}>
+              <Text style={styles.editPlayerName}>{ps.player_name}</Text>
+              <View style={styles.editStatsGrid}>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'points', 'Points')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.points || 0}</Text>
+                  <Text style={styles.editStatLabel}>PTS</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'rebounds', 'Rebounds')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.rebounds || 0}</Text>
+                  <Text style={styles.editStatLabel}>REB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'assists', 'Assists')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.assists || 0}</Text>
+                  <Text style={styles.editStatLabel}>AST</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'steals', 'Steals')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.steals || 0}</Text>
+                  <Text style={styles.editStatLabel}>STL</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'blocks', 'Blocks')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.blocks || 0}</Text>
+                  <Text style={styles.editStatLabel}>BLK</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'turnovers', 'Turnovers')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.turnovers || 0}</Text>
+                  <Text style={styles.editStatLabel}>TO</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.editStatItem}
+                  onPress={() => handleEditStat(ps.player_id, 'fouls', 'Fouls')}
+                >
+                  <Text style={styles.editStatValue}>{ps.stats.fouls || 0}</Text>
+                  <Text style={styles.editStatLabel}>FOUL</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Edit Stat Modal */}
+      <Modal visible={editingStat !== null} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.editModal}>
+            <Text style={styles.editModalTitle}>Adjust {editingStat?.label}</Text>
+            <Text style={styles.editModalSubtitle}>
+              Current: {editingPlayer && currentGame?.player_stats.find(ps => ps.player_id === editingPlayer)?.stats[editingStat?.type as keyof typeof currentGame.player_stats[0]['stats']] || 0}
+            </Text>
+            <View style={styles.editModalButtons}>
+              <TouchableOpacity
+                style={styles.editModalBtn}
+                onPress={() => handleAdjustStat(-1)}
+              >
+                <Ionicons name="remove-circle" size={56} color={colors.error} />
+                <Text style={styles.editModalBtnLabel}>-1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.editModalBtn}
+                onPress={() => handleAdjustStat(1)}
+              >
+                <Ionicons name="add-circle" size={56} color={colors.success} />
+                <Text style={styles.editModalBtnLabel}>+1</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.editModalClose}
+              onPress={() => { setEditingStat(null); setEditingPlayer(null); }}
+            >
+              <Text style={styles.editModalCloseText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
