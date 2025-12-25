@@ -1127,6 +1127,9 @@ async def generate_ai_summary(game_id: str, user: dict = Depends(get_current_use
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
     
+    # Get the team name - use home_team_name if available, otherwise default
+    team_name = game.get('home_team_name') or 'Our Team'
+    
     # Build game context
     player_summaries = []
     for ps in game.get("player_stats", []):
@@ -1139,21 +1142,23 @@ async def generate_ai_summary(game_id: str, user: dict = Depends(get_current_use
     prompt = f"""Generate a comprehensive basketball game summary for social media sharing.
 
 Game Details:
-- Our Team Score: {game.get('our_score', 0)}
+- {team_name} Score: {game.get('our_score', 0)}
 - Opponent ({game.get('opponent_name', 'Opponent')}): {game.get('opponent_score', 0)}
 - Date: {game.get('game_date', 'Unknown')}
 - Location: {game.get('location', 'Unknown')}
 
-Player Statistics:
+Player Statistics for {team_name}:
 {chr(10).join(player_summaries)}
 
 Notes: {game.get('notes', 'None')}
 
+IMPORTANT: Always refer to the team as "{team_name}" in your summary, never use "Our Team" or "Your Team".
+
 Please provide:
-1. A headline summary (1 sentence)
+1. A headline summary (1 sentence) - use the team name "{team_name}"
 2. Key highlights and standout performers
 3. Notable statistics
-4. A social media ready recap (under 280 characters)
+4. A social media ready recap (under 280 characters) - use the team name "{team_name}"
 """
     
     try:

@@ -554,8 +554,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   gameTypeButtonActive: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.secondary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   gameTypeText: {
     color: colors.textSecondary,
