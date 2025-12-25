@@ -121,13 +121,31 @@ export default function GameSummaryScreen() {
     }
   };
 
-  // Convert base64 video to file URI for playback
+  // Helper to get media source URL
+  const getMediaSource = (media: GameMedia): string => {
+    // If URL exists (new file-based storage), use full API URL
+    if (media.url) {
+      return `${process.env.EXPO_PUBLIC_BACKEND_URL || ''}${media.url}`;
+    }
+    // Fallback to legacy base64 data
+    return media.data || '';
+  };
+
+  // Prepare video for playback
   useEffect(() => {
     const prepareVideo = async () => {
-      if (selectedMedia?.type === 'video' && selectedMedia.data) {
+      if (selectedMedia?.type === 'video') {
         setVideoLoading(true);
         try {
-          // Check if data exists and is a base64 data URI
+          // If URL-based media, use the URL directly
+          if (selectedMedia.url) {
+            const fullUrl = `${process.env.EXPO_PUBLIC_BACKEND_URL || ''}${selectedMedia.url}`;
+            setVideoUri(fullUrl);
+            setVideoLoading(false);
+            return;
+          }
+          
+          // Legacy: Convert base64 to file
           if (selectedMedia.data && typeof selectedMedia.data === 'string') {
             const filename = `video_${selectedMedia.id || Date.now()}.mp4`;
             const fileUri = await base64ToFileUri(selectedMedia.data, filename);
