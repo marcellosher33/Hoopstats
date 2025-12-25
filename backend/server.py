@@ -172,6 +172,15 @@ class PlayerCreate(BaseModel):
     height: Optional[str] = None
     weight: Optional[int] = None
 
+class PlayerUpdate(BaseModel):
+    name: Optional[str] = None
+    number: Optional[int] = None
+    position: Optional[str] = None
+    team_id: Optional[str] = None  # Can be set to null to remove from team
+    photo: Optional[str] = None
+    height: Optional[str] = None
+    weight: Optional[int] = None
+
 # Team Models
 class Team(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
