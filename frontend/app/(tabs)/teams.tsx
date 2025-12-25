@@ -8,9 +8,11 @@ import {
   Alert,
   Modal,
   RefreshControl,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../src/stores/authStore';
 import { useGameStore } from '../../src/stores/gameStore';
 import { Button } from '../../src/components/Button';
@@ -26,14 +28,17 @@ const COLOR_OPTIONS = [
 export default function TeamsScreen() {
   const router = useRouter();
   const { token } = useAuthStore();
-  const { teams, players, games, fetchTeams, fetchPlayers, fetchGames, createTeam, deleteTeam } = useGameStore();
+  const { teams, players, games, fetchTeams, fetchPlayers, fetchGames, createTeam, updateTeam, deleteTeam, updatePlayer } = useGameStore();
 
   const [refreshing, setRefreshing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAddPlayersModal, setShowAddPlayersModal] = useState(false);
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamColor, setNewTeamColor] = useState(COLOR_OPTIONS[0]);
+  const [newTeamLogo, setNewTeamLogo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [selectedPlayersToAdd, setSelectedPlayersToAdd] = useState<string[]>([]);
 
   useEffect(() => {
     if (token) {
