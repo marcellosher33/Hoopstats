@@ -410,6 +410,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 2,
   },
+  teamsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: spacing.sm,
+  },
+  teamColumn: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  teamName: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+  },
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -417,7 +433,7 @@ const styles = StyleSheet.create({
   },
   bigScore: {
     color: colors.text,
-    fontSize: 56,
+    fontSize: 48,
     fontWeight: 'bold',
   },
   scoreDash: {
