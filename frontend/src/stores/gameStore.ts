@@ -196,6 +196,64 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   },
 
+  undoLastStat: async (gameId: string, token: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/games/${gameId}/stats/undo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const updatedGame = await response.json();
+        set((state) => ({
+          currentGame: updatedGame,
+          games: state.games.map((g) => (g.id === gameId ? updatedGame : g)),
+        }));
+        return true;
+      } else {
+        const errorData = await response.json();
+        console.error('[GameStore] Failed to undo stat:', errorData.detail);
+        return false;
+      }
+    } catch (error) {
+      console.error('[GameStore] Network error undoing stat:', error);
+      return false;
+    }
+  },
+
+  adjustStat: async (gameId: string, playerId: string, statType: string, adjustment: number, token: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/games/${gameId}/stats/adjust`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          player_id: playerId,
+          stat_type: statType,
+          adjustment: adjustment,
+        }),
+      });
+      
+      if (response.ok) {
+        const updatedGame = await response.json();
+        set((state) => ({
+          currentGame: updatedGame,
+          games: state.games.map((g) => (g.id === gameId ? updatedGame : g)),
+        }));
+      } else {
+        const errorData = await response.json();
+        console.error('[GameStore] Failed to adjust stat:', errorData.detail);
+      }
+    } catch (error) {
+      console.error('[GameStore] Network error adjusting stat:', error);
+    }
+  },
+
   addMedia: async (gameId: string, mediaType: string, data: string, token: string, options?: any) => {
     const formData = new FormData();
     formData.append('media_type', mediaType);
