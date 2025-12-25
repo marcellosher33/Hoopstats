@@ -317,17 +317,20 @@ export default function LiveGameScreen() {
       {teamMode ? (
         /* Team Mode - All Players View */
         <ScrollView style={styles.teamModeContainer}>
-          <Text style={styles.teamModeTitle}>Tap player + stat to record</Text>
+          <Text style={styles.teamModeTitle}>Tap stat to record • Long-press to adjust</Text>
           {currentGame.player_stats.map((ps) => (
             <View key={ps.player_id} style={styles.teamModePlayerRow}>
               <View style={styles.teamModePlayerInfo}>
                 <View style={styles.teamModeAvatar}>
                   <Text style={styles.teamModeAvatarText}>{ps.player_name.charAt(0)}</Text>
                 </View>
-                <View>
+                <View style={styles.teamModePlayerDetails}>
                   <Text style={styles.teamModePlayerName}>{ps.player_name}</Text>
                   <Text style={styles.teamModePlayerStats}>
-                    {ps.stats.points || 0} pts | {ps.stats.rebounds || 0} reb | {ps.stats.assists || 0} ast
+                    {ps.stats.points || 0} pts • {ps.stats.rebounds || 0} reb • {ps.stats.assists || 0} ast
+                  </Text>
+                  <Text style={styles.teamModePlayerStatsRow2}>
+                    {ps.stats.steals || 0} stl • {ps.stats.blocks || 0} blk • {ps.stats.turnovers || 0} to • {ps.stats.fouls || 0} foul
                   </Text>
                 </View>
               </View>
