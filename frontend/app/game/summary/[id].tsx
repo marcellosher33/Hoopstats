@@ -130,6 +130,20 @@ export default function GameSummaryScreen() {
     }
   };
 
+  const handleEditStat = (playerId: string, statType: string, statLabel: string) => {
+    setEditingPlayer(playerId);
+    setEditingStat({ type: statType, label: statLabel });
+  };
+
+  const handleAdjustStat = async (adjustment: number) => {
+    if (!token || !id || !editingPlayer || !editingStat) return;
+    await adjustStat(id, editingPlayer, editingStat.type, adjustment, token);
+    // Refresh the game data
+    await fetchGame(id, token);
+    setEditingStat(null);
+    setEditingPlayer(null);
+  };
+
   const handleShare = async () => {
     if (!currentGame) return;
     
