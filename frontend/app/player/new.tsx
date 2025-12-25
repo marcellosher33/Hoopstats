@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../src/stores/authStore';
@@ -22,16 +22,32 @@ const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];
 
 export default function NewPlayerScreen() {
   const router = useRouter();
+  const { teamId } = useLocalSearchParams<{ teamId?: string }>();
   const { token } = useAuthStore();
-  const { createPlayer } = useGameStore();
+  const { teams, createPlayer, fetchTeams } = useGameStore();
 
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [position, setPosition] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(teamId || null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      fetchTeams(token);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (teamId) {
+      setSelectedTeamId(teamId);
+    }
+  }, [teamId]);
+
+  const selectedTeam = teams.find(t => t.id === selectedTeamId);
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
