@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
-import * as FileSystem from 'expo-file-system/legacy';
+import { File, Paths } from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -28,22 +28,27 @@ import { GameMedia } from '../../../src/types';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-// Helper function to convert base64 to file URI
+// Helper function to convert base64 to file URI using new File API
 const base64ToFileUri = async (base64Data: string, filename: string): Promise<string | null> => {
   try {
-    const fileUri = `${FileSystem.cacheDirectory}${filename}`;
-    
     // Remove data URI prefix if present
     let cleanBase64 = base64Data;
     if (base64Data.includes(',')) {
       cleanBase64 = base64Data.split(',')[1];
     }
     
-    await FileSystem.writeAsStringAsync(fileUri, cleanBase64, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    // Decode base64 to binary
+    const binaryString = atob(cleanBase64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
     
-    return fileUri;
+    // Create file using new File API
+    const file = new File(Paths.cache, filename);
+    await file.write(bytes);
+    
+    return file.uri;
   } catch (error) {
     console.error('Error converting base64 to file:', error);
     return null;
