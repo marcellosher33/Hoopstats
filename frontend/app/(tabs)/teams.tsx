@@ -294,9 +294,13 @@ export default function TeamsScreen() {
                     onLongPress={() => handleDeleteTeam(team)}
                   >
                     <View style={styles.teamHeader}>
-                      <View style={[styles.teamBadge, { backgroundColor: team.color_primary }]}>
-                        <Text style={styles.teamBadgeText}>{team.name.charAt(0)}</Text>
-                      </View>
+                      {team.logo ? (
+                        <Image source={{ uri: team.logo }} style={styles.teamLogo} />
+                      ) : (
+                        <View style={[styles.teamBadge, { backgroundColor: team.color_primary }]}>
+                          <Text style={styles.teamBadgeText}>{team.name.charAt(0)}</Text>
+                        </View>
+                      )}
                       <View style={styles.teamInfo}>
                         <Text style={styles.teamName}>{team.name}</Text>
                         <Text style={styles.teamMeta}>
@@ -346,6 +350,7 @@ export default function TeamsScreen() {
                                 key={player.id}
                                 style={styles.playerItem}
                                 onPress={() => router.push(`/player/${player.id}`)}
+                                onLongPress={() => handleRemovePlayerFromTeam(player)}
                               >
                                 <View style={styles.playerAvatar}>
                                   <Text style={styles.playerAvatarText}>{player.name.charAt(0)}</Text>
