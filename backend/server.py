@@ -1,5 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Form
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -18,8 +20,12 @@ from openai import OpenAI
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import base64
 import json
+import aiofiles
 
 ROOT_DIR = Path(__file__).parent
+MEDIA_DIR = ROOT_DIR / 'media'
+MEDIA_DIR.mkdir(exist_ok=True)
+
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
