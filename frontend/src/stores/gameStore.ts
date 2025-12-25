@@ -255,14 +255,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   addMedia: async (gameId: string, mediaType: string, data: string, token: string, options?: any) => {
+    // Use the new base64 upload endpoint that stores files on server
     const formData = new FormData();
+    formData.append('game_id', gameId);
     formData.append('media_type', mediaType);
     formData.append('data', data);
-    if (options?.description) formData.append('description', options.description);
-    if (options?.is_highlight) formData.append('is_highlight', 'true');
-    if (options?.quarter) formData.append('quarter', options.quarter.toString());
 
-    const response = await fetch(`${API_URL}/api/games/${gameId}/media`, {
+    const response = await fetch(`${API_URL}/api/media/upload-base64`, {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${token}` },
       body: formData,
