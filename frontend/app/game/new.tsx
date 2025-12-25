@@ -18,7 +18,7 @@ import { useGameStore } from '../../src/stores/gameStore';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
-import { Player } from '../../src/types';
+import { Player, Team } from '../../src/types';
 
 type LocationType = 'home' | 'away' | null;
 type GameType = 'preseason' | 'tournament' | 'regular_season' | 'playoffs' | null;
@@ -44,8 +44,9 @@ const PERIOD_TYPE_OPTIONS: { value: PeriodType; label: string; description: stri
 export default function NewGameScreen() {
   const router = useRouter();
   const { token } = useAuthStore();
-  const { players, fetchPlayers, createGame } = useGameStore();
+  const { players, teams, fetchPlayers, fetchTeams, createGame } = useGameStore();
 
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [opponentName, setOpponentName] = useState('');
   const [location, setLocation] = useState<LocationType>(null);
   const [gameType, setGameType] = useState<GameType>(null);
@@ -60,8 +61,30 @@ export default function NewGameScreen() {
   useEffect(() => {
     if (token) {
       fetchPlayers(token);
+      fetchTeams(token);
     }
   }, [token]);
+
+  // Filter players based on selected team
+  const availablePlayers = selectedTeam 
+    ? players.filter(p => p.team_id === selectedTeam.id)
+    : players;
+
+  // When team is selected, auto-select all team players and set team name
+  const handleTeamSelect = (team: Team | null) => {
+    setSelectedTeam(team);
+    if (team) {
+      setHomeTeamName(team.name);
+      // Auto-select all players from this team
+      const teamPlayerIds = players
+        .filter(p => p.team_id === team.id)
+        .map(p => p.id);
+      setSelectedPlayers(teamPlayerIds);
+    } else {
+      setHomeTeamName('');
+      setSelectedPlayers([]);
+    }
+  };
 
   const togglePlayer = (playerId: string) => {
     setSelectedPlayers(prev =>
