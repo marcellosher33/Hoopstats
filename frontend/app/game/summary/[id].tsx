@@ -959,4 +959,103 @@ const styles = StyleSheet.create({
     color: colors.error,
     fontWeight: '500',
   },
+  // Edit Stats Styles
+  editStatsSection: {
+    marginTop: spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+  },
+  editStatsTitle: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  editPlayerCard: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  editPlayerName: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: spacing.sm,
+  },
+  editStatsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  editStatItem: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    alignItems: 'center',
+    minWidth: 55,
+  },
+  editStatValue: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  editStatLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    width: '80%',
+    maxWidth: 320,
+    alignItems: 'center',
+  },
+  editModalTitle: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: spacing.sm,
+  },
+  editModalSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    marginBottom: spacing.lg,
+  },
+  editModalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: spacing.lg,
+  },
+  editModalBtn: {
+    alignItems: 'center',
+    padding: spacing.md,
+  },
+  editModalBtnLabel: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: spacing.xs,
+  },
+  editModalClose: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxl,
+    borderRadius: borderRadius.lg,
+  },
+  editModalCloseText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
