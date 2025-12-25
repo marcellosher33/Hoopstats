@@ -475,7 +475,7 @@ export default function GameSummaryScreen() {
           
           {selectedMedia?.type === 'photo' ? (
             <Image 
-              source={{ uri: selectedMedia.data }} 
+              source={{ uri: getMediaSource(selectedMedia) }} 
               style={styles.fullScreenImage}
               resizeMode="contain"
             />
