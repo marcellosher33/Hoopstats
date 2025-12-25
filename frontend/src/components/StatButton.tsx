@@ -102,6 +102,7 @@ interface ScoringButtonProps {
   label: string;
   value?: number;
   onPress: () => void;
+  onLongPress?: () => void;
   disabled?: boolean;
 }
 
@@ -110,6 +111,7 @@ export const ScoringButton: React.FC<ScoringButtonProps> = ({
   label,
   value,
   onPress,
+  onLongPress,
   disabled = false,
 }) => {
   const gradientColors = points === 3 
@@ -122,6 +124,8 @@ export const ScoringButton: React.FC<ScoringButtonProps> = ({
     <TouchableOpacity
       style={[styles.scoringContainer, disabled && styles.disabled]}
       onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={500}
       disabled={disabled}
       activeOpacity={0.85}
     >
@@ -151,18 +155,22 @@ export const ScoringButton: React.FC<ScoringButtonProps> = ({
 interface MissButtonProps {
   label: string;
   onPress: () => void;
+  onLongPress?: () => void;
   disabled?: boolean;
 }
 
 export const MissButton: React.FC<MissButtonProps> = ({
   label,
   onPress,
+  onLongPress,
   disabled = false,
 }) => {
   return (
     <TouchableOpacity
       style={[styles.missButton, disabled && styles.disabled]}
       onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={500}
       disabled={disabled}
       activeOpacity={0.7}
     >
