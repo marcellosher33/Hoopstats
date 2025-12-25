@@ -27,6 +27,28 @@ import { GameMedia } from '../../../src/types';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+// Helper function to convert base64 to file URI
+const base64ToFileUri = async (base64Data: string, filename: string): Promise<string | null> => {
+  try {
+    const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+    
+    // Remove data URI prefix if present
+    let cleanBase64 = base64Data;
+    if (base64Data.includes(',')) {
+      cleanBase64 = base64Data.split(',')[1];
+    }
+    
+    await FileSystem.writeAsStringAsync(fileUri, cleanBase64, {
+      encoding: 'base64',
+    });
+    
+    return fileUri;
+  } catch (error) {
+    console.error('Error converting base64 to file:', error);
+    return null;
+  }
+};
+
 export default function GameSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
