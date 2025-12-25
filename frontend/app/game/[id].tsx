@@ -80,6 +80,33 @@ export default function LiveGameScreen() {
     }
   };
 
+  const handleUndo = async () => {
+    if (!token || !id) return;
+    const success = await undoLastStat(id, token);
+    if (success) {
+      Alert.alert('Success', 'Last stat undone');
+    } else {
+      Alert.alert('Error', 'No stats to undo');
+    }
+  };
+
+  const handleLongPressAdjust = (statType: string, label: string) => {
+    if (!selectedPlayer) {
+      Alert.alert('Select Player', 'Please select a player first');
+      return;
+    }
+    setAdjustStatType(statType);
+    setAdjustStatLabel(label);
+    setShowAdjustModal(true);
+  };
+
+  const handleAdjustStat = async (adjustment: number) => {
+    if (!token || !id || !selectedPlayer || !adjustStatType) return;
+    await adjustStat(id, selectedPlayer, adjustStatType, adjustment, token);
+    setShowAdjustModal(false);
+    setAdjustStatType(null);
+  };
+
   const handleShotChartPress = (x: number, y: number) => {
     if (!pendingShotType) return;
     
