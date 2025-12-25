@@ -116,6 +116,20 @@ export default function PlayerStatsScreen() {
         {player?.position && (
           <Text style={styles.playerPosition}>{player.position}</Text>
         )}
+        {(player?.height || player?.weight) && (
+          <Text style={styles.playerPhysical}>
+            {player?.height && `${player.height}`}
+            {player?.height && player?.weight && ' • '}
+            {player?.weight && `${player.weight} lbs`}
+          </Text>
+        )}
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => router.push(`/player/edit/${id}`)}
+        >
+          <Ionicons name="pencil" size={16} color={colors.primary} />
+          <Text style={styles.editButtonText}>Edit Player</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Season Averages */}
