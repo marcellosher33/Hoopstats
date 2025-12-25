@@ -53,11 +53,14 @@ export default function GameSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { currentGame, fetchGame, generateAISummary, deleteGame } = useGameStore();
+  const { currentGame, fetchGame, generateAISummary, deleteGame, adjustStat } = useGameStore();
   
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<GameMedia | null>(null);
+  const [showEditStats, setShowEditStats] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<string | null>(null);
+  const [editingStat, setEditingStat] = useState<{ type: string; label: string } | null>(null);
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [videoLoading, setVideoLoading] = useState(false);
   const videoRef = useRef<Video>(null);
