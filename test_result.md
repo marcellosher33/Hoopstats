@@ -272,6 +272,33 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Implemented with scoreboard, quarter controls, player selection, stat buttons, shot chart modal, camera integration."
+      - working: true
+        agent: "main"
+        comment: "Added Undo button and stat adjustment modal (long-press on stat buttons). Backend endpoints /stats/undo and /stats/adjust tested and working."
+
+  - task: "Undo Stat Feature"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py, /app/frontend/app/game/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Backend endpoint tested via curl - correctly undoes last stat. Frontend has Undo button in action bar."
+
+  - task: "Manual Stat Adjustment"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py, /app/frontend/app/game/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Backend endpoint tested via curl - correctly adjusts stats +/-. Frontend has long-press adjustment modal on stat buttons."
 
   - task: "New Game creation"
     implemented: true
