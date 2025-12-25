@@ -758,4 +758,72 @@ const styles = StyleSheet.create({
   colorOptionSelected: {
     borderColor: colors.text,
   },
+  // New styles
+  teamLogo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: spacing.md,
+  },
+  logoPickerContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  logoPicker: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  logoPlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoPlaceholderText: {
+    color: 'white',
+    fontSize: 11,
+    marginTop: 4,
+  },
+  addPlayerActions: {
+    gap: spacing.sm,
+  },
+  hintText: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    fontStyle: 'italic',
+  },
+  emptyPlayersModal: {
+    alignItems: 'center',
+    paddingVertical: spacing.lg,
+  },
+  emptyPlayersText: {
+    color: colors.textSecondary,
+    marginTop: spacing.md,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
+  },
+  playerSelectList: {
+    maxHeight: 300,
+  },
+  playerSelectItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    marginBottom: spacing.xs,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  playerSelectItemActive: {
+    borderColor: colors.success,
+    backgroundColor: colors.success + '20',
+  },
 });
