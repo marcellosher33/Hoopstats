@@ -446,9 +446,59 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.sm,
   },
+  sectionSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    marginBottom: spacing.md,
+    marginTop: -spacing.xs,
+  },
   selectedCount: {
     color: colors.primary,
     fontSize: 14,
+  },
+  teamScroll: {
+    marginHorizontal: -spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  teamCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginRight: spacing.sm,
+    alignItems: 'center',
+    minWidth: 100,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  teamCardActive: {
+    backgroundColor: colors.primary + '20',
+    borderColor: colors.primary,
+  },
+  teamCardText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: spacing.xs,
+  },
+  teamCardTextActive: {
+    color: colors.text,
+  },
+  teamBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  teamBadgeText: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  teamPlayerCount: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 2,
   },
   label: {
     color: colors.text,
