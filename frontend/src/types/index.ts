@@ -42,6 +42,8 @@ export interface Player {
   name: string;
   number?: number;
   position?: string;
+  height?: string;  // e.g., "6'2" or "188cm"
+  weight?: number;  // in lbs
   photo?: string;
   created_at: string;
 }
