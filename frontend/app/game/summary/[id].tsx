@@ -945,11 +945,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  mediaViewerClose: {
+  mediaViewerActions: {
     position: 'absolute',
     top: 50,
-    right: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     zIndex: 10,
+  },
+  mediaViewerClose: {
+    padding: spacing.sm,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 20,
+  },
+  mediaViewerSave: {
     padding: spacing.sm,
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 20,
