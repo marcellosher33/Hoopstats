@@ -139,6 +139,31 @@ export default function NewPlayerScreen() {
               ))}
             </View>
           </View>
+
+          {/* Physical Attributes */}
+          <View style={styles.physicalSection}>
+            <Text style={styles.label}>Physical Attributes</Text>
+            <View style={styles.physicalRow}>
+              <View style={styles.physicalField}>
+                <Input
+                  label="Height"
+                  value={height}
+                  onChangeText={setHeight}
+                  placeholder="e.g., 6'2&quot;"
+                />
+              </View>
+              <View style={styles.physicalField}>
+                <Input
+                  label="Weight (lbs)"
+                  value={weight}
+                  onChangeText={(text) => setWeight(text.replace(/[^0-9]/g, ''))}
+                  placeholder="e.g., 185"
+                  keyboardType="numeric"
+                  maxLength={3}
+                />
+              </View>
+            </View>
+          </View>
         </View>
 
         {/* Preview */}
