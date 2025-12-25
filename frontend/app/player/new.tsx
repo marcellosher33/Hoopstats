@@ -60,6 +60,8 @@ export default function NewPlayerScreen() {
           name: name.trim(),
           number: number ? parseInt(number, 10) : undefined,
           position: position || undefined,
+          height: height || undefined,
+          weight: weight ? parseInt(weight, 10) : undefined,
           photo: photo || undefined,
         },
         token!
