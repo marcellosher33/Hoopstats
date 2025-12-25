@@ -8,6 +8,8 @@ import {
   Alert,
   Share,
   Image,
+  Modal,
+  Dimensions,
 } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,6 +19,10 @@ import { useGameStore } from '../../../src/stores/gameStore';
 import { Button } from '../../../src/components/Button';
 import { ShotChart } from '../../../src/components/ShotChart';
 import { colors, spacing, borderRadius } from '../../../src/utils/theme';
+import { GameMedia } from '../../../src/types';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 export default function GameSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,6 +32,7 @@ export default function GameSummaryScreen() {
   
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState<GameMedia | null>(null);
 
   useEffect(() => {
     if (token && id) {
