@@ -64,6 +64,7 @@ export default function GameSummaryScreen() {
   const [editingStat, setEditingStat] = useState<{ type: string; label: string } | null>(null);
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [videoLoading, setVideoLoading] = useState(false);
+  const [savingMedia, setSavingMedia] = useState(false);
   const videoRef = useRef<Video>(null);
 
   useEffect(() => {
@@ -71,6 +72,49 @@ export default function GameSummaryScreen() {
       fetchGame(id, token);
     }
   }, [token, id]);
+
+  // Save media to device
+  const handleSaveMedia = async (media: GameMedia) => {
+    setSavingMedia(true);
+    try {
+      // Request permissions
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Required', 'Please grant access to save media to your device.');
+        setSavingMedia(false);
+        return;
+      }
+
+      // Create file from base64
+      const extension = media.type === 'video' ? 'mp4' : 'jpg';
+      const filename = `hoopstats_${media.id || Date.now()}.${extension}`;
+      const fileUri = await base64ToFileUri(media.data, filename);
+      
+      if (!fileUri) {
+        Alert.alert('Error', 'Failed to save media');
+        setSavingMedia(false);
+        return;
+      }
+
+      // Save to media library
+      const asset = await MediaLibrary.createAssetAsync(fileUri);
+      
+      // Optionally create an album
+      const album = await MediaLibrary.getAlbumAsync('HoopStats');
+      if (album) {
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+      } else {
+        await MediaLibrary.createAlbumAsync('HoopStats', asset, false);
+      }
+
+      Alert.alert('Saved!', `${media.type === 'video' ? 'Video' : 'Photo'} saved to your device.`);
+    } catch (error) {
+      console.error('Error saving media:', error);
+      Alert.alert('Error', 'Failed to save media to device');
+    } finally {
+      setSavingMedia(false);
+    }
+  };
 
   // Convert base64 video to file URI for playback
   useEffect(() => {
