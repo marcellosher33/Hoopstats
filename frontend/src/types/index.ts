@@ -68,11 +68,13 @@ export interface GamePlayerStats {
 export interface GameMedia {
   id: string;
   type: 'photo' | 'video';
-  data: string;
+  data?: string;  // Legacy base64 data (for backward compatibility)
+  url?: string;   // New URL-based media
   timestamp: string;
   description?: string;
-  is_highlight: boolean;
+  is_highlight?: boolean;
   quarter?: number;
+  filename?: string;
 }
 
 export interface Game {
