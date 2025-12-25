@@ -340,6 +340,8 @@ export default function LiveGameScreen() {
                     setPendingShotMade(true);
                     setShowShotChart(true);
                   }}
+                  onLongPress={() => handleLongPressAdjust('points', 'Points', ps.player_id)}
+                  delayLongPress={500}
                 >
                   <Text style={styles.teamModeStatBtnText}>+2</Text>
                 </TouchableOpacity>
@@ -351,6 +353,8 @@ export default function LiveGameScreen() {
                     setPendingShotMade(true);
                     setShowShotChart(true);
                   }}
+                  onLongPress={() => handleLongPressAdjust('points', 'Points', ps.player_id)}
+                  delayLongPress={500}
                 >
                   <Text style={styles.teamModeStatBtnText}>+3</Text>
                 </TouchableOpacity>
@@ -361,6 +365,8 @@ export default function LiveGameScreen() {
                       await recordStat(id, ps.player_id, 'rebounds', token);
                     }
                   }}
+                  onLongPress={() => handleLongPressAdjust('rebounds', 'Rebounds', ps.player_id)}
+                  delayLongPress={500}
                 >
                   <Text style={styles.teamModeStatBtnText}>REB</Text>
                 </TouchableOpacity>
@@ -371,8 +377,22 @@ export default function LiveGameScreen() {
                       await recordStat(id, ps.player_id, 'assists', token);
                     }
                   }}
+                  onLongPress={() => handleLongPressAdjust('assists', 'Assists', ps.player_id)}
+                  delayLongPress={500}
                 >
                   <Text style={styles.teamModeStatBtnText}>AST</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(139, 92, 246, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'steals', token);
+                    }
+                  }}
+                  onLongPress={() => handleLongPressAdjust('steals', 'Steals', ps.player_id)}
+                  delayLongPress={500}
+                >
+                  <Text style={styles.teamModeStatBtnText}>STL</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
@@ -381,8 +401,22 @@ export default function LiveGameScreen() {
                       await recordStat(id, ps.player_id, 'turnovers', token);
                     }
                   }}
+                  onLongPress={() => handleLongPressAdjust('turnovers', 'Turnovers', ps.player_id)}
+                  delayLongPress={500}
                 >
                   <Text style={styles.teamModeStatBtnText}>TO</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(251, 191, 36, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'fouls', token);
+                    }
+                  }}
+                  onLongPress={() => handleLongPressAdjust('fouls', 'Fouls', ps.player_id)}
+                  delayLongPress={500}
+                >
+                  <Text style={styles.teamModeStatBtnText}>FOUL</Text>
                 </TouchableOpacity>
               </View>
             </View>
