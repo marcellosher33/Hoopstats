@@ -247,9 +247,16 @@ export default function GameSummaryScreen() {
           </View>
           <View style={styles.photoGrid}>
             {(showAllPhotos ? photos : photos.slice(0, 4)).map((photo, index) => (
-              <View key={photo.id} style={styles.photoItem}>
+              <TouchableOpacity 
+                key={photo.id} 
+                style={styles.photoItem}
+                onPress={() => setSelectedMedia(photo)}
+              >
                 <Image source={{ uri: photo.data }} style={styles.photo} />
-              </View>
+                <View style={styles.mediaPlayOverlay}>
+                  <Ionicons name="expand" size={24} color="white" />
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -263,23 +270,53 @@ export default function GameSummaryScreen() {
           </View>
           <View style={styles.videoList}>
             {videos.map((video, index) => (
-              <View key={video.id} style={styles.videoItem}>
-                <Video
-                  source={{ uri: video.data }}
-                  style={styles.video}
-                  useNativeControls
-                  resizeMode={ResizeMode.CONTAIN}
-                  isLooping={false}
-                />
+              <TouchableOpacity 
+                key={video.id} 
+                style={styles.videoItem}
+                onPress={() => setSelectedMedia(video)}
+              >
+                <View style={styles.videoThumbnail}>
+                  <Ionicons name="play-circle" size={64} color="white" />
+                  <Text style={styles.videoTapLabel}>Tap to play</Text>
+                </View>
                 <View style={styles.videoOverlay}>
-                  <Ionicons name="videocam" size={24} color="white" />
+                  <Ionicons name="videocam" size={20} color="white" />
                   <Text style={styles.videoLabel}>Clip {index + 1}</Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
       )}
+
+      {/* Full Screen Media Viewer Modal */}
+      <Modal visible={selectedMedia !== null} animationType="fade" transparent>
+        <View style={styles.mediaViewerOverlay}>
+          <TouchableOpacity 
+            style={styles.mediaViewerClose}
+            onPress={() => setSelectedMedia(null)}
+          >
+            <Ionicons name="close" size={32} color="white" />
+          </TouchableOpacity>
+          
+          {selectedMedia?.type === 'photo' ? (
+            <Image 
+              source={{ uri: selectedMedia.data }} 
+              style={styles.fullScreenImage}
+              resizeMode="contain"
+            />
+          ) : selectedMedia?.type === 'video' ? (
+            <Video
+              source={{ uri: selectedMedia.data }}
+              style={styles.fullScreenVideo}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+              shouldPlay
+              isLooping={false}
+            />
+          ) : null}
+        </View>
+      </Modal>
 
       {/* Game Notes */}
       {currentGame.notes && (
