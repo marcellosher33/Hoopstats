@@ -9,6 +9,7 @@ interface StatButtonProps {
   sublabel?: string;
   value?: number;
   onPress: () => void;
+  onLongPress?: () => void;
   variant?: 'scoring' | 'stat' | 'miss' | 'negative';
   icon?: keyof typeof Ionicons.glyphMap;
   size?: 'small' | 'medium' | 'large';
