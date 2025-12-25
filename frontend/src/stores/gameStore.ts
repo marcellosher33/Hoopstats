@@ -22,6 +22,8 @@ interface GameState {
 
   // Stats
   recordStat: (gameId: string, playerId: string, statType: StatType, token: string, shotLocation?: { x: number; y: number }) => Promise<void>;
+  undoLastStat: (gameId: string, token: string) => Promise<boolean>;
+  adjustStat: (gameId: string, playerId: string, statType: string, adjustment: number, token: string) => Promise<void>;
 
   // Media
   addMedia: (gameId: string, mediaType: string, data: string, token: string, options?: any) => Promise<void>;
