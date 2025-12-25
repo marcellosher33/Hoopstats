@@ -764,6 +764,22 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: screenHeight * 0.7,
   },
+  videoContainer: {
+    width: screenWidth,
+    height: screenHeight * 0.7,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  videoLoadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  videoLoadingText: {
+    color: colors.text,
+    marginTop: spacing.md,
+    fontSize: 16,
+  },
   notesCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
