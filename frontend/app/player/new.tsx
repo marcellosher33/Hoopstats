@@ -28,6 +28,8 @@ export default function NewPlayerScreen() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [position, setPosition] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
