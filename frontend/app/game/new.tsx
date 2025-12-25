@@ -337,16 +337,20 @@ export default function NewGameScreen() {
         {/* Player Selection */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Select Players</Text>
+            <Text style={styles.sectionTitle}>
+              {selectedTeam ? `${selectedTeam.name} Roster` : 'Select Players'}
+            </Text>
             <Text style={styles.selectedCount}>
               {selectedPlayers.length} selected
             </Text>
           </View>
 
-          {players.length === 0 ? (
+          {availablePlayers.length === 0 ? (
             <View style={styles.emptyPlayers}>
               <Ionicons name="people-outline" size={48} color={colors.textSecondary} />
-              <Text style={styles.emptyText}>No players yet</Text>
+              <Text style={styles.emptyText}>
+                {selectedTeam ? `No players in ${selectedTeam.name}` : 'No players yet'}
+              </Text>
               <Button
                 title="Add Player"
                 onPress={() => router.push('/player/new')}
@@ -357,7 +361,7 @@ export default function NewGameScreen() {
             </View>
           ) : (
             <View style={styles.playerGrid}>
-              {players.map((player) => (
+              {availablePlayers.map((player) => (
                 <TouchableOpacity
                   key={player.id}
                   style={[
