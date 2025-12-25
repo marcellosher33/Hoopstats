@@ -53,6 +53,7 @@ interface PlayerFullStats {
 
 export default function PlayerStatsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const { token } = useAuthStore();
   const { players } = useGameStore();
   
