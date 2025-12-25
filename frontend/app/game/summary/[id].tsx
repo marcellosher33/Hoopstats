@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as MediaLibrary from 'expo-media-library';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -40,7 +40,7 @@ const base64ToFileUri = async (base64Data: string, filename: string): Promise<st
     }
     
     await FileSystem.writeAsStringAsync(fileUri, cleanBase64, {
-      encoding: 'base64',
+      encoding: FileSystem.EncodingType.Base64,
     });
     
     return fileUri;
