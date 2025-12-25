@@ -1406,6 +1406,148 @@ async def test_upgrade_subscription(tier: str, user: dict = Depends(get_current_
     
     return {"message": f"Upgraded to {tier}", "expires": expires}
 
+# ==================== MEDIA UPLOAD ====================
+
+class MediaUploadResponse(BaseModel):
+    id: str
+    url: str
+    type: str
+    filename: str
+
+@api_router.post("/media/upload", response_model=MediaUploadResponse)
+async def upload_media(
+    file: UploadFile = File(...),
+    game_id: str = Form(...),
+    media_type: str = Form(...),
+    user: dict = Depends(get_current_user)
+):
+    """Upload media file (photo or video) and return URL"""
+    # Validate game belongs to user
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Generate unique filename
+    file_ext = file.filename.split('.')[-1] if '.' in file.filename else ('mp4' if media_type == 'video' else 'jpg')
+    media_id = str(uuid.uuid4())
+    filename = f"{media_id}.{file_ext}"
+    
+    # Create game-specific directory
+    game_media_dir = MEDIA_DIR / game_id
+    game_media_dir.mkdir(exist_ok=True)
+    
+    # Save file
+    file_path = game_media_dir / filename
+    async with aiofiles.open(file_path, 'wb') as out_file:
+        content = await file.read()
+        await out_file.write(content)
+    
+    # Generate URL
+    media_url = f"/api/media/{game_id}/{filename}"
+    
+    # Add media reference to game document (just the URL, not the actual data)
+    media_entry = {
+        "id": media_id,
+        "type": media_type,
+        "url": media_url,
+        "filename": filename,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$push": {"media": media_entry}}
+    )
+    
+    return MediaUploadResponse(
+        id=media_id,
+        url=media_url,
+        type=media_type,
+        filename=filename
+    )
+
+@api_router.post("/media/upload-base64")
+async def upload_media_base64(
+    game_id: str = Form(...),
+    media_type: str = Form(...),
+    data: str = Form(...),
+    user: dict = Depends(get_current_user)
+):
+    """Upload media from base64 data (for mobile compatibility)"""
+    # Validate game belongs to user
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Generate unique filename
+    file_ext = 'mp4' if media_type == 'video' else 'jpg'
+    media_id = str(uuid.uuid4())
+    filename = f"{media_id}.{file_ext}"
+    
+    # Create game-specific directory
+    game_media_dir = MEDIA_DIR / game_id
+    game_media_dir.mkdir(exist_ok=True)
+    
+    # Decode base64 and save file
+    try:
+        # Remove data URI prefix if present
+        if ',' in data:
+            data = data.split(',')[1]
+        
+        file_content = base64.b64decode(data)
+        file_path = game_media_dir / filename
+        
+        async with aiofiles.open(file_path, 'wb') as out_file:
+            await out_file.write(file_content)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to decode media: {str(e)}")
+    
+    # Generate URL
+    media_url = f"/api/media/{game_id}/{filename}"
+    
+    # Add media reference to game document
+    media_entry = {
+        "id": media_id,
+        "type": media_type,
+        "url": media_url,
+        "filename": filename,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$push": {"media": media_entry}}
+    )
+    
+    return {
+        "id": media_id,
+        "url": media_url,
+        "type": media_type,
+        "filename": filename
+    }
+
+@api_router.get("/media/{game_id}/{filename}")
+async def get_media(game_id: str, filename: str):
+    """Serve media file"""
+    file_path = MEDIA_DIR / game_id / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Media not found")
+    
+    # Determine content type
+    ext = filename.split('.')[-1].lower()
+    content_types = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png',
+        'mp4': 'video/mp4',
+        'mov': 'video/quicktime',
+        'webm': 'video/webm'
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+    
+    return FileResponse(file_path, media_type=content_type)
+
 # ==================== ROOT & HEALTH ====================
 
 @api_router.get("/")
