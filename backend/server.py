@@ -562,14 +562,14 @@ async def create_team(team_data: TeamCreate, user: dict = Depends(get_current_us
 @api_router.get("/teams")
 async def get_teams(user: dict = Depends(get_current_user)):
     teams = await db.teams.find({"user_id": user["id"]}).to_list(50)
-    return teams
+    return serialize_doc(teams)
 
 @api_router.get("/teams/{team_id}")
 async def get_team(team_id: str, user: dict = Depends(get_current_user)):
     team = await db.teams.find_one({"id": team_id, "user_id": user["id"]})
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
-    return team
+    return serialize_doc(team)
 
 @api_router.put("/teams/{team_id}")
 async def update_team(team_id: str, team_data: TeamCreate, user: dict = Depends(get_current_user)):
@@ -577,7 +577,7 @@ async def update_team(team_id: str, team_data: TeamCreate, user: dict = Depends(
         {"id": team_id, "user_id": user["id"]},
         {"$set": team_data.dict(exclude_unset=True)}
     )
-    if result.modified_count == 0:
+    if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Team not found")
     return await db.teams.find_one({"id": team_id})
 
