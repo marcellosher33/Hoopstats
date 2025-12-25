@@ -424,4 +424,45 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.surfaceLight,
   },
+  // Team selection styles
+  teamSection: {
+    marginBottom: spacing.lg,
+  },
+  teamScroll: {
+    marginTop: spacing.sm,
+  },
+  teamOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginRight: spacing.sm,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    gap: spacing.xs,
+  },
+  teamOptionActive: {
+    backgroundColor: colors.primary + '20',
+    borderColor: colors.primary,
+  },
+  teamOptionText: {
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  teamOptionTextActive: {
+    color: colors.text,
+  },
+  teamDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  teamNote: {
+    marginTop: spacing.sm,
+    fontSize: 12,
+    color: colors.success,
+    fontStyle: 'italic',
+  },
 });
