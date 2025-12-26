@@ -209,21 +209,15 @@ export default function LiveGameScreen() {
     router.replace(`/game/summary/${id}`);
   };
 
-  const openCamera = async (mode: 'photo' | 'video') => {
+  const openCamera = async () => {
     if (!cameraPermission?.granted) {
       const result = await requestCameraPermission();
       if (!result.granted) {
-        Alert.alert('Permission Required', 'Camera permission is needed to take photos/videos');
+        Alert.alert('Permission Required', 'Camera permission is needed to take photos');
         return;
       }
     }
 
-    if (mode === 'video' && user?.subscription_tier === 'free') {
-      Alert.alert('Pro Feature', 'Video recording requires a Pro subscription');
-      return;
-    }
-
-    setCameraMode(mode);
     setShowCamera(true);
   };
 
