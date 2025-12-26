@@ -106,6 +106,55 @@ export default function TeamsScreen() {
     }
   };
 
+  const openEditTeamModal = (team: Team) => {
+    setEditingTeam(team);
+    setEditTeamName(team.name);
+    setEditTeamColor(team.color_primary || COLOR_OPTIONS[0]);
+    setEditTeamLogo(team.logo || null);
+    setShowEditModal(true);
+  };
+
+  const handlePickEditLogo = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets[0].base64) {
+      setEditTeamLogo(`data:image/jpeg;base64,${result.assets[0].base64}`);
+    }
+  };
+
+  const handleUpdateTeam = async () => {
+    if (!editingTeam || !editTeamName.trim()) {
+      Alert.alert('Error', 'Please enter a team name');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await updateTeam(
+        editingTeam.id,
+        {
+          name: editTeamName.trim(),
+          color_primary: editTeamColor,
+          logo: editTeamLogo || undefined,
+        },
+        token!
+      );
+      setShowEditModal(false);
+      setEditingTeam(null);
+      Alert.alert('Success', 'Team updated successfully');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to update team');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getUnassignedPlayers = (): Player[] => {
     return players.filter(p => !p.team_id);
   };
