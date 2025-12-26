@@ -282,6 +282,80 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  teamSelector: {
+    padding: spacing.md,
+    paddingBottom: 0,
+  },
+  teamSelectorLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginBottom: spacing.xs,
+  },
+  teamScrollView: {
+    flexGrow: 0,
+  },
+  teamChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surface,
+    marginRight: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.surfaceLight,
+    gap: spacing.xs,
+  },
+  teamChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  teamChipDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  teamChipText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  teamChipTextActive: {
+    color: colors.text,
+  },
+  teamStatsCard: {
+    margin: spacing.md,
+    marginBottom: 0,
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  teamStatsTitle: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  teamStatsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  teamStatItem: {
+    alignItems: 'center',
+  },
+  teamStatValue: {
+    color: colors.text,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  teamStatLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: spacing.xs,
+  },
   filterTabs: {
     flexDirection: 'row',
     padding: spacing.md,
