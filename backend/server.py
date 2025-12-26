@@ -960,8 +960,11 @@ async def undo_last_stat(game_id: str, user: dict = Depends(get_current_user)):
             elif stat_type == "miss_3":
                 stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) - 1)
                 stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
-            elif stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
+            elif stat_type in ["rebounds", "offensive_rebounds", "defensive_rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
                 stats[stat_type] = max(0, stats.get(stat_type, 0) - 1)
+                # Also decrement total rebounds for offensive/defensive
+                if stat_type in ["offensive_rebounds", "defensive_rebounds"]:
+                    stats["rebounds"] = max(0, stats.get("rebounds", 0) - 1)
             
             # Remove shot from shots array if it was a shot
             if last_stat.get("shot_id"):
