@@ -90,7 +90,10 @@ export default function ProfileScreen() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            router.replace('/');
+            // Use setTimeout to ensure state is fully cleared before navigation
+            setTimeout(() => {
+              router.replace('/');
+            }, 100);
           },
         },
       ]
