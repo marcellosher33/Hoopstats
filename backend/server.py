@@ -137,6 +137,8 @@ class UserResponse(BaseModel):
 class PlayerStats(BaseModel):
     points: int = 0
     rebounds: int = 0
+    offensive_rebounds: int = 0
+    defensive_rebounds: int = 0
     assists: int = 0
     steals: int = 0
     blocks: int = 0
