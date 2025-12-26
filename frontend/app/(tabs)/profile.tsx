@@ -83,24 +83,32 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-            // Use setTimeout to ensure state is fully cleared before navigation
-            setTimeout(() => {
-              router.replace('/');
-            }, 100);
+    // Use custom modal for web compatibility
+    if (Platform.OS === 'web') {
+      setShowLogoutModal(true);
+    } else {
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to logout?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Logout',
+            style: 'destructive',
+            onPress: performLogout,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
+  };
+
+  const performLogout = async () => {
+    setShowLogoutModal(false);
+    await logout();
+    // Use setTimeout to ensure state is fully cleared before navigation
+    setTimeout(() => {
+      router.replace('/');
+    }, 100);
   };
 
   const tierColors = {
