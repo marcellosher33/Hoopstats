@@ -105,10 +105,9 @@ export default function ProfileScreen() {
   const performLogout = async () => {
     setShowLogoutModal(false);
     await logout();
-    // Use setTimeout to ensure state is fully cleared before navigation
-    setTimeout(() => {
-      router.replace('/');
-    }, 100);
+    // Navigate to the auth/login screen or root welcome screen
+    // Using '../' to go up from tabs, or direct path to index
+    router.replace('/auth/login');
   };
 
   const tierColors = {
