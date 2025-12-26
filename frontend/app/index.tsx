@@ -39,8 +39,8 @@ export default function Index() {
 
       <View style={styles.features}>
         <FeatureItem icon="stats-chart" text="Track all game stats" />
-        <FeatureItem icon="camera" text="Capture photos & videos" />
-        <FeatureItem icon="sparkles" text="AI-powered highlights" />
+        <FeatureItem icon="camera" text="Capture game photos" />
+        <FeatureItem icon="analytics" text="AI game summaries" />
         <FeatureItem icon="people" text="Individual & team tracking" />
       </View>
 
@@ -60,8 +60,8 @@ export default function Index() {
       <View style={styles.tiers}>
         <Text style={styles.tiersTitle}>Subscription Plans</Text>
         <View style={styles.tierRow}>
-          <TierBadge title="Free" price="$0" features={['Basic stats', 'Last 2 games', 'Photos only']} />
-          <TierBadge title="Pro" price="$69.99/yr" features={['All stats', 'Unlimited history', 'Video + Highlights']} highlight />
+          <TierBadge title="Free" price="$0" features={['Basic stats', 'Last 2 games', 'Photos']} />
+          <TierBadge title="Pro" price="$69.99/yr" features={['All stats', 'Unlimited history', 'AI Summaries']} isHighlighted />
           <TierBadge title="Team" price="$199.99/yr" features={['Team roster', 'Full analytics', 'Everything in Pro']} />
         </View>
       </View>
@@ -76,8 +76,8 @@ const FeatureItem = ({ icon, text }: { icon: keyof typeof Ionicons.glyphMap; tex
   </View>
 );
 
-const TierBadge = ({ title, price, features, highlight }: { title: string; price: string; features: string[]; highlight?: boolean }) => (
-  <View style={[styles.tierBadge, highlight && styles.tierHighlight]}>
+const TierBadge = ({ title, price, features, isHighlighted }: { title: string; price: string; features: string[]; isHighlighted?: boolean }) => (
+  <View style={[styles.tierBadge, isHighlighted && styles.tierHighlight]}>
     <Text style={styles.tierTitle}>{title}</Text>
     <Text style={styles.tierPrice}>{price}</Text>
     {features.map((f, i) => (
