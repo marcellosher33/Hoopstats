@@ -51,11 +51,15 @@ except Exception as e:
 
 # Helper to convert MongoDB documents
 def serialize_doc(doc):
-    """Convert MongoDB document to JSON-serializable format"""
+    """Convert MongoDB document to JSON-serializable dict"""
     if doc is None:
         return None
     if isinstance(doc, list):
         return [serialize_doc(d) for d in doc]
+    if isinstance(doc, ObjectId):
+        return str(doc)
+    if isinstance(doc, datetime):
+        return doc.isoformat()
     if isinstance(doc, dict):
         result = {}
         for key, value in doc.items():
@@ -68,7 +72,7 @@ def serialize_doc(doc):
             elif isinstance(value, dict):
                 result[key] = serialize_doc(value)
             elif isinstance(value, list):
-                result[key] = [serialize_doc(v) if isinstance(v, (dict, list)) else v for v in value]
+                result[key] = [serialize_doc(v) for v in value]
             else:
                 result[key] = value
         return result
