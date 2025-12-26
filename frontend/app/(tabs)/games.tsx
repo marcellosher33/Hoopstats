@@ -101,7 +101,7 @@ export default function GamesScreen() {
             <View style={styles.teamLogo}>
               <Ionicons name="basketball" size={24} color={colors.primary} />
             </View>
-            <Text style={styles.teamName}>Your Team</Text>
+            <Text style={styles.teamName}>{item.home_team_name || 'Your Team'}</Text>
           </View>
 
           <View style={styles.scoreContainer}>
