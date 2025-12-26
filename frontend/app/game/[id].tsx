@@ -145,43 +145,6 @@ export default function LiveGameScreen() {
     setShowCamera(false);
   };
 
-  const [isRecording, setIsRecording] = useState(false);
-
-  const handleStartRecording = async () => {
-    if (!cameraRef.current) return;
-    
-    try {
-      setIsRecording(true);
-      const video = await cameraRef.current.recordAsync({ maxDuration: 60 });
-      if (video?.uri && token && id) {
-        // Convert video to base64 for storage
-        const response = await fetch(video.uri);
-        const blob = await response.blob();
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64data = reader.result as string;
-          await addMedia(id, 'video', base64data, token, {
-            quarter: currentGame?.current_period || currentGame?.current_quarter,
-          });
-          Alert.alert('Success', 'Video saved!');
-        };
-        reader.readAsDataURL(blob);
-      }
-    } catch (error) {
-      console.error('Video recording error:', error);
-      Alert.alert('Error', 'Failed to record video');
-    } finally {
-      setIsRecording(false);
-      setShowCamera(false);
-    }
-  };
-
-  const handleStopRecording = () => {
-    if (cameraRef.current && isRecording) {
-      cameraRef.current.stopRecording();
-    }
-  };
-
   const handleQuarterChange = async (newPeriod: number) => {
     if (!token || !id) return;
     await updateGame(id, { current_period: newPeriod }, token);
