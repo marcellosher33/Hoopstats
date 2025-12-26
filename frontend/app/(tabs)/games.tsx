@@ -491,6 +491,20 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  assignedTeamBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderBottomLeftRadius: borderRadius.md,
+  },
+  assignedTeamText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   gameHeader: {
     flexDirection: 'row',
