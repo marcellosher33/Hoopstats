@@ -843,29 +843,11 @@ export default function LiveGameScreen() {
                 </View>
               )}
               
-              {cameraMode === 'photo' ? (
-                <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
-                  <View style={styles.captureBtnInner} />
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity 
-                  style={[styles.captureBtn, styles.videoCaptureBtn, isRecording && styles.recordingBtn]} 
-                  onPress={isRecording ? handleStopRecording : handleStartRecording}
-                >
-                  <View style={[
-                    styles.captureBtnInner, 
-                    styles.videoBtnInner,
-                    isRecording && styles.recordingBtnInner
-                  ]} />
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
+                <View style={styles.captureBtnInner} />
+              </TouchableOpacity>
               
-              <Text style={styles.captureModeLabel}>
-                {cameraMode === 'video' 
-                  ? (isRecording ? 'Tap to stop' : 'Tap to record')
-                  : 'Tap to capture'
-                }
-              </Text>
+              <Text style={styles.captureModeLabel}>Tap to capture</Text>
             </View>
           </View>
         </View>
@@ -879,7 +861,7 @@ export default function LiveGameScreen() {
             <Text style={styles.modalSubtitle}>Final Score</Text>
             <View style={styles.finalScoreRow}>
               <View style={styles.finalScoreTeam}>
-                <Text style={styles.finalScoreLabel}>Your Team</Text>
+                <Text style={styles.finalScoreLabel}>{currentGame.home_team_name || 'Your Team'}</Text>
                 <Text style={styles.finalScore}>{currentGame.our_score}</Text>
               </View>
               <Text style={styles.finalScoreVs}>-</Text>
