@@ -810,8 +810,11 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                         "period": current_period,
                         "timestamp": datetime.utcnow().isoformat()
                     })
-            elif stat.stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
+            elif stat.stat_type in ["rebounds", "offensive_rebounds", "defensive_rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
                 stats[stat.stat_type] = stats.get(stat.stat_type, 0) + stat.value
+                # Also increment total rebounds for offensive/defensive
+                if stat.stat_type in ["offensive_rebounds", "defensive_rebounds"]:
+                    stats["rebounds"] = stats.get("rebounds", 0) + stat.value
             elif stat.stat_type == "plus_minus":
                 stats["plus_minus"] = stats.get("plus_minus", 0) + stat.value
             elif stat.stat_type == "minutes":
