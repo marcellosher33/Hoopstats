@@ -782,6 +782,7 @@ export default function LiveGameScreen() {
 
       {/* Camera Modal */}
       <Modal visible={showCamera} animationType="slide">
+        <GestureHandlerRootView style={{ flex: 1 }}>
         <View style={[
           styles.cameraContainer,
           cameraMode === 'video' && styles.cameraContainerVideo
@@ -801,9 +802,11 @@ export default function LiveGameScreen() {
             </Text>
           </View>
 
+          <GestureDetector gesture={pinchGesture}>
+          <View style={styles.camera}>
           <CameraView
             ref={cameraRef}
-            style={styles.camera}
+            style={StyleSheet.absoluteFill}
             facing="back"
             mode={cameraMode === 'video' ? 'video' : 'picture'}
             zoom={cameraZoom}
