@@ -1267,9 +1267,6 @@ const styles = StyleSheet.create({
   modeBannerPhoto: {
     backgroundColor: colors.primary,
   },
-  modeBannerVideo: {
-    backgroundColor: colors.error,
-  },
   modeBannerText: {
     color: 'white',
     fontSize: 18,
