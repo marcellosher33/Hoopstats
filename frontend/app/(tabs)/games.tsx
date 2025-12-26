@@ -644,4 +644,62 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  modalContent: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  modalTitle: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    marginBottom: spacing.md,
+  },
+  teamList: {
+    maxHeight: 300,
+  },
+  teamOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.surfaceLight,
+    gap: spacing.md,
+  },
+  teamOptionSelected: {
+    backgroundColor: 'rgba(255, 107, 53, 0.2)',
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  teamOptionDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+  },
+  teamOptionText: {
+    color: colors.text,
+    fontSize: 16,
+    flex: 1,
+  },
 });
