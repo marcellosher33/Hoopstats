@@ -35,7 +35,6 @@ export default function LiveGameScreen() {
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [cameraMode, setCameraMode] = useState<'photo' | 'video'>('photo');
   const [showShotChart, setShowShotChart] = useState(false);
   const [pendingShotType, setPendingShotType] = useState<'2pt' | '3pt' | null>(null);
   const [pendingShotMade, setPendingShotMade] = useState(true);
