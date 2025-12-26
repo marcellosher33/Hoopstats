@@ -519,15 +519,29 @@ export default function LiveGameScreen() {
 
             {/* Other Stats */}
             <View style={styles.statSection}>
-              <Text style={styles.statSectionTitle}>STATS (Long-press to adjust)</Text>
+              <Text style={styles.statSectionTitle}>REBOUNDS (Long-press to adjust)</Text>
               <View style={styles.statGrid}>
                 <StatButton
-                  label="REB"
-                  value={stats?.rebounds}
+                  label="OREB"
+                  value={stats?.offensive_rebounds}
                   variant="stat"
-                  onPress={() => handleStatPress('rebounds')}
-                  onLongPress={() => handleLongPressAdjust('rebounds', 'Rebounds')}
+                  onPress={() => handleStatPress('offensive_rebounds')}
+                  onLongPress={() => handleLongPressAdjust('offensive_rebounds', 'Offensive Rebounds')}
                 />
+                <StatButton
+                  label="DREB"
+                  value={stats?.defensive_rebounds}
+                  variant="stat"
+                  onPress={() => handleStatPress('defensive_rebounds')}
+                  onLongPress={() => handleLongPressAdjust('defensive_rebounds', 'Defensive Rebounds')}
+                />
+              </View>
+            </View>
+
+            {/* Other Stats */}
+            <View style={styles.statSection}>
+              <Text style={styles.statSectionTitle}>STATS (Long-press to adjust)</Text>
+              <View style={styles.statGrid}>
                 <StatButton
                   label="AST"
                   value={stats?.assists}
