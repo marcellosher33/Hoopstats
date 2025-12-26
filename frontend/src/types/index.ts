@@ -119,5 +119,6 @@ export interface HighlightReel {
 export type StatType = 
   | 'points_2' | 'points_3' | 'ft_made' | 'ft_missed'
   | 'miss_2' | 'miss_3'
-  | 'rebounds' | 'assists' | 'steals' | 'blocks' | 'turnovers' | 'fouls'
+  | 'rebounds' | 'offensive_rebounds' | 'defensive_rebounds'
+  | 'assists' | 'steals' | 'blocks' | 'turnovers' | 'fouls'
   | 'plus_minus' | 'minutes';
