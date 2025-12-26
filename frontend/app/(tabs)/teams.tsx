@@ -240,30 +240,6 @@ export default function TeamsScreen() {
     );
   };
 
-  const handleDeleteTeam = (team: Team) => {
-    Alert.alert(
-      'Delete Team',
-      `Are you sure you want to delete "${team.name}"? Players will not be deleted.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteTeam(team.id, token!);
-              if (selectedTeam?.id === team.id) {
-                setSelectedTeam(null);
-              }
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete team');
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const getTeamPlayers = (teamId: string): Player[] => {
     return players.filter(p => p.team_id === teamId);
   };
