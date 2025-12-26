@@ -372,7 +372,7 @@ export default function LiveGameScreen() {
                   onLongPress={() => handleLongPressAdjust('offensive_rebounds', 'Off Rebounds', ps.player_id)}
                   delayLongPress={500}
                 >
-                  <Text style={styles.teamModeStatBtnText}>OREB</Text>
+                  <Text style={styles.teamModeStatBtnText}>OR</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(16, 185, 129, 0.4)' }]}
@@ -384,7 +384,7 @@ export default function LiveGameScreen() {
                   onLongPress={() => handleLongPressAdjust('defensive_rebounds', 'Def Rebounds', ps.player_id)}
                   delayLongPress={500}
                 >
-                  <Text style={styles.teamModeStatBtnText}>DREB</Text>
+                  <Text style={styles.teamModeStatBtnText}>DR</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}
