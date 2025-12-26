@@ -1,146 +1,181 @@
-diff --git a/frontend/app/game/[id].tsx b/frontend/app/game/[id].tsx
-index 2b57cbc..153f910 100644
---- a/frontend/app/game/[id].tsx
-+++ b/frontend/app/game/[id].tsx
-@@ -145,43 +145,6 @@ export default function LiveGameScreen() {
-     setShowCamera(false);
-   };
+diff --git a/backend/server.py b/backend/server.py
+index 0b7409d..a333793 100644
+--- a/backend/server.py
++++ b/backend/server.py
+@@ -51,11 +51,15 @@ except Exception as e:
  
--  const [isRecording, setIsRecording] = useState(false);
--
--  const handleStartRecording = async () => {
--    if (!cameraRef.current) return;
--    
--    try {
--      setIsRecording(true);
--      const video = await cameraRef.current.recordAsync({ maxDuration: 60 });
--      if (video?.uri && token && id) {
--        // Convert video to base64 for storage
--        const response = await fetch(video.uri);
--        const blob = await response.blob();
--        const reader = new FileReader();
--        reader.onloadend = async () => {
--          const base64data = reader.result as string;
--          await addMedia(id, 'video', base64data, token, {
--            quarter: currentGame?.current_period || currentGame?.current_quarter,
--          });
--          Alert.alert('Success', 'Video saved!');
--        };
--        reader.readAsDataURL(blob);
--      }
--    } catch (error) {
--      console.error('Video recording error:', error);
--      Alert.alert('Error', 'Failed to record video');
--    } finally {
--      setIsRecording(false);
--      setShowCamera(false);
--    }
--  };
--
--  const handleStopRecording = () => {
--    if (cameraRef.current && isRecording) {
--      cameraRef.current.stopRecording();
--    }
--  };
--
-   const handleQuarterChange = async (newPeriod: number) => {
-     if (!token || !id) return;
-     await updateGame(id, { current_period: newPeriod }, token);
-@@ -835,13 +798,6 @@ export default function LiveGameScreen() {
-             
-             {/* Bottom controls */}
-             <View style={styles.cameraControls}>
--              {isRecording && (
--                <View style={styles.recordingIndicator}>
--                  <View style={styles.recordingDot} />
--                  <Text style={styles.recordingText}>REC</Text>
--                </View>
--              )}
--              
-               <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
-                 <View style={styles.captureBtnInner} />
-               </TouchableOpacity>
-@@ -1300,9 +1256,6 @@ const styles = StyleSheet.create({
-     flex: 1,
-     backgroundColor: 'black',
-   },
--  cameraContainerVideo: {
--    backgroundColor: '#1a0000',
--  },
-   modeBanner: {
-     flexDirection: 'row',
-     alignItems: 'center',
-@@ -1314,9 +1267,6 @@ const styles = StyleSheet.create({
-   modeBannerPhoto: {
-     backgroundColor: colors.primary,
-   },
--  modeBannerVideo: {
--    backgroundColor: colors.error,
--  },
-   modeBannerText: {
-     color: 'white',
-     fontSize: 18,
-@@ -1446,22 +1396,6 @@ const styles = StyleSheet.create({
-     alignItems: 'center',
-     paddingBottom: spacing.xxl,
-   },
--  recordingIndicator: {
--    flexDirection: 'row',
--    alignItems: 'center',
--    backgroundColor: 'rgba(239, 68, 68, 0.9)',
--    paddingHorizontal: spacing.md,
--    paddingVertical: spacing.sm,
--    borderRadius: borderRadius.full,
--    marginBottom: spacing.lg,
--    gap: spacing.xs,
--  },
--  recordingDot: {
--    width: 12,
--    height: 12,
--    borderRadius: 6,
--    backgroundColor: 'white',
--  },
-   captureBtn: {
-     width: 80,
-     height: 80,
-@@ -1471,40 +1405,18 @@ const styles = StyleSheet.create({
-     alignItems: 'center',
-     justifyContent: 'center',
-   },
--  videoCaptureBtn: {
--    borderColor: colors.error,
--  },
-   captureBtnInner: {
-     width: 64,
-     height: 64,
-     borderRadius: 32,
-     backgroundColor: 'white',
-   },
--  videoBtnInner: {
--    backgroundColor: colors.error,
--  },
--  recordingBtn: {
--    borderColor: colors.error,
--    borderWidth: 6,
--  },
--  recordingBtnInner: {
--    width: 32,
--    height: 32,
--    borderRadius: 6,
--    backgroundColor: colors.error,
--  },
-   captureModeLabel: {
-     color: 'white',
-     fontSize: 14,
-     marginTop: spacing.md,
-     opacity: 0.8,
-   },
--  recordingText: {
--    color: 'white',
--    fontSize: 16,
--    fontWeight: 'bold',
--    marginTop: spacing.sm,
--  },
-   // Mode Toggle Styles
-   modeToggle: {
-     flexDirection: 'row',
+ # Helper to convert MongoDB documents
+ def serialize_doc(doc):
+-    """Convert MongoDB document to JSON-serializable format"""
++    """Convert MongoDB document to JSON-serializable dict"""
+     if doc is None:
+         return None
+     if isinstance(doc, list):
+         return [serialize_doc(d) for d in doc]
++    if isinstance(doc, ObjectId):
++        return str(doc)
++    if isinstance(doc, datetime):
++        return doc.isoformat()
+     if isinstance(doc, dict):
+         result = {}
+         for key, value in doc.items():
+@@ -68,7 +72,7 @@ def serialize_doc(doc):
+             elif isinstance(value, dict):
+                 result[key] = serialize_doc(value)
+             elif isinstance(value, list):
+-                result[key] = [serialize_doc(v) if isinstance(v, (dict, list)) else v for v in value]
++                result[key] = [serialize_doc(v) for v in value]
+             else:
+                 result[key] = value
+         return result
+diff --git a/model.patch b/model.patch
+index 2c7d0d7..e69de29 100644
+--- a/model.patch
++++ b/model.patch
+@@ -1,146 +0,0 @@
+-diff --git a/frontend/app/game/[id].tsx b/frontend/app/game/[id].tsx
+-index 2b57cbc..153f910 100644
+---- a/frontend/app/game/[id].tsx
+-+++ b/frontend/app/game/[id].tsx
+-@@ -145,43 +145,6 @@ export default function LiveGameScreen() {
+-     setShowCamera(false);
+-   };
+- 
+--  const [isRecording, setIsRecording] = useState(false);
+--
+--  const handleStartRecording = async () => {
+--    if (!cameraRef.current) return;
+--    
+--    try {
+--      setIsRecording(true);
+--      const video = await cameraRef.current.recordAsync({ maxDuration: 60 });
+--      if (video?.uri && token && id) {
+--        // Convert video to base64 for storage
+--        const response = await fetch(video.uri);
+--        const blob = await response.blob();
+--        const reader = new FileReader();
+--        reader.onloadend = async () => {
+--          const base64data = reader.result as string;
+--          await addMedia(id, 'video', base64data, token, {
+--            quarter: currentGame?.current_period || currentGame?.current_quarter,
+--          });
+--          Alert.alert('Success', 'Video saved!');
+--        };
+--        reader.readAsDataURL(blob);
+--      }
+--    } catch (error) {
+--      console.error('Video recording error:', error);
+--      Alert.alert('Error', 'Failed to record video');
+--    } finally {
+--      setIsRecording(false);
+--      setShowCamera(false);
+--    }
+--  };
+--
+--  const handleStopRecording = () => {
+--    if (cameraRef.current && isRecording) {
+--      cameraRef.current.stopRecording();
+--    }
+--  };
+--
+-   const handleQuarterChange = async (newPeriod: number) => {
+-     if (!token || !id) return;
+-     await updateGame(id, { current_period: newPeriod }, token);
+-@@ -835,13 +798,6 @@ export default function LiveGameScreen() {
+-             
+-             {/* Bottom controls */}
+-             <View style={styles.cameraControls}>
+--              {isRecording && (
+--                <View style={styles.recordingIndicator}>
+--                  <View style={styles.recordingDot} />
+--                  <Text style={styles.recordingText}>REC</Text>
+--                </View>
+--              )}
+--              
+-               <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
+-                 <View style={styles.captureBtnInner} />
+-               </TouchableOpacity>
+-@@ -1300,9 +1256,6 @@ const styles = StyleSheet.create({
+-     flex: 1,
+-     backgroundColor: 'black',
+-   },
+--  cameraContainerVideo: {
+--    backgroundColor: '#1a0000',
+--  },
+-   modeBanner: {
+-     flexDirection: 'row',
+-     alignItems: 'center',
+-@@ -1314,9 +1267,6 @@ const styles = StyleSheet.create({
+-   modeBannerPhoto: {
+-     backgroundColor: colors.primary,
+-   },
+--  modeBannerVideo: {
+--    backgroundColor: colors.error,
+--  },
+-   modeBannerText: {
+-     color: 'white',
+-     fontSize: 18,
+-@@ -1446,22 +1396,6 @@ const styles = StyleSheet.create({
+-     alignItems: 'center',
+-     paddingBottom: spacing.xxl,
+-   },
+--  recordingIndicator: {
+--    flexDirection: 'row',
+--    alignItems: 'center',
+--    backgroundColor: 'rgba(239, 68, 68, 0.9)',
+--    paddingHorizontal: spacing.md,
+--    paddingVertical: spacing.sm,
+--    borderRadius: borderRadius.full,
+--    marginBottom: spacing.lg,
+--    gap: spacing.xs,
+--  },
+--  recordingDot: {
+--    width: 12,
+--    height: 12,
+--    borderRadius: 6,
+--    backgroundColor: 'white',
+--  },
+-   captureBtn: {
+-     width: 80,
+-     height: 80,
+-@@ -1471,40 +1405,18 @@ const styles = StyleSheet.create({
+-     alignItems: 'center',
+-     justifyContent: 'center',
+-   },
+--  videoCaptureBtn: {
+--    borderColor: colors.error,
+--  },
+-   captureBtnInner: {
+-     width: 64,
+-     height: 64,
+-     borderRadius: 32,
+-     backgroundColor: 'white',
+-   },
+--  videoBtnInner: {
+--    backgroundColor: colors.error,
+--  },
+--  recordingBtn: {
+--    borderColor: colors.error,
+--    borderWidth: 6,
+--  },
+--  recordingBtnInner: {
+--    width: 32,
+--    height: 32,
+--    borderRadius: 6,
+--    backgroundColor: colors.error,
+--  },
+-   captureModeLabel: {
+-     color: 'white',
+-     fontSize: 14,
+-     marginTop: spacing.md,
+-     opacity: 0.8,
+-   },
+--  recordingText: {
+--    color: 'white',
+--    fontSize: 16,
+--    fontWeight: 'bold',
+--    marginTop: spacing.sm,
+--  },
+-   // Mode Toggle Styles
+-   modeToggle: {
+-     flexDirection: 'row',
