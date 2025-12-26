@@ -754,30 +754,18 @@ export default function LiveGameScreen() {
 
       {/* Camera Modal */}
       <Modal visible={showCamera} animationType="slide">
-        <View style={[
-          styles.cameraContainer,
-          cameraMode === 'video' && styles.cameraContainerVideo
-        ]}>
+        <View style={styles.cameraContainer}>
           {/* Mode Banner */}
-          <View style={[
-            styles.modeBanner,
-            cameraMode === 'video' ? styles.modeBannerVideo : styles.modeBannerPhoto
-          ]}>
-            <Ionicons 
-              name={cameraMode === 'video' ? 'videocam' : 'camera'} 
-              size={24} 
-              color="white" 
-            />
-            <Text style={styles.modeBannerText}>
-              {cameraMode === 'video' ? 'VIDEO MODE' : 'PHOTO MODE'}
-            </Text>
+          <View style={[styles.modeBanner, styles.modeBannerPhoto]}>
+            <Ionicons name="camera" size={24} color="white" />
+            <Text style={styles.modeBannerText}>PHOTO MODE</Text>
           </View>
 
           <CameraView
             ref={cameraRef}
             style={styles.camera}
             facing="back"
-            mode={cameraMode === 'video' ? 'video' : 'picture'}
+            mode="picture"
             zoom={cameraZoom}
           />
           
@@ -788,9 +776,6 @@ export default function LiveGameScreen() {
               <TouchableOpacity 
                 style={styles.closeButton}
                 onPress={() => {
-                  if (isRecording) {
-                    handleStopRecording();
-                  }
                   setCameraZoom(0);
                   setShowCamera(false);
                 }}
