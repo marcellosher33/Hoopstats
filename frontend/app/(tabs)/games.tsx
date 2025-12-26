@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   ScrollView,
+  Modal,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
