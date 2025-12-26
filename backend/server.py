@@ -897,8 +897,11 @@ async def adjust_stat(game_id: str, adjustment: StatAdjustment, user: dict = Dep
                 else:
                     stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) + adjustment.adjustment)
                     stats["points"] = max(0, stats.get("points", 0) + adjustment.adjustment)
-            elif adjustment.stat_type in ["rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
+            elif adjustment.stat_type in ["rebounds", "offensive_rebounds", "defensive_rebounds", "assists", "steals", "blocks", "turnovers", "fouls"]:
                 stats[adjustment.stat_type] = max(0, stats.get(adjustment.stat_type, 0) + adjustment.adjustment)
+                # Also update total rebounds for offensive/defensive
+                if adjustment.stat_type in ["offensive_rebounds", "defensive_rebounds"]:
+                    stats["rebounds"] = max(0, stats.get("rebounds", 0) + adjustment.adjustment)
             
             ps["stats"] = stats
             break
