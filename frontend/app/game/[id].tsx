@@ -411,6 +411,18 @@ export default function LiveGameScreen() {
                   <Text style={styles.teamModeStatBtnText}>STL</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(147, 51, 234, 0.2)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'blocks', token);
+                    }
+                  }}
+                  onLongPress={() => handleLongPressAdjust('blocks', 'Blocks', ps.player_id)}
+                  delayLongPress={500}
+                >
+                  <Text style={styles.teamModeStatBtnText}>BLK</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
                   onPress={async () => {
                     if (token && id) {
@@ -432,7 +444,7 @@ export default function LiveGameScreen() {
                   onLongPress={() => handleLongPressAdjust('fouls', 'Fouls', ps.player_id)}
                   delayLongPress={500}
                 >
-                  <Text style={styles.teamModeStatBtnText}>FOUL</Text>
+                  <Text style={styles.teamModeStatBtnText}>FOU</Text>
                 </TouchableOpacity>
               </View>
             </View>
