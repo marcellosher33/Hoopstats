@@ -798,13 +798,6 @@ export default function LiveGameScreen() {
             
             {/* Bottom controls */}
             <View style={styles.cameraControls}>
-              {isRecording && (
-                <View style={styles.recordingIndicator}>
-                  <View style={styles.recordingDot} />
-                  <Text style={styles.recordingText}>REC</Text>
-                </View>
-              )}
-              
               <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
                 <View style={styles.captureBtnInner} />
               </TouchableOpacity>
