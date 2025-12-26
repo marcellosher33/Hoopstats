@@ -807,12 +807,6 @@ export default function LiveGameScreen() {
             </View>
             
             {/* Zoom Controls */}
-            {/* Pinch to zoom hint */}
-            <View style={styles.pinchHint}>
-              <Ionicons name="hand-left-outline" size={16} color="rgba(255,255,255,0.7)" />
-              <Text style={styles.pinchHintText}>Pinch to zoom</Text>
-            </View>
-            
             <View style={styles.zoomControlsContainer}>
               <View style={styles.zoomControls}>
                 <TouchableOpacity 
