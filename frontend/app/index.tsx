@@ -11,12 +11,19 @@ export default function Index() {
   const { isAuthenticated, isLoading } = useAuthStore();
 
   useEffect(() => {
+    // Only redirect to tabs if authenticated and not loading
     if (!isLoading && isAuthenticated) {
       router.replace('/(tabs)');
     }
   }, [isAuthenticated, isLoading]);
 
+  // Show loading state
   if (isLoading) {
+    return null;
+  }
+
+  // If authenticated, don't render the welcome screen (will redirect)
+  if (isAuthenticated) {
     return null;
   }
 
