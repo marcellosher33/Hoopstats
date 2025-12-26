@@ -187,6 +187,16 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Subscription Plans</Text>
         
+        {/* Restore Purchases Button */}
+        <TouchableOpacity 
+          style={styles.restoreButton}
+          onPress={handleRestorePurchases}
+          disabled={upgrading || purchaseLoading}
+        >
+          <Ionicons name="refresh" size={18} color={colors.primary} />
+          <Text style={styles.restoreText}>Restore Purchases</Text>
+        </TouchableOpacity>
+        
         {/* Free Plan */}
         <View style={[styles.planCard, user?.subscription_tier === 'free' && styles.planActive]}>
           <View style={styles.planHeader}>
