@@ -397,6 +397,76 @@ export default function GameSummaryScreen() {
         )}
       </View>
 
+      {/* Team Statistics (for team mode) */}
+      {isTeamMode && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Team Statistics</Text>
+          <View style={styles.teamStatsCard}>
+            <Text style={styles.teamStatsTeamName}>{currentGame.home_team_name || 'Team'} Totals</Text>
+            
+            {/* Main Stats Row */}
+            <View style={styles.teamStatsMainRow}>
+              <View style={styles.teamStatBig}>
+                <Text style={[styles.teamStatBigValue, { color: colors.points }]}>{teamStats.points}</Text>
+                <Text style={styles.teamStatBigLabel}>PTS</Text>
+              </View>
+              <View style={styles.teamStatBig}>
+                <Text style={[styles.teamStatBigValue, { color: colors.rebounds }]}>{teamStats.rebounds}</Text>
+                <Text style={styles.teamStatBigLabel}>REB</Text>
+              </View>
+              <View style={styles.teamStatBig}>
+                <Text style={[styles.teamStatBigValue, { color: colors.assists }]}>{teamStats.assists}</Text>
+                <Text style={styles.teamStatBigLabel}>AST</Text>
+              </View>
+              <View style={styles.teamStatBig}>
+                <Text style={[styles.teamStatBigValue, { color: colors.steals }]}>{teamStats.steals}</Text>
+                <Text style={styles.teamStatBigLabel}>STL</Text>
+              </View>
+            </View>
+            
+            {/* Secondary Stats */}
+            <View style={styles.teamStatsSecondaryRow}>
+              <View style={styles.teamStatSmall}>
+                <Text style={styles.teamStatSmallValue}>{teamStats.blocks}</Text>
+                <Text style={styles.teamStatSmallLabel}>BLK</Text>
+              </View>
+              <View style={styles.teamStatSmall}>
+                <Text style={styles.teamStatSmallValue}>{teamStats.offensive_rebounds}</Text>
+                <Text style={styles.teamStatSmallLabel}>OREB</Text>
+              </View>
+              <View style={styles.teamStatSmall}>
+                <Text style={styles.teamStatSmallValue}>{teamStats.defensive_rebounds}</Text>
+                <Text style={styles.teamStatSmallLabel}>DREB</Text>
+              </View>
+              <View style={styles.teamStatSmall}>
+                <Text style={[styles.teamStatSmallValue, { color: colors.turnovers }]}>{teamStats.turnovers}</Text>
+                <Text style={styles.teamStatSmallLabel}>TO</Text>
+              </View>
+              <View style={styles.teamStatSmall}>
+                <Text style={styles.teamStatSmallValue}>{teamStats.fouls}</Text>
+                <Text style={styles.teamStatSmallLabel}>FOULS</Text>
+              </View>
+            </View>
+            
+            {/* Shooting Percentages */}
+            <View style={styles.teamShootingRow}>
+              <View style={styles.teamShootingItem}>
+                <Text style={styles.teamShootingPct}>{fgPct}%</Text>
+                <Text style={styles.teamShootingLabel}>FG ({teamStats.fg_made}/{teamStats.fg_attempted})</Text>
+              </View>
+              <View style={styles.teamShootingItem}>
+                <Text style={styles.teamShootingPct}>{threePct}%</Text>
+                <Text style={styles.teamShootingLabel}>3PT ({teamStats.three_pt_made}/{teamStats.three_pt_attempted})</Text>
+              </View>
+              <View style={styles.teamShootingItem}>
+                <Text style={styles.teamShootingPct}>{ftPct}%</Text>
+                <Text style={styles.teamShootingLabel}>FT ({teamStats.ft_made}/{teamStats.ft_attempted})</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+
       {/* Player Stats */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Player Statistics</Text>
