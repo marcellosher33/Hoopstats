@@ -10,6 +10,8 @@ export interface User {
 export interface PlayerStats {
   points: number;
   rebounds: number;
+  offensive_rebounds: number;
+  defensive_rebounds: number;
   assists: number;
   steals: number;
   blocks: number;
