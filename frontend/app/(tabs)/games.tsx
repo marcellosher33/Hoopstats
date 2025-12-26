@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,24 +14,56 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { useGameStore } from '../../src/stores/gameStore';
 import { Button } from '../../src/components/Button';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
-import { Game } from '../../src/types';
+import { Game, Team } from '../../src/types';
 
 export default function GamesScreen() {
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { games, fetchGames, isLoading } = useGameStore();
+  const { games, teams, fetchGames, fetchTeams, isLoading } = useGameStore();
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
 
   useEffect(() => {
     if (token) {
       fetchGames(token);
+      fetchTeams(token);
     }
   }, [token]);
 
   const filteredGames = games.filter(game => {
-    if (filter === 'all') return true;
-    return game.status === filter;
+    // Filter by status
+    if (filter !== 'all' && game.status !== filter) return false;
+    
+    // Filter by team
+    if (selectedTeamId) {
+      // Check if game's home_team_name matches selected team name
+      const selectedTeam = teams.find(t => t.id === selectedTeamId);
+      if (selectedTeam && game.home_team_name !== selectedTeam.name) {
+        return false;
+      }
+    }
+    
+    return true;
   });
+
+  // Calculate stats for selected team
+  const getTeamStats = () => {
+    if (!selectedTeamId) return null;
+    
+    const teamGames = games.filter(g => {
+      const selectedTeam = teams.find(t => t.id === selectedTeamId);
+      return selectedTeam && g.home_team_name === selectedTeam.name && g.status === 'completed';
+    });
+    
+    const wins = teamGames.filter(g => g.our_score > g.opponent_score).length;
+    const losses = teamGames.filter(g => g.our_score < g.opponent_score).length;
+    const totalPoints = teamGames.reduce((sum, g) => sum + (g.our_score || 0), 0);
+    const avgPoints = teamGames.length > 0 ? (totalPoints / teamGames.length).toFixed(1) : '0';
+    
+    return { wins, losses, gamesPlayed: teamGames.length, avgPoints };
+  };
+
+  const teamStats = getTeamStats();
 
   const renderGame = ({ item }: { item: Game }) => {
     const isWin = item.our_score > item.opponent_score;
