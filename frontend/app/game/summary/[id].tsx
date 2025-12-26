@@ -289,6 +289,37 @@ export default function GameSummaryScreen() {
   const videos = currentGame.media.filter(m => m.type === 'video');
   const allShots = currentGame.player_stats.flatMap(ps => ps.shots || []);
 
+  // Calculate team totals
+  const teamStats = currentGame.player_stats.reduce((totals, ps) => {
+    return {
+      points: totals.points + (ps.stats.points || 0),
+      rebounds: totals.rebounds + (ps.stats.rebounds || 0),
+      offensive_rebounds: totals.offensive_rebounds + (ps.stats.offensive_rebounds || 0),
+      defensive_rebounds: totals.defensive_rebounds + (ps.stats.defensive_rebounds || 0),
+      assists: totals.assists + (ps.stats.assists || 0),
+      steals: totals.steals + (ps.stats.steals || 0),
+      blocks: totals.blocks + (ps.stats.blocks || 0),
+      turnovers: totals.turnovers + (ps.stats.turnovers || 0),
+      fouls: totals.fouls + (ps.stats.fouls || 0),
+      fg_made: totals.fg_made + (ps.stats.fg_made || 0),
+      fg_attempted: totals.fg_attempted + (ps.stats.fg_attempted || 0),
+      three_pt_made: totals.three_pt_made + (ps.stats.three_pt_made || 0),
+      three_pt_attempted: totals.three_pt_attempted + (ps.stats.three_pt_attempted || 0),
+      ft_made: totals.ft_made + (ps.stats.ft_made || 0),
+      ft_attempted: totals.ft_attempted + (ps.stats.ft_attempted || 0),
+    };
+  }, {
+    points: 0, rebounds: 0, offensive_rebounds: 0, defensive_rebounds: 0,
+    assists: 0, steals: 0, blocks: 0, turnovers: 0, fouls: 0,
+    fg_made: 0, fg_attempted: 0, three_pt_made: 0, three_pt_attempted: 0,
+    ft_made: 0, ft_attempted: 0
+  });
+
+  const fgPct = teamStats.fg_attempted > 0 ? Math.round((teamStats.fg_made / teamStats.fg_attempted) * 100) : 0;
+  const threePct = teamStats.three_pt_attempted > 0 ? Math.round((teamStats.three_pt_made / teamStats.three_pt_attempted) * 100) : 0;
+  const ftPct = teamStats.ft_attempted > 0 ? Math.round((teamStats.ft_made / teamStats.ft_attempted) * 100) : 0;
+  const isTeamMode = currentGame.player_stats.length > 1;
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Game Result Header */}
