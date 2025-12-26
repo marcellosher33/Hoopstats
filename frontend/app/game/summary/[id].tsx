@@ -470,7 +470,12 @@ export default function GameSummaryScreen() {
       {/* Player Stats */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Player Statistics</Text>
-        {currentGame.player_stats.map((ps) => (
+        {currentGame.player_stats.map((ps) => {
+          const playerFgPct = ps.stats.fg_attempted > 0 ? Math.round((ps.stats.fg_made / ps.stats.fg_attempted) * 100) : 0;
+          const playerThreePct = ps.stats.three_pt_attempted > 0 ? Math.round((ps.stats.three_pt_made / ps.stats.three_pt_attempted) * 100) : 0;
+          const playerFtPct = ps.stats.ft_attempted > 0 ? Math.round((ps.stats.ft_made / ps.stats.ft_attempted) * 100) : 0;
+          
+          return (
           <View key={ps.player_id} style={styles.playerStatCard}>
             <View style={styles.playerHeader}>
               <View style={styles.playerAvatar}>
@@ -481,6 +486,8 @@ export default function GameSummaryScreen() {
                 <Text style={styles.playerPts}>{ps.stats.points || 0} PTS</Text>
               </View>
             </View>
+            
+            {/* All Stats Grid */}
             <View style={styles.statsGrid}>
               <StatItem label="PTS" value={ps.stats.points || 0} color={colors.points} />
               <StatItem label="REB" value={ps.stats.rebounds || 0} color={colors.rebounds} />
@@ -489,20 +496,44 @@ export default function GameSummaryScreen() {
               <StatItem label="BLK" value={ps.stats.blocks || 0} color={colors.blocks} />
               <StatItem label="TO" value={ps.stats.turnovers || 0} color={colors.turnovers} />
             </View>
-            <View style={styles.shootingStats}>
-              <Text style={styles.shootingText}>
-                FG: {ps.stats.fg_made || 0}/{ps.stats.fg_attempted || 0}
-                {ps.stats.fg_attempted ? ` (${Math.round((ps.stats.fg_made / ps.stats.fg_attempted) * 100)}%)` : ''}
-              </Text>
-              <Text style={styles.shootingText}>
-                3PT: {ps.stats.three_pt_made || 0}/{ps.stats.three_pt_attempted || 0}
-              </Text>
-              <Text style={styles.shootingText}>
-                FT: {ps.stats.ft_made || 0}/{ps.stats.ft_attempted || 0}
-              </Text>
+            
+            {/* Rebounds Breakdown */}
+            <View style={styles.reboundsRow}>
+              <View style={styles.reboundItem}>
+                <Text style={styles.reboundValue}>{ps.stats.offensive_rebounds || 0}</Text>
+                <Text style={styles.reboundLabel}>OREB</Text>
+              </View>
+              <View style={styles.reboundItem}>
+                <Text style={styles.reboundValue}>{ps.stats.defensive_rebounds || 0}</Text>
+                <Text style={styles.reboundLabel}>DREB</Text>
+              </View>
+              <View style={styles.reboundItem}>
+                <Text style={styles.reboundValue}>{ps.stats.fouls || 0}</Text>
+                <Text style={styles.reboundLabel}>FOULS</Text>
+              </View>
+            </View>
+            
+            {/* Shooting Percentages */}
+            <View style={styles.shootingPercentages}>
+              <View style={styles.shootingPctItem}>
+                <Text style={styles.shootingPctValue}>{playerFgPct}%</Text>
+                <Text style={styles.shootingPctLabel}>FG</Text>
+                <Text style={styles.shootingPctDetail}>{ps.stats.fg_made || 0}/{ps.stats.fg_attempted || 0}</Text>
+              </View>
+              <View style={styles.shootingPctItem}>
+                <Text style={styles.shootingPctValue}>{playerThreePct}%</Text>
+                <Text style={styles.shootingPctLabel}>3PT</Text>
+                <Text style={styles.shootingPctDetail}>{ps.stats.three_pt_made || 0}/{ps.stats.three_pt_attempted || 0}</Text>
+              </View>
+              <View style={styles.shootingPctItem}>
+                <Text style={styles.shootingPctValue}>{playerFtPct}%</Text>
+                <Text style={styles.shootingPctLabel}>FT</Text>
+                <Text style={styles.shootingPctDetail}>{ps.stats.ft_made || 0}/{ps.stats.ft_attempted || 0}</Text>
+              </View>
             </View>
           </View>
-        ))}
+          );
+        })}
       </View>
 
       {/* Shot Chart */}
