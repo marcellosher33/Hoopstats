@@ -591,6 +591,65 @@ export default function TeamsScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Edit Team Modal */}
+      <Modal visible={showEditModal} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Edit Team</Text>
+              <TouchableOpacity onPress={() => setShowEditModal(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity style={styles.logoPickerContainer} onPress={handlePickEditLogo}>
+              {editTeamLogo ? (
+                <Image source={{ uri: editTeamLogo }} style={styles.logoPicker} />
+              ) : (
+                <View style={[styles.logoPlaceholder, { backgroundColor: editTeamColor }]}>
+                  <Ionicons name="camera" size={32} color="white" />
+                  <Text style={styles.logoPlaceholderText}>Change Logo</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <Input
+              label="Team Name"
+              value={editTeamName}
+              onChangeText={setEditTeamName}
+              placeholder="e.g., Warriors, Eagles"
+            />
+
+            <Text style={styles.colorLabel}>Team Color</Text>
+            <View style={styles.colorGrid}>
+              {COLOR_OPTIONS.map((color) => (
+                <TouchableOpacity
+                  key={color}
+                  style={[
+                    styles.colorOption,
+                    { backgroundColor: color },
+                    editTeamColor === color && styles.colorOptionSelected,
+                  ]}
+                  onPress={() => setEditTeamColor(color)}
+                >
+                  {editTeamColor === color && (
+                    <Ionicons name="checkmark" size={20} color="white" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Button
+              title="Save Changes"
+              onPress={handleUpdateTeam}
+              loading={loading}
+              disabled={!editTeamName.trim()}
+              style={{ marginTop: spacing.lg }}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
