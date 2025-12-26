@@ -237,25 +237,37 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
         
-        <TouchableOpacity style={styles.settingRow}>
+        <TouchableOpacity 
+          style={styles.settingRow}
+          onPress={() => Alert.alert('Notifications', 'Notification settings coming soon. You\'ll be able to configure game reminders, stat alerts, and more.')}
+        >
           <Ionicons name="notifications" size={24} color={colors.text} />
           <Text style={styles.settingText}>Notifications</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingRow}>
+        <TouchableOpacity 
+          style={styles.settingRow}
+          onPress={() => Alert.alert('Export Data', 'Data export feature coming soon. You\'ll be able to export your game stats to CSV or PDF.')}
+        >
           <Ionicons name="cloud-download" size={24} color={colors.text} />
           <Text style={styles.settingText}>Export Data</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingRow}>
+        <TouchableOpacity 
+          style={styles.settingRow}
+          onPress={() => Alert.alert('Help & Support', 'Need help? Contact us at support@hoopstats.app\n\nFAQ:\n• Tap stats to record them\n• Long-press to manually adjust\n• Use Team Mode for multiple players')}
+        >
           <Ionicons name="help-circle" size={24} color={colors.text} />
           <Text style={styles.settingText}>Help & Support</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingRow}>
+        <TouchableOpacity 
+          style={styles.settingRow}
+          onPress={() => Alert.alert('Terms & Privacy', 'By using this app, you agree to our Terms of Service and Privacy Policy.\n\nYour data is stored securely and never shared with third parties without your consent.')}
+        >
           <Ionicons name="document-text" size={24} color={colors.text} />
           <Text style={styles.settingText}>Terms & Privacy</Text>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
