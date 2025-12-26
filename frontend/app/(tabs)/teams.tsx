@@ -32,10 +32,15 @@ export default function TeamsScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showAddPlayersModal, setShowAddPlayersModal] = useState(false);
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamColor, setNewTeamColor] = useState(COLOR_OPTIONS[0]);
   const [newTeamLogo, setNewTeamLogo] = useState<string | null>(null);
+  const [editTeamName, setEditTeamName] = useState('');
+  const [editTeamColor, setEditTeamColor] = useState(COLOR_OPTIONS[0]);
+  const [editTeamLogo, setEditTeamLogo] = useState<string | null>(null);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [selectedPlayersToAdd, setSelectedPlayersToAdd] = useState<string[]>([]);
