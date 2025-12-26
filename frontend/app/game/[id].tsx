@@ -784,6 +784,7 @@ export default function LiveGameScreen() {
             style={styles.camera}
             facing="back"
             mode={cameraMode === 'video' ? 'video' : 'picture'}
+            zoom={cameraZoom}
           >
             <View style={styles.cameraHeader}>
               <TouchableOpacity 
@@ -792,11 +793,78 @@ export default function LiveGameScreen() {
                   if (isRecording) {
                     handleStopRecording();
                   }
+                  setCameraZoom(0); // Reset zoom when closing
                   setShowCamera(false);
                 }}
               >
                 <Ionicons name="close" size={28} color="white" />
               </TouchableOpacity>
+              
+              {/* Zoom indicator */}
+              <View style={styles.zoomIndicator}>
+                <Text style={styles.zoomText}>{(1 + cameraZoom * 7).toFixed(1)}x</Text>
+              </View>
+            </View>
+            
+            {/* Zoom Controls */}
+            <View style={styles.zoomControlsContainer}>
+              <View style={styles.zoomControls}>
+                <TouchableOpacity 
+                  style={[styles.zoomBtn, cameraZoom === 0 && styles.zoomBtnActive]}
+                  onPress={() => setCameraZoom(0)}
+                >
+                  <Text style={[styles.zoomBtnText, cameraZoom === 0 && styles.zoomBtnTextActive]}>1x</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.zoomBtn, cameraZoom >= 0.12 && cameraZoom < 0.25 && styles.zoomBtnActive]}
+                  onPress={() => setCameraZoom(0.125)}
+                >
+                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.12 && cameraZoom < 0.25 && styles.zoomBtnTextActive]}>2x</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.zoomBtn, cameraZoom >= 0.25 && cameraZoom < 0.5 && styles.zoomBtnActive]}
+                  onPress={() => setCameraZoom(0.285)}
+                >
+                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.25 && cameraZoom < 0.5 && styles.zoomBtnTextActive]}>3x</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.zoomBtn, cameraZoom >= 0.5 && styles.zoomBtnActive]}
+                  onPress={() => setCameraZoom(0.57)}
+                >
+                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.5 && styles.zoomBtnTextActive]}>5x</Text>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Fine zoom slider */}
+              <View style={styles.zoomSliderContainer}>
+                <Ionicons name="remove" size={20} color="white" />
+                <View style={styles.zoomSlider}>
+                  <View 
+                    style={[styles.zoomSliderFill, { width: `${cameraZoom * 100}%` }]} 
+                  />
+                  <TouchableOpacity
+                    style={[styles.zoomSliderThumb, { left: `${cameraZoom * 100}%` }]}
+                    onPress={() => {}}
+                  />
+                </View>
+                <Ionicons name="add" size={20} color="white" />
+              </View>
+              
+              {/* Zoom +/- buttons for fine control */}
+              <View style={styles.zoomFineControls}>
+                <TouchableOpacity 
+                  style={styles.zoomFineBtn}
+                  onPress={() => setCameraZoom(Math.max(0, cameraZoom - 0.05))}
+                >
+                  <Ionicons name="remove-circle" size={36} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.zoomFineBtn}
+                  onPress={() => setCameraZoom(Math.min(1, cameraZoom + 0.05))}
+                >
+                  <Ionicons name="add-circle" size={36} color="white" />
+                </TouchableOpacity>
+              </View>
             </View>
             
             <View style={styles.cameraControls}>
