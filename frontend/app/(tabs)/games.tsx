@@ -157,6 +157,64 @@ export default function GamesScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Team Selector */}
+      {teams.length > 0 && (
+        <View style={styles.teamSelector}>
+          <Text style={styles.teamSelectorLabel}>Filter by Team:</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.teamScrollView}>
+            <TouchableOpacity
+              style={[styles.teamChip, !selectedTeamId && styles.teamChipActive]}
+              onPress={() => setSelectedTeamId(null)}
+            >
+              <Text style={[styles.teamChipText, !selectedTeamId && styles.teamChipTextActive]}>All Teams</Text>
+            </TouchableOpacity>
+            {teams.map((team) => (
+              <TouchableOpacity
+                key={team.id}
+                style={[
+                  styles.teamChip, 
+                  selectedTeamId === team.id && styles.teamChipActive,
+                  { borderColor: team.color_primary || colors.primary }
+                ]}
+                onPress={() => setSelectedTeamId(team.id)}
+              >
+                <View style={[styles.teamChipDot, { backgroundColor: team.color_primary || colors.primary }]} />
+                <Text style={[styles.teamChipText, selectedTeamId === team.id && styles.teamChipTextActive]}>
+                  {team.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Team Stats Card */}
+      {selectedTeamId && teamStats && (
+        <View style={styles.teamStatsCard}>
+          <Text style={styles.teamStatsTitle}>
+            {teams.find(t => t.id === selectedTeamId)?.name} Stats
+          </Text>
+          <View style={styles.teamStatsRow}>
+            <View style={styles.teamStatItem}>
+              <Text style={styles.teamStatValue}>{teamStats.gamesPlayed}</Text>
+              <Text style={styles.teamStatLabel}>Games</Text>
+            </View>
+            <View style={styles.teamStatItem}>
+              <Text style={[styles.teamStatValue, { color: colors.success }]}>{teamStats.wins}</Text>
+              <Text style={styles.teamStatLabel}>Wins</Text>
+            </View>
+            <View style={styles.teamStatItem}>
+              <Text style={[styles.teamStatValue, { color: colors.error }]}>{teamStats.losses}</Text>
+              <Text style={styles.teamStatLabel}>Losses</Text>
+            </View>
+            <View style={styles.teamStatItem}>
+              <Text style={styles.teamStatValue}>{teamStats.avgPoints}</Text>
+              <Text style={styles.teamStatLabel}>Avg Pts</Text>
+            </View>
+          </View>
+        </View>
+      )}
+
       {/* Filter Tabs */}
       <View style={styles.filterTabs}>
         {(['all', 'in_progress', 'completed'] as const).map((f) => (
