@@ -1366,9 +1366,14 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
+  cameraOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'space-between',
+  },
   cameraHeader: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
@@ -1381,8 +1386,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   zoomIndicator: {
-    position: 'absolute',
-    right: 0,
     backgroundColor: 'rgba(0,0,0,0.6)',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
