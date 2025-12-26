@@ -1396,22 +1396,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: spacing.xxl,
   },
-  recordingIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(239, 68, 68, 0.9)',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.full,
-    marginBottom: spacing.lg,
-    gap: spacing.xs,
-  },
-  recordingDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: 'white',
-  },
   captureBtn: {
     width: 80,
     height: 80,
@@ -1421,39 +1405,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  videoCaptureBtn: {
-    borderColor: colors.error,
-  },
   captureBtnInner: {
     width: 64,
     height: 64,
     borderRadius: 32,
     backgroundColor: 'white',
   },
-  videoBtnInner: {
-    backgroundColor: colors.error,
-  },
-  recordingBtn: {
-    borderColor: colors.error,
-    borderWidth: 6,
-  },
-  recordingBtnInner: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
-    backgroundColor: colors.error,
-  },
   captureModeLabel: {
     color: 'white',
     fontSize: 14,
     marginTop: spacing.md,
     opacity: 0.8,
-  },
-  recordingText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: spacing.sm,
   },
   // Mode Toggle Styles
   modeToggle: {
