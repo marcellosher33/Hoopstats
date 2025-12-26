@@ -106,12 +106,21 @@ export default function GamesScreen() {
     const isWin = item.our_score > item.opponent_score;
     const isLoss = item.our_score < item.opponent_score;
     const isLive = item.status === 'in_progress';
+    const assignedTeam = teams.find(t => t.id === item.team_id);
 
     return (
       <TouchableOpacity
         style={styles.gameCard}
         onPress={() => router.push(isLive ? `/game/${item.id}` : `/game/summary/${item.id}`)}
+        onLongPress={() => handleLongPressGame(item)}
+        delayLongPress={500}
       >
+        {/* Team badge if assigned */}
+        {assignedTeam && (
+          <View style={[styles.assignedTeamBadge, { backgroundColor: assignedTeam.color_primary || colors.primary }]}>
+            <Text style={styles.assignedTeamText}>{assignedTeam.name}</Text>
+          </View>
+        )}
         <View style={styles.gameHeader}>
           <View style={[
             styles.statusDot,
