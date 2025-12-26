@@ -442,6 +442,19 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.md,
   },
+  restoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  restoreText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
   planCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
