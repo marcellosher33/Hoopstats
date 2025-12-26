@@ -1256,9 +1256,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'black',
   },
-  cameraContainerVideo: {
-    backgroundColor: '#1a0000',
-  },
   modeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
