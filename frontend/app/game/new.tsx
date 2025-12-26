@@ -115,6 +115,7 @@ export default function NewGameScreen() {
       const game = await createGame(
         {
           home_team_name: homeTeamName.trim(),
+          team_id: selectedTeam || undefined,
           opponent_name: opponentName.trim(),
           location: location || undefined,
           game_type: gameType || undefined,
