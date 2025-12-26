@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
+import { usePurchaseStore, formatPrice, ENTITLEMENTS } from '../../src/stores/purchaseStore';
 import { Button } from '../../src/components/Button';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
@@ -20,8 +21,60 @@ const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, token, logout, refreshUser } = useAuthStore();
+  const { 
+    isInitialized, 
+    packages, 
+    isPro, 
+    isTeam, 
+    isLoading: purchaseLoading,
+    initializePurchases,
+    purchasePackage,
+    restorePurchases,
+  } = usePurchaseStore();
   const [upgrading, setUpgrading] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Initialize RevenueCat when user is available
+  useEffect(() => {
+    if (user?.id && !isInitialized) {
+      initializePurchases(user.id);
+    }
+  }, [user?.id, isInitialized]);
+
+  const handlePurchase = async (packageIdentifier: string) => {
+    const pkg = packages.find(p => p.identifier === packageIdentifier);
+    if (!pkg) {
+      // Fall back to test upgrade if no package found (for development)
+      handleUpgrade(packageIdentifier.includes('team') ? 'team' : 'pro');
+      return;
+    }
+
+    setUpgrading(true);
+    try {
+      const success = await purchasePackage(pkg);
+      if (success) {
+        await refreshUser();
+        Alert.alert('Success', 'Thank you for your purchase!');
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Purchase failed');
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    setUpgrading(true);
+    try {
+      await restorePurchases();
+      await refreshUser();
+      Alert.alert('Success', 'Purchases restored successfully!');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to restore purchases');
+    } finally {
+      setUpgrading(false);
+    }
+  };
 
   const handleUpgrade = async (tier: 'pro' | 'team') => {
     setUpgrading(true);
