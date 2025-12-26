@@ -590,7 +590,8 @@ async def update_team(team_id: str, team_data: TeamCreate, user: dict = Depends(
     )
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Team not found")
-    return await db.teams.find_one({"id": team_id})
+    updated_team = await db.teams.find_one({"id": team_id})
+    return serialize_doc(updated_team)
 
 @api_router.delete("/teams/{team_id}")
 async def delete_team(team_id: str, user: dict = Depends(get_current_user)):
