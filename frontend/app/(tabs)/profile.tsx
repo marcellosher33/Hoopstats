@@ -144,9 +144,8 @@ export default function ProfileScreen() {
             <PlanFeature text="Basic stats tracking" included />
             <PlanFeature text="Last 2 completed games" included />
             <PlanFeature text="Photo capture" included />
-            <PlanFeature text="Video recording" />
             <PlanFeature text="AI summaries" />
-            <PlanFeature text="Highlight reels" />
+            <PlanFeature text="Shot charts" />
           </View>
           {user?.subscription_tier === 'free' ? (
             <View style={styles.currentPlan}>
@@ -175,9 +174,8 @@ export default function ProfileScreen() {
           <View style={styles.planFeatures}>
             <PlanFeature text="All stats tracking" included />
             <PlanFeature text="Unlimited game history" included />
-            <PlanFeature text="Photo & video capture" included />
+            <PlanFeature text="Photo capture" included />
             <PlanFeature text="AI game summaries" included />
-            <PlanFeature text="Highlight reel creation" included />
             <PlanFeature text="Shot charts & analytics" included />
             <PlanFeature text="Team roster management" />
           </View>
@@ -213,7 +211,7 @@ export default function ProfileScreen() {
             <PlanFeature text="Everything in Pro" included />
             <PlanFeature text="Full team roster management" included />
             <PlanFeature text="Team-wide statistics" included />
-            <PlanFeature text="Season highlight compilations" included />
+            <PlanFeature text="Season stat compilations" included />
             <PlanFeature text="Export & sharing tools" included />
             <PlanFeature text="Priority support" included />
           </View>
