@@ -319,6 +319,50 @@ export default function GamesScreen() {
       >
         <Ionicons name="add" size={28} color={colors.text} />
       </TouchableOpacity>
+
+      {/* Assign Team Modal */}
+      <Modal visible={showAssignModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Assign to Team</Text>
+              <TouchableOpacity onPress={() => setShowAssignModal(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.modalSubtitle}>
+              Long-press a game to assign it to a team
+            </Text>
+            
+            <ScrollView style={styles.teamList}>
+              <TouchableOpacity
+                style={styles.teamOption}
+                onPress={() => handleAssignTeam(null)}
+              >
+                <Ionicons name="close-circle" size={24} color={colors.textSecondary} />
+                <Text style={styles.teamOptionText}>No Team (Unassign)</Text>
+              </TouchableOpacity>
+              
+              {teams.map((team) => (
+                <TouchableOpacity
+                  key={team.id}
+                  style={[
+                    styles.teamOption,
+                    gameToAssign?.team_id === team.id && styles.teamOptionSelected
+                  ]}
+                  onPress={() => handleAssignTeam(team.id)}
+                >
+                  <View style={[styles.teamOptionDot, { backgroundColor: team.color_primary || colors.primary }]} />
+                  <Text style={styles.teamOptionText}>{team.name}</Text>
+                  {gameToAssign?.team_id === team.id && (
+                    <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
