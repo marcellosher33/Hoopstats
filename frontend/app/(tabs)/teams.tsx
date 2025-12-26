@@ -383,6 +383,22 @@ export default function TeamsScreen() {
                             <Text style={[styles.addPlayerText, { color: colors.success }]}>Create New Player</Text>
                           </TouchableOpacity>
                         </View>
+                        <View style={styles.teamActions}>
+                          <TouchableOpacity
+                            style={styles.editTeamBtn}
+                            onPress={() => openEditTeamModal(team)}
+                          >
+                            <Ionicons name="create" size={18} color={colors.primary} />
+                            <Text style={styles.editTeamText}>Edit Team</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.deleteTeamBtn}
+                            onPress={() => handleDeleteTeam(team)}
+                          >
+                            <Ionicons name="trash" size={18} color={colors.error} />
+                            <Text style={styles.deleteTeamText}>Delete Team</Text>
+                          </TouchableOpacity>
+                        </View>
                         <Text style={styles.hintText}>Long-press player to remove from team</Text>
                       </View>
                     )}
