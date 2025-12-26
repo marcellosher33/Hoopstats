@@ -53,6 +53,26 @@ export default function LiveGameScreen() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0); // 0 to 1 range
+  
+  // Pinch-to-zoom gesture values
+  const baseZoom = useSharedValue(0);
+  const pinchScale = useSharedValue(1);
+  
+  // Create pinch gesture for camera zoom
+  const pinchGesture = Gesture.Pinch()
+    .onStart(() => {
+      baseZoom.value = cameraZoom;
+    })
+    .onUpdate((event) => {
+      // Calculate new zoom based on pinch scale
+      // Scale of 1 = no change, 2 = double zoom, 0.5 = half zoom
+      const scaleFactor = (event.scale - 1) * 0.5; // Reduce sensitivity
+      const newZoom = Math.min(1, Math.max(0, baseZoom.value + scaleFactor));
+      setCameraZoom(newZoom);
+    })
+    .onEnd(() => {
+      baseZoom.value = cameraZoom;
+    });
 
   useEffect(() => {
     if (token && id) {
