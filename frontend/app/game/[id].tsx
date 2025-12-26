@@ -785,7 +785,11 @@ export default function LiveGameScreen() {
             facing="back"
             mode={cameraMode === 'video' ? 'video' : 'picture'}
             zoom={cameraZoom}
-          >
+          />
+          
+          {/* Overlay controls - outside CameraView for better touch handling */}
+          <View style={styles.cameraOverlay}>
+            {/* Header with close and zoom indicator */}
             <View style={styles.cameraHeader}>
               <TouchableOpacity 
                 style={styles.closeButton}
@@ -793,14 +797,13 @@ export default function LiveGameScreen() {
                   if (isRecording) {
                     handleStopRecording();
                   }
-                  setCameraZoom(0); // Reset zoom when closing
+                  setCameraZoom(0);
                   setShowCamera(false);
                 }}
               >
                 <Ionicons name="close" size={28} color="white" />
               </TouchableOpacity>
               
-              {/* Zoom indicator */}
               <View style={styles.zoomIndicator}>
                 <Text style={styles.zoomText}>{(1 + cameraZoom * 7).toFixed(1)}x</Text>
               </View>
@@ -816,41 +819,26 @@ export default function LiveGameScreen() {
                   <Text style={[styles.zoomBtnText, cameraZoom === 0 && styles.zoomBtnTextActive]}>1x</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={[styles.zoomBtn, cameraZoom >= 0.12 && cameraZoom < 0.25 && styles.zoomBtnActive]}
+                  style={[styles.zoomBtn, cameraZoom > 0 && cameraZoom <= 0.15 && styles.zoomBtnActive]}
                   onPress={() => setCameraZoom(0.125)}
                 >
-                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.12 && cameraZoom < 0.25 && styles.zoomBtnTextActive]}>2x</Text>
+                  <Text style={[styles.zoomBtnText, cameraZoom > 0 && cameraZoom <= 0.15 && styles.zoomBtnTextActive]}>2x</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={[styles.zoomBtn, cameraZoom >= 0.25 && cameraZoom < 0.5 && styles.zoomBtnActive]}
+                  style={[styles.zoomBtn, cameraZoom > 0.15 && cameraZoom <= 0.35 && styles.zoomBtnActive]}
                   onPress={() => setCameraZoom(0.285)}
                 >
-                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.25 && cameraZoom < 0.5 && styles.zoomBtnTextActive]}>3x</Text>
+                  <Text style={[styles.zoomBtnText, cameraZoom > 0.15 && cameraZoom <= 0.35 && styles.zoomBtnTextActive]}>3x</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  style={[styles.zoomBtn, cameraZoom >= 0.5 && styles.zoomBtnActive]}
+                  style={[styles.zoomBtn, cameraZoom > 0.35 && styles.zoomBtnActive]}
                   onPress={() => setCameraZoom(0.57)}
                 >
-                  <Text style={[styles.zoomBtnText, cameraZoom >= 0.5 && styles.zoomBtnTextActive]}>5x</Text>
+                  <Text style={[styles.zoomBtnText, cameraZoom > 0.35 && styles.zoomBtnTextActive]}>5x</Text>
                 </TouchableOpacity>
               </View>
               
-              {/* Fine zoom slider */}
-              <View style={styles.zoomSliderContainer}>
-                <Ionicons name="remove" size={20} color="white" />
-                <View style={styles.zoomSlider}>
-                  <View 
-                    style={[styles.zoomSliderFill, { width: `${cameraZoom * 100}%` }]} 
-                  />
-                  <TouchableOpacity
-                    style={[styles.zoomSliderThumb, { left: `${cameraZoom * 100}%` }]}
-                    onPress={() => {}}
-                  />
-                </View>
-                <Ionicons name="add" size={20} color="white" />
-              </View>
-              
-              {/* Zoom +/- buttons for fine control */}
+              {/* Fine zoom controls */}
               <View style={styles.zoomFineControls}>
                 <TouchableOpacity 
                   style={styles.zoomFineBtn}
@@ -867,8 +855,8 @@ export default function LiveGameScreen() {
               </View>
             </View>
             
+            {/* Bottom controls */}
             <View style={styles.cameraControls}>
-              {/* Recording indicator */}
               {isRecording && (
                 <View style={styles.recordingIndicator}>
                   <View style={styles.recordingDot} />
@@ -876,7 +864,6 @@ export default function LiveGameScreen() {
                 </View>
               )}
               
-              {/* Capture button */}
               {cameraMode === 'photo' ? (
                 <TouchableOpacity style={styles.captureBtn} onPress={handleTakePhoto}>
                   <View style={styles.captureBtnInner} />
@@ -894,7 +881,6 @@ export default function LiveGameScreen() {
                 </TouchableOpacity>
               )}
               
-              {/* Mode label */}
               <Text style={styles.captureModeLabel}>
                 {cameraMode === 'video' 
                   ? (isRecording ? 'Tap to stop' : 'Tap to record')
@@ -902,7 +888,7 @@ export default function LiveGameScreen() {
                 }
               </Text>
             </View>
-          </CameraView>
+          </View>
         </View>
       </Modal>
 
