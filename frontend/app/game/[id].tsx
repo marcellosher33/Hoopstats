@@ -611,6 +611,10 @@ export default function LiveGameScreen() {
                     <Text style={styles.playerStatLabel}>REB</Text>
                   </View>
                   <View style={styles.playerStatItem}>
+                    <Text style={[styles.playerStatValue, { color: colors.rebounds, fontSize: 16 }]}>{stats?.offensive_rebounds || 0}/{stats?.defensive_rebounds || 0}</Text>
+                    <Text style={styles.playerStatLabel}>O/D</Text>
+                  </View>
+                  <View style={styles.playerStatItem}>
                     <Text style={[styles.playerStatValue, { color: colors.assists }]}>{stats?.assists || 0}</Text>
                     <Text style={styles.playerStatLabel}>AST</Text>
                   </View>
