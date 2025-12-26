@@ -665,18 +665,6 @@ export default function LiveGameScreen() {
           <Ionicons name="camera" size={26} color={colors.text} />
           <Text style={styles.actionBtnText}>Photo</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionBtn, user?.subscription_tier === 'free' && styles.actionBtnDisabled]}
-          onPress={() => openCamera('video')}
-        >
-          <Ionicons name="videocam" size={26} color={user?.subscription_tier === 'free' ? colors.textSecondary : colors.text} />
-          <Text style={[styles.actionBtnText, user?.subscription_tier === 'free' && styles.actionBtnTextDisabled]}>Video</Text>
-          {user?.subscription_tier === 'free' && (
-            <View style={styles.proBadge}>
-              <Text style={styles.proBadgeText}>PRO</Text>
-            </View>
-          )}
-        </TouchableOpacity>
         <TouchableOpacity style={styles.endGameBtn} onPress={() => setShowEndGameModal(true)}>
           <Ionicons name="flag" size={26} color={colors.text} />
           <Text style={styles.endGameBtnText}>End Game</Text>
