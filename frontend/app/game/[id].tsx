@@ -1509,6 +1509,22 @@ const styles = StyleSheet.create({
   zoomFineBtn: {
     padding: spacing.xs,
   },
+  pinchHint: {
+    position: 'absolute',
+    top: 100,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    gap: spacing.xs,
+  },
+  pinchHintText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 12,
+  },
   cameraControls: {
     flex: 1,
     justifyContent: 'flex-end',
