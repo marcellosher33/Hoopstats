@@ -36,9 +36,14 @@ export default function GamesScreen() {
     
     // Filter by team
     if (selectedTeamId) {
-      // Check if game's home_team_name matches selected team name
       const selectedTeam = teams.find(t => t.id === selectedTeamId);
-      if (selectedTeam && game.home_team_name !== selectedTeam.name) {
+      if (!selectedTeam) return false;
+      
+      // Check if game matches by team_id OR home_team_name
+      const matchByTeamId = game.team_id === selectedTeamId;
+      const matchByTeamName = game.home_team_name === selectedTeam.name;
+      
+      if (!matchByTeamId && !matchByTeamName) {
         return false;
       }
     }
@@ -50,9 +55,13 @@ export default function GamesScreen() {
   const getTeamStats = () => {
     if (!selectedTeamId) return null;
     
+    const selectedTeam = teams.find(t => t.id === selectedTeamId);
+    if (!selectedTeam) return null;
+    
     const teamGames = games.filter(g => {
-      const selectedTeam = teams.find(t => t.id === selectedTeamId);
-      return selectedTeam && g.home_team_name === selectedTeam.name && g.status === 'completed';
+      const matchByTeamId = g.team_id === selectedTeamId;
+      const matchByTeamName = g.home_team_name === selectedTeam.name;
+      return (matchByTeamId || matchByTeamName) && g.status === 'completed';
     });
     
     const wins = teamGames.filter(g => g.our_score > g.opponent_score).length;
