@@ -158,7 +158,7 @@ export default function HomeScreen() {
           <Ionicons name="star" size={24} color={colors.warning} />
           <View style={styles.upgradeInfo}>
             <Text style={styles.upgradeTitle}>Upgrade to Pro</Text>
-            <Text style={styles.upgradeSubtitle}>Unlock video recording, AI summaries & more</Text>
+            <Text style={styles.upgradeSubtitle}>Unlock AI summaries, unlimited history & more</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.textSecondary} />
         </TouchableOpacity>
