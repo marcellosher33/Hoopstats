@@ -928,7 +928,10 @@ export default function LiveGameScreen() {
               </Text>
             </View>
           </CameraView>
+          </View>
+          </GestureDetector>
         </View>
+        </GestureHandlerRootView>
       </Modal>
 
       {/* End Game Modal */}
