@@ -840,6 +840,38 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '600',
   },
+  teamActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+  },
+  editTeamBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  editTeamText: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  deleteTeamBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  deleteTeamText: {
+    fontSize: 14,
+    color: colors.error,
+    fontWeight: '600',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.7)',
