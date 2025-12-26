@@ -19,9 +19,11 @@ import { Game, Team } from '../../src/types';
 export default function GamesScreen() {
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { games, teams, fetchGames, fetchTeams, isLoading } = useGameStore();
+  const { games, teams, fetchGames, fetchTeams, updateGame, isLoading } = useGameStore();
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [gameToAssign, setGameToAssign] = useState<Game | null>(null);
 
   useEffect(() => {
     if (token) {
@@ -29,6 +31,30 @@ export default function GamesScreen() {
       fetchTeams(token);
     }
   }, [token]);
+
+  const handleLongPressGame = (game: Game) => {
+    if (teams.length > 0) {
+      setGameToAssign(game);
+      setShowAssignModal(true);
+    }
+  };
+
+  const handleAssignTeam = async (teamId: string | null) => {
+    if (!gameToAssign || !token) return;
+    
+    try {
+      const selectedTeam = teams.find(t => t.id === teamId);
+      await updateGame(gameToAssign.id, {
+        team_id: teamId,
+        home_team_name: selectedTeam?.name || gameToAssign.home_team_name,
+      }, token);
+      setShowAssignModal(false);
+      setGameToAssign(null);
+      Alert.alert('Success', teamId ? `Game assigned to ${selectedTeam?.name}` : 'Team assignment removed');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to assign team');
+    }
+  };
 
   const filteredGames = games.filter(game => {
     // Filter by status
