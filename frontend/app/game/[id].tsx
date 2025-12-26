@@ -365,13 +365,25 @@ export default function LiveGameScreen() {
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(16, 185, 129, 0.2)' }]}
                   onPress={async () => {
                     if (token && id) {
-                      await recordStat(id, ps.player_id, 'rebounds', token);
+                      await recordStat(id, ps.player_id, 'offensive_rebounds', token);
                     }
                   }}
-                  onLongPress={() => handleLongPressAdjust('rebounds', 'Rebounds', ps.player_id)}
+                  onLongPress={() => handleLongPressAdjust('offensive_rebounds', 'Off Rebounds', ps.player_id)}
                   delayLongPress={500}
                 >
-                  <Text style={styles.teamModeStatBtnText}>REB</Text>
+                  <Text style={styles.teamModeStatBtnText}>OREB</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(16, 185, 129, 0.4)' }]}
+                  onPress={async () => {
+                    if (token && id) {
+                      await recordStat(id, ps.player_id, 'defensive_rebounds', token);
+                    }
+                  }}
+                  onLongPress={() => handleLongPressAdjust('defensive_rebounds', 'Def Rebounds', ps.player_id)}
+                  delayLongPress={500}
+                >
+                  <Text style={styles.teamModeStatBtnText}>DREB</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.teamModeStatBtn, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}
