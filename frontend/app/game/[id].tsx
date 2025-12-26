@@ -50,6 +50,7 @@ export default function LiveGameScreen() {
   
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
+  const [cameraZoom, setCameraZoom] = useState(0); // 0 to 1 range
 
   useEffect(() => {
     if (token && id) {
