@@ -28,10 +28,26 @@ MEDIA_DIR.mkdir(exist_ok=True)
 
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'basketball_tracker')]
+# Configure logging FIRST before using logger
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# MongoDB connection with proper error handling
+mongo_url = os.environ.get('MONGO_URL')
+if not mongo_url:
+    logger.error("MONGO_URL environment variable is not set!")
+    raise ValueError("MONGO_URL environment variable is required")
+
+try:
+    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
+    db = client[os.environ.get('DB_NAME', 'basketball_tracker')]
+    logger.info("MongoDB client initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize MongoDB client: {e}")
+    raise
 
 # Helper to convert MongoDB documents
 def serialize_doc(doc):
