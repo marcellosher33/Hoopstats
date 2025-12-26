@@ -6,6 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +21,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user, token, logout, refreshUser } = useAuthStore();
   const [upgrading, setUpgrading] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleUpgrade = async (tier: 'pro' | 'team') => {
     setUpgrading(true);
