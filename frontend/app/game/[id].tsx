@@ -51,34 +51,6 @@ export default function LiveGameScreen() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0); // 0 to 1 range
-  
-  // Pinch-to-zoom gesture values
-  const baseZoom = useSharedValue(0);
-  const pinchScale = useSharedValue(1);
-  
-  // Callback for updating zoom from gesture (needs runOnJS)
-  const updateZoom = useCallback((newZoom: number) => {
-    setCameraZoom(newZoom);
-  }, []);
-  
-  // Create pinch gesture for camera zoom
-  const pinchGesture = Gesture.Pinch()
-    .onStart(() => {
-      'worklet';
-      baseZoom.value = pinchScale.value;
-    })
-    .onUpdate((event) => {
-      'worklet';
-      // Calculate new zoom based on pinch scale
-      const scaleFactor = (event.scale - 1) * 0.5;
-      const newZoom = Math.min(1, Math.max(0, baseZoom.value + scaleFactor));
-      pinchScale.value = newZoom;
-      runOnJS(updateZoom)(newZoom);
-    })
-    .onEnd(() => {
-      'worklet';
-      baseZoom.value = pinchScale.value;
-    });
 
   useEffect(() => {
     if (token && id) {
