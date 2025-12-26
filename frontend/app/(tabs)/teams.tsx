@@ -155,6 +155,31 @@ export default function TeamsScreen() {
     }
   };
 
+  const handleDeleteTeam = (team: Team) => {
+    Alert.alert(
+      'Delete Team',
+      `Are you sure you want to delete "${team.name}"? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              await deleteTeam(team.id, token!);
+              Alert.alert('Success', 'Team deleted successfully');
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Failed to delete team');
+            } finally {
+              setLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const getUnassignedPlayers = (): Player[] => {
     return players.filter(p => !p.team_id);
   };
