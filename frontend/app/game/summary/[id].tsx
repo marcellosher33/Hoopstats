@@ -1313,4 +1313,122 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  // Team Statistics Styles
+  teamStatsCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+  },
+  teamStatsTeamName: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  teamStatsMainRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: spacing.md,
+  },
+  teamStatBig: {
+    alignItems: 'center',
+  },
+  teamStatBigValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  teamStatBigLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+  },
+  teamStatsSecondaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+    marginBottom: spacing.md,
+  },
+  teamStatSmall: {
+    alignItems: 'center',
+  },
+  teamStatSmallValue: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  teamStatSmallLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  teamShootingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+  },
+  teamShootingItem: {
+    alignItems: 'center',
+  },
+  teamShootingPct: {
+    color: colors.primary,
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  teamShootingLabel: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  // Player Stats Enhancements
+  reboundsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: spacing.md,
+    marginTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+  },
+  reboundItem: {
+    alignItems: 'center',
+  },
+  reboundValue: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  reboundLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  shootingPercentages: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: spacing.md,
+    marginTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+  },
+  shootingPctItem: {
+    alignItems: 'center',
+  },
+  shootingPctValue: {
+    color: colors.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  shootingPctLabel: {
+    color: colors.textSecondary,
+    fontSize: 11,
+  },
+  shootingPctDetail: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    marginTop: 2,
+  },
 });
