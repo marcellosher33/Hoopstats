@@ -291,11 +291,14 @@ export default function GameSummaryScreen() {
 
   // Calculate team totals
   const teamStats = currentGame.player_stats.reduce((totals, ps) => {
+    const playerOreb = ps.stats.offensive_rebounds || 0;
+    const playerDreb = ps.stats.defensive_rebounds || 0;
+    const playerTotalReb = ps.stats.rebounds || (playerOreb + playerDreb);
     return {
       points: totals.points + (ps.stats.points || 0),
-      rebounds: totals.rebounds + (ps.stats.rebounds || 0),
-      offensive_rebounds: totals.offensive_rebounds + (ps.stats.offensive_rebounds || 0),
-      defensive_rebounds: totals.defensive_rebounds + (ps.stats.defensive_rebounds || 0),
+      rebounds: totals.rebounds + playerTotalReb,
+      offensive_rebounds: totals.offensive_rebounds + playerOreb,
+      defensive_rebounds: totals.defensive_rebounds + playerDreb,
       assists: totals.assists + (ps.stats.assists || 0),
       steals: totals.steals + (ps.stats.steals || 0),
       blocks: totals.blocks + (ps.stats.blocks || 0),
