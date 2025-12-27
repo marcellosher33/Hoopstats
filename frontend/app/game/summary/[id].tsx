@@ -477,6 +477,9 @@ export default function GameSummaryScreen() {
           const playerFgPct = ps.stats.fg_attempted > 0 ? Math.round((ps.stats.fg_made / ps.stats.fg_attempted) * 100) : 0;
           const playerThreePct = ps.stats.three_pt_attempted > 0 ? Math.round((ps.stats.three_pt_made / ps.stats.three_pt_attempted) * 100) : 0;
           const playerFtPct = ps.stats.ft_attempted > 0 ? Math.round((ps.stats.ft_made / ps.stats.ft_attempted) * 100) : 0;
+          const playerOreb = ps.stats.offensive_rebounds || 0;
+          const playerDreb = ps.stats.defensive_rebounds || 0;
+          const playerTotalReb = ps.stats.rebounds || (playerOreb + playerDreb);
           
           return (
           <View key={ps.player_id} style={styles.playerStatCard}>
@@ -493,7 +496,7 @@ export default function GameSummaryScreen() {
             {/* All Stats Grid */}
             <View style={styles.statsGrid}>
               <StatItem label="PTS" value={ps.stats.points || 0} color={colors.points} />
-              <StatItem label="REB" value={ps.stats.rebounds || 0} color={colors.rebounds} />
+              <StatItem label="REB" value={playerTotalReb} color={colors.rebounds} />
               <StatItem label="AST" value={ps.stats.assists || 0} color={colors.assists} />
               <StatItem label="STL" value={ps.stats.steals || 0} color={colors.steals} />
               <StatItem label="BLK" value={ps.stats.blocks || 0} color={colors.blocks} />
@@ -503,11 +506,11 @@ export default function GameSummaryScreen() {
             {/* Rebounds Breakdown */}
             <View style={styles.reboundsRow}>
               <View style={styles.reboundItem}>
-                <Text style={styles.reboundValue}>{ps.stats.offensive_rebounds || 0}</Text>
+                <Text style={styles.reboundValue}>{playerOreb}</Text>
                 <Text style={styles.reboundLabel}>OREB</Text>
               </View>
               <View style={styles.reboundItem}>
-                <Text style={styles.reboundValue}>{ps.stats.defensive_rebounds || 0}</Text>
+                <Text style={styles.reboundValue}>{playerDreb}</Text>
                 <Text style={styles.reboundLabel}>DREB</Text>
               </View>
               <View style={styles.reboundItem}>
