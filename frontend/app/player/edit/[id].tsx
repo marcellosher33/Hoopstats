@@ -8,6 +8,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,7 +25,7 @@ export default function EditPlayerScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { token } = useAuthStore();
-  const { players, updatePlayer, deletePlayer, fetchPlayers } = useGameStore();
+  const { players, teams, updatePlayer, deletePlayer, fetchPlayers, fetchTeams } = useGameStore();
 
   const player = players.find(p => p.id === id);
 
@@ -35,6 +36,14 @@ export default function EditPlayerScreen() {
   const [weight, setWeight] = useState('');
   const [photo, setPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [teamId, setTeamId] = useState<string | null>(null);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      fetchTeams(token);
+    }
+  }, [token]);
 
   useEffect(() => {
     if (player) {
@@ -43,6 +52,7 @@ export default function EditPlayerScreen() {
       setPosition(player.position || '');
       setHeight(player.height || '');
       setWeight(player.weight?.toString() || '');
+      setTeamId(player.team_id || null);
       setPhoto(player.photo || null);
     }
   }, [player]);
