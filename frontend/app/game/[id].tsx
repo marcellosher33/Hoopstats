@@ -1629,6 +1629,24 @@ const styles = StyleSheet.create({
   quarterBtnTextActive: {
     color: colors.text,
   },
+  // Court Side Button in Header
+  courtSideButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.sm,
+    alignSelf: 'center',
+  },
+  courtSideButtonText: {
+    color: colors.primary,
+    fontSize: 11,
+    fontWeight: '600',
+  },
   // Minutes Tracker
   minutesTracker: {
     flexDirection: 'row',
