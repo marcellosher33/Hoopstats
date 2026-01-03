@@ -399,7 +399,7 @@ export default function LiveGameScreen() {
   // Opponent score quick buttons
   const handleOpponentScore = async (points: number) => {
     if (!token || !id || !currentGame) return;
-    const newOpponentScore = currentGame.opponent_score + points;
+    const newOpponentScore = Math.max(0, currentGame.opponent_score + points); // Don't go below 0
     await updateGame(id, { opponent_score: newOpponentScore }, token);
   };
 
