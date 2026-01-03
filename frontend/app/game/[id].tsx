@@ -537,6 +537,21 @@ export default function LiveGameScreen() {
             <Text style={[styles.quarterBtnText, (currentGame.current_period || 1) > 4 && styles.quarterBtnTextActive]}>OT</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Court Side Selection Button */}
+        <TouchableOpacity 
+          style={styles.courtSideButton}
+          onPress={() => setShowCourtSideModal(true)}
+        >
+          <Ionicons 
+            name={firstHalfCourtSide === 'top' ? 'arrow-up' : 'arrow-down'} 
+            size={14} 
+            color={colors.primary} 
+          />
+          <Text style={styles.courtSideButtonText}>
+            {firstHalfCourtSide === 'top' ? 'Top' : 'Bottom'} = 1st Half
+          </Text>
+        </TouchableOpacity>
       </LinearGradient>
 
       {/* Mode Toggle */}
