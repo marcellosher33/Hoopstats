@@ -58,7 +58,7 @@ export default function LiveGameScreen() {
   const [playerMinutes, setPlayerMinutes] = useState<Record<string, number>>({});
   const [activePlayerIds, setActivePlayerIds] = useState<Set<string>>(new Set());
   const [isClockRunning, setIsClockRunning] = useState(false); // Single player mode clock
-  const minutesIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -110,7 +110,7 @@ export default function LiveGameScreen() {
 
   // Single player mode clock
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     if (!teamMode && isClockRunning && selectedPlayer) {
       interval = setInterval(() => {
         setPlayerMinutes(prev => ({
