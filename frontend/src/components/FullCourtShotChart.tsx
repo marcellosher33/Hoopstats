@@ -172,7 +172,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
             strokeWidth="0.6"
           />
           
-          {/* Half labels */}
+          {/* Half labels - swap based on firstHalfSide */}
           <G opacity="0.5">
             <Rect x="40" y="45" width="20" height="4" rx="1" fill="rgba(0,0,0,0.3)" />
             <SvgText
@@ -183,7 +183,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
               textAnchor="middle"
               fontWeight="bold"
             >
-              1ST HALF
+              {firstHalfSide === 'top' ? '1ST HALF' : '2ND HALF'}
             </SvgText>
             <Rect x="40" y={viewBoxHeight - 49} width="20" height="4" rx="1" fill="rgba(0,0,0,0.3)" />
             <SvgText
@@ -194,7 +194,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
               textAnchor="middle"
               fontWeight="bold"
             >
-              2ND HALF
+              {firstHalfSide === 'top' ? '2ND HALF' : '1ST HALF'}
             </SvgText>
           </G>
           
