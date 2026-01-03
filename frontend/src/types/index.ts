@@ -60,11 +60,20 @@ export interface Team {
   created_at: string;
 }
 
+export interface StatEvent {
+  id: string;
+  stat_type: string;
+  value: number;
+  period: number;
+  timestamp: string;
+}
+
 export interface GamePlayerStats {
   player_id: string;
   player_name: string;
   stats: PlayerStats;
   shots: ShotAttempt[];
+  stat_events?: StatEvent[];
 }
 
 export interface GameMedia {
