@@ -475,9 +475,20 @@ export default function LiveGameScreen() {
           </View>
           <View style={styles.teamScore}>
             <Text style={styles.teamLabel}>{currentGame.opponent_name.toUpperCase()}</Text>
-            <Text style={styles.score}>{currentGame.opponent_score}</Text>
+            <TouchableOpacity 
+              onLongPress={() => setShowOpponentScoreAdjust(true)}
+              delayLongPress={500}
+            >
+              <Text style={styles.score}>{currentGame.opponent_score}</Text>
+            </TouchableOpacity>
             {/* Opponent Quick Score Buttons */}
             <View style={styles.opponentQuickScore}>
+              <TouchableOpacity 
+                style={[styles.opponentScoreBtn, styles.opponentScoreBtnMinus]}
+                onPress={() => handleOpponentScore(-1)}
+              >
+                <Text style={styles.opponentScoreBtnText}>-1</Text>
+              </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.opponentScoreBtn}
                 onPress={() => handleOpponentScore(1)}
