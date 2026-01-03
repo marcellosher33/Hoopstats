@@ -220,6 +220,35 @@ export default function EditPlayerScreen() {
               </View>
             </View>
           </View>
+
+          {/* Team Assignment */}
+          {teams.length > 0 && (
+            <View style={styles.teamSection}>
+              <Text style={styles.sectionTitle}>Team</Text>
+              <TouchableOpacity 
+                style={styles.teamSelector}
+                onPress={() => setShowTeamModal(true)}
+              >
+                {teamId ? (
+                  <>
+                    <View style={[
+                      styles.teamColorDot, 
+                      { backgroundColor: teams.find(t => t.id === teamId)?.color_primary || colors.primary }
+                    ]} />
+                    <Text style={styles.teamSelectorText}>
+                      {teams.find(t => t.id === teamId)?.name || 'Select Team'}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="people-outline" size={20} color={colors.textSecondary} />
+                    <Text style={styles.teamSelectorPlaceholder}>No Team Assigned</Text>
+                  </>
+                )}
+                <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         {/* Delete Button */}
@@ -228,6 +257,53 @@ export default function EditPlayerScreen() {
           <Text style={styles.deleteButtonText}>Delete Player</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Team Selection Modal */}
+      <Modal visible={showTeamModal} transparent animationType="fade">
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowTeamModal(false)}
+        >
+          <View style={styles.teamModal}>
+            <View style={styles.teamModalHeader}>
+              <Text style={styles.teamModalTitle}>Select Team</Text>
+              <TouchableOpacity onPress={() => setShowTeamModal(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.teamList}>
+              <TouchableOpacity
+                style={[styles.teamOption, !teamId && styles.teamOptionSelected]}
+                onPress={() => {
+                  setTeamId(null);
+                  setShowTeamModal(false);
+                }}
+              >
+                <Ionicons name="close-circle" size={24} color={colors.textSecondary} />
+                <Text style={styles.teamOptionText}>No Team</Text>
+                {!teamId && <Ionicons name="checkmark-circle" size={20} color={colors.primary} />}
+              </TouchableOpacity>
+              
+              {teams.map((team) => (
+                <TouchableOpacity
+                  key={team.id}
+                  style={[styles.teamOption, teamId === team.id && styles.teamOptionSelected]}
+                  onPress={() => {
+                    setTeamId(team.id);
+                    setShowTeamModal(false);
+                  }}
+                >
+                  <View style={[styles.teamOptionDot, { backgroundColor: team.color_primary || colors.primary }]} />
+                  <Text style={styles.teamOptionText}>{team.name}</Text>
+                  {teamId === team.id && <Ionicons name="checkmark-circle" size={20} color={colors.primary} />}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       {/* Save Button */}
       <View style={styles.footer}>
