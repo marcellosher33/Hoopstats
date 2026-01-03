@@ -354,23 +354,85 @@ frontend:
     file: "/app/frontend/src/components/ShotChart.tsx"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "SVG-based basketball court with shot visualization."
 
+  - task: "Full Court Shot Chart"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/FullCourtShotChart.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "New full-court SVG shot chart component replacing half-court version. Allows tracking shots on both halves of the court."
+
+  - task: "Period-Level Stats Filter"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/game/[id].tsx, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added period filter (Q1/Q2/Q3/Q4/ALL or H1/H2/ALL) to view stats by quarter/half. Backend now tracks all stat events with period info."
+
+  - task: "Opponent Score Tracker"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/game/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added +1, +2, +3 buttons to track opponent team score during live game."
+
+  - task: "Minutes Tracker (Single Player Mode)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/game/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added stopwatch timer that runs when player is IN and stops when OUT in single player mode."
+
+  - task: "In-Game Roster (Team Mode)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/game/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Team mode allows toggling 5 players as 'In' the game. In players appear at top, Out players at bottom."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Player CRUD operations"
-    - "Game CRUD operations"
-    - "Live stat recording"
+    - "Period-Level Stats Filter"
+    - "Full Court Shot Chart"
+    - "Opponent Score Tracker"
+    - "Minutes Tracker (Single Player Mode)"
+    - "In-Game Roster (Team Mode)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -378,3 +440,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "MVP implementation complete. App has user auth, player/team management, game tracking with live stats, shot charts, AI summaries, and three subscription tiers. Ready for testing."
+  - agent: "main"
+    message: "Implemented 6 new features for live game screen: 1) Full court shot chart, 2) Opponent score tracker (+1/+2/+3), 3) Minutes tracker with IN/OUT toggle, 4) Team mode with in-game roster, 5) Period filter for stats (Q1/Q2/Q3/Q4/ALL), 6) All stats now tracked by period. Backend updated to store stat_events with period info. Need testing."
