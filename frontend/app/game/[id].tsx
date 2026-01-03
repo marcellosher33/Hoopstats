@@ -1549,12 +1549,35 @@ const styles = StyleSheet.create({
   statsCardGradient: {
     padding: spacing.md,
   },
+  playerStatsTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
   playerStatsTitle: {
     color: colors.text,
     fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: spacing.md,
+  },
+  periodBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+  },
+  periodBadgeText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  filterNote: {
+    color: colors.textSecondary,
+    fontSize: 10,
     textAlign: 'center',
+    marginTop: spacing.sm,
+    fontStyle: 'italic',
   },
   playerStatsGrid: {
     flexDirection: 'row',
