@@ -399,6 +399,47 @@ export default function GamesScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Game Options Modal (Long Press) */}
+      <Modal visible={showGameOptionsModal} transparent animationType="fade">
+        <TouchableOpacity 
+          style={styles.modalOverlay} 
+          activeOpacity={1}
+          onPress={() => setShowGameOptionsModal(false)}
+        >
+          <View style={styles.gameOptionsModal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {selectedGameForOptions?.home_team_name || 'Game'} vs {selectedGameForOptions?.opponent_name}
+              </Text>
+              <TouchableOpacity onPress={() => setShowGameOptionsModal(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.gameOptionsContent}>
+              {teams.length > 0 && (
+                <TouchableOpacity 
+                  style={styles.gameOptionItem}
+                  onPress={handleAssignTeamFromOptions}
+                >
+                  <Ionicons name="people-outline" size={24} color={colors.primary} />
+                  <Text style={styles.gameOptionText}>Assign to Team</Text>
+                  <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+                </TouchableOpacity>
+              )}
+              
+              <TouchableOpacity 
+                style={[styles.gameOptionItem, styles.gameOptionDelete]}
+                onPress={handleDeleteGame}
+              >
+                <Ionicons name="trash-outline" size={24} color={colors.error} />
+                <Text style={[styles.gameOptionText, styles.gameOptionDeleteText]}>Delete Game</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
