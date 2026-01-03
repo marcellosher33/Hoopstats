@@ -173,7 +173,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
           {/* Half labels */}
           <G opacity="0.5">
             <Rect x="40" y="45" width="20" height="4" rx="1" fill="rgba(0,0,0,0.3)" />
-            <Text
+            <SvgText
               x="50"
               y="48"
               fontSize="3"
@@ -182,9 +182,9 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
               fontWeight="bold"
             >
               1ST HALF
-            </Text>
+            </SvgText>
             <Rect x="40" y={viewBoxHeight - 49} width="20" height="4" rx="1" fill="rgba(0,0,0,0.3)" />
-            <Text
+            <SvgText
               x="50"
               y={viewBoxHeight - 46}
               fontSize="3"
@@ -193,7 +193,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
               fontWeight="bold"
             >
               2ND HALF
-            </Text>
+            </SvgText>
           </G>
           
           {/* Shot markers - render all shots */}
