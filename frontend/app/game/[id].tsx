@@ -1360,7 +1360,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   minutesDisplay: {
     flexDirection: 'row',
@@ -1395,6 +1395,42 @@ const styles = StyleSheet.create({
   },
   clockToggleTextActive: {
     color: colors.error,
+  },
+  // Period Filter Styles
+  periodFilter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.sm,
+    marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
+  periodFilterLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  periodFilterScroll: {
+    flexGrow: 0,
+  },
+  periodFilterBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceLight,
+    marginRight: spacing.xs,
+  },
+  periodFilterBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  periodFilterBtnText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  periodFilterBtnTextActive: {
+    color: colors.text,
   },
   playerScroll: {
     maxHeight: 90,
