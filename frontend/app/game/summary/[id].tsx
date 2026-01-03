@@ -537,6 +537,32 @@ export default function GameSummaryScreen() {
                 <Text style={styles.shootingPctDetail}>{ps.stats.ft_made || 0}/{ps.stats.ft_attempted || 0}</Text>
               </View>
             </View>
+            
+            {/* Individual Player Shot Chart */}
+            {ps.shots && ps.shots.length > 0 && (
+              <View style={styles.playerShotChartContainer}>
+                <Text style={styles.playerShotChartTitle}>Shot Chart ({ps.shots.length} shots)</Text>
+                <ShotChart 
+                  shots={ps.shots} 
+                  width={screenWidth - 80} 
+                  height={(screenWidth - 80) * 0.75} 
+                />
+                <View style={styles.shotLegendSmall}>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDotSmall, { backgroundColor: colors.shotMade }]} />
+                    <Text style={styles.legendTextSmall}>
+                      Made ({ps.shots.filter(s => s.made).length})
+                    </Text>
+                  </View>
+                  <View style={styles.legendItem}>
+                    <View style={[styles.legendDotSmall, { backgroundColor: colors.shotMissed }]} />
+                    <Text style={styles.legendTextSmall}>
+                      Missed ({ps.shots.filter(s => !s.made).length})
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
           );
         })}
