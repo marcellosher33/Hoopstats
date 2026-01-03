@@ -147,6 +147,68 @@ export default function LiveGameScreen() {
     ps => ps.player_id === selectedPlayer
   );
 
+  // Helper function to calculate stats from shots filtered by period
+  const getFilteredStats = (playerStats: typeof selectedPlayerStats) => {
+    if (!playerStats) return null;
+    
+    // If no filter, return original stats
+    if (statsFilterPeriod === null) {
+      return playerStats.stats;
+    }
+    
+    // Calculate stats from filtered shots
+    const filteredShots = playerStats.shots.filter(
+      shot => (shot.period || shot.quarter) === statsFilterPeriod
+    );
+    
+    // Calculate stats from shots
+    let points = 0;
+    let fg_made = 0;
+    let fg_attempted = 0;
+    let three_pt_made = 0;
+    let three_pt_attempted = 0;
+    
+    filteredShots.forEach(shot => {
+      if (shot.shot_type === '3pt') {
+        three_pt_attempted++;
+        if (shot.made) {
+          three_pt_made++;
+          fg_made++;
+          points += 3;
+        }
+        fg_attempted++;
+      } else if (shot.shot_type === '2pt') {
+        fg_attempted++;
+        if (shot.made) {
+          fg_made++;
+          points += 2;
+        }
+      }
+    });
+    
+    // For non-shot stats, we don't have period-level tracking yet,
+    // so show the full game stats with a note
+    return {
+      ...playerStats.stats,
+      points,
+      fg_made,
+      fg_attempted,
+      three_pt_made,
+      three_pt_attempted,
+      // Keep other stats as totals (they aren't tracked by period currently)
+    };
+  };
+
+  // Get filtered shots for the shot chart
+  const getFilteredShots = (shots: typeof selectedPlayerStats.shots) => {
+    if (!shots) return [];
+    if (statsFilterPeriod === null) return shots;
+    return shots.filter(shot => (shot.period || shot.quarter) === statsFilterPeriod);
+  };
+
+  // Get the filtered stats for display
+  const filteredStats = selectedPlayerStats ? getFilteredStats(selectedPlayerStats) : null;
+
   const handleStatPress = async (statType: StatType, shotLocation?: { x: number; y: number }) => {
     if (!selectedPlayer || !token || !id) {
       Alert.alert('Select Player', 'Please select a player first');
