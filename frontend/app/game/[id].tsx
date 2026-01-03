@@ -1924,6 +1924,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxHeight: '90%',
   },
+  courtSideToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.surfaceLight,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginBottom: spacing.sm,
+  },
+  courtSideToggleText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
   modalTitle: {
     color: colors.text,
     fontSize: 22,
