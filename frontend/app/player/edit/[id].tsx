@@ -88,6 +88,7 @@ export default function EditPlayerScreen() {
           height: height || undefined,
           weight: weight ? parseInt(weight, 10) : undefined,
           photo: photo || undefined,
+          team_id: teamId || undefined,
         },
         token!
       );
