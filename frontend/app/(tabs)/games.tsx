@@ -21,11 +21,13 @@ import { Game, Team } from '../../src/types';
 export default function GamesScreen() {
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { games, teams, fetchGames, fetchTeams, updateGame, isLoading } = useGameStore();
+  const { games, teams, fetchGames, fetchTeams, updateGame, deleteGame, isLoading } = useGameStore();
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [gameToAssign, setGameToAssign] = useState<Game | null>(null);
+  const [showGameOptionsModal, setShowGameOptionsModal] = useState(false);
+  const [selectedGameForOptions, setSelectedGameForOptions] = useState<Game | null>(null);
 
   useEffect(() => {
     if (token) {
@@ -35,8 +37,42 @@ export default function GamesScreen() {
   }, [token]);
 
   const handleLongPressGame = (game: Game) => {
-    if (teams.length > 0) {
-      setGameToAssign(game);
+    setSelectedGameForOptions(game);
+    setShowGameOptionsModal(true);
+  };
+
+  const handleDeleteGame = () => {
+    if (!selectedGameForOptions) return;
+    
+    Alert.alert(
+      'Delete Game',
+      `Are you sure you want to delete the game vs ${selectedGameForOptions.opponent_name}? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            if (token && selectedGameForOptions) {
+              try {
+                await deleteGame(selectedGameForOptions.id, token);
+                setShowGameOptionsModal(false);
+                setSelectedGameForOptions(null);
+                Alert.alert('Success', 'Game deleted successfully');
+              } catch (error: any) {
+                Alert.alert('Error', error.message || 'Failed to delete game');
+              }
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleAssignTeamFromOptions = () => {
+    if (selectedGameForOptions && teams.length > 0) {
+      setGameToAssign(selectedGameForOptions);
+      setShowGameOptionsModal(false);
       setShowAssignModal(true);
     }
   };
