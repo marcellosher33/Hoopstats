@@ -161,12 +161,19 @@ export default function LiveGameScreen() {
       shot => (shot.period || shot.quarter) === statsFilterPeriod
     );
     
-    // Calculate stats from shots
+    // Filter stat events by period
+    const filteredStatEvents = (playerStats.stat_events || []).filter(
+      event => event.period === statsFilterPeriod
+    );
+    
+    // Calculate shooting stats from shots
     let points = 0;
     let fg_made = 0;
     let fg_attempted = 0;
     let three_pt_made = 0;
     let three_pt_attempted = 0;
+    let ft_made = 0;
+    let ft_attempted = 0;
     
     filteredShots.forEach(shot => {
       if (shot.shot_type === '3pt') {
@@ -186,16 +193,74 @@ export default function LiveGameScreen() {
       }
     });
     
-    // For non-shot stats, we don't have period-level tracking yet,
-    // so show the full game stats with a note
+    // Calculate other stats from stat events
+    let offensive_rebounds = 0;
+    let defensive_rebounds = 0;
+    let rebounds = 0;
+    let assists = 0;
+    let steals = 0;
+    let blocks = 0;
+    let turnovers = 0;
+    let fouls = 0;
+    
+    filteredStatEvents.forEach(event => {
+      const value = event.value || 1;
+      switch (event.stat_type) {
+        case 'offensive_rebounds':
+          offensive_rebounds += value;
+          rebounds += value;
+          break;
+        case 'defensive_rebounds':
+          defensive_rebounds += value;
+          rebounds += value;
+          break;
+        case 'rebounds':
+          rebounds += value;
+          break;
+        case 'assists':
+          assists += value;
+          break;
+        case 'steals':
+          steals += value;
+          break;
+        case 'blocks':
+          blocks += value;
+          break;
+        case 'turnovers':
+          turnovers += value;
+          break;
+        case 'fouls':
+          fouls += value;
+          break;
+        case 'ft_made':
+          ft_made += value;
+          ft_attempted += value;
+          points += value;
+          break;
+        case 'ft_missed':
+          ft_attempted += value;
+          break;
+      }
+    });
+    
     return {
-      ...playerStats.stats,
       points,
       fg_made,
       fg_attempted,
       three_pt_made,
       three_pt_attempted,
-      // Keep other stats as totals (they aren't tracked by period currently)
+      ft_made,
+      ft_attempted,
+      offensive_rebounds,
+      defensive_rebounds,
+      rebounds,
+      assists,
+      steals,
+      blocks,
+      turnovers,
+      fouls,
+      plus_minus: playerStats.stats.plus_minus || 0, // Keep total (not period-tracked)
+      minutes_played: playerStats.stats.minutes_played || 0, // Keep total
     };
   };
 
