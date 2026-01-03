@@ -770,7 +770,16 @@ export default function LiveGameScreen() {
                     colors={['#252540', '#1A1A2E']}
                     style={styles.statsCardGradient}
                   >
-                    <Text style={styles.playerStatsTitle}>{selectedPlayerStats?.player_name}</Text>
+                    <View style={styles.playerStatsTitleRow}>
+                      <Text style={styles.playerStatsTitle}>{selectedPlayerStats?.player_name}</Text>
+                      {statsFilterPeriod !== null && (
+                        <View style={styles.periodBadge}>
+                          <Text style={styles.periodBadgeText}>
+                            {currentGame.period_type === 'halves' ? `H${statsFilterPeriod}` : `Q${statsFilterPeriod}`}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                     <View style={styles.playerStatsGrid}>
                       <View style={styles.playerStatItem}>
                         <Text style={[styles.playerStatValue, { color: colors.points }]}>{stats?.points || 0}</Text>
@@ -797,6 +806,11 @@ export default function LiveGameScreen() {
                         <Text style={styles.playerStatLabel}>MIN</Text>
                       </View>
                     </View>
+                    {statsFilterPeriod !== null && (
+                      <Text style={styles.filterNote}>
+                        *REB, AST, MIN show full game totals
+                      </Text>
+                    )}
                   </LinearGradient>
                 </View>
               </>
