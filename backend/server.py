@@ -306,6 +306,10 @@ class GameUpdate(BaseModel):
     tags: Optional[List[str]] = None
     scoreboard_photo: Optional[str] = None
     status: Optional[str] = None
+    active_player_ids: Optional[List[str]] = None  # Players currently "in" the game
+    court_side: Optional[str] = None  # Which side is 1st half: "top" or "bottom"
+    team_id: Optional[str] = None
+    home_team_name: Optional[str] = None
 
 # Highlight Reel Models
 class HighlightReel(BaseModel):
