@@ -898,7 +898,7 @@ export default function LiveGameScreen() {
               {pendingShotMade ? '✓ Made' : '✗ Missed'} {pendingShotType === '3pt' ? '3-Point Shot' : '2-Point Shot'}
             </Text>
             <FullCourtShotChart
-              shots={selectedPlayerStats?.shots || []}
+              shots={getFilteredShots(selectedPlayerStats?.shots || [])}
               onCourtPress={handleShotChartPress}
               width={screenWidth - 64}
               height={(screenWidth - 64) * 1.6}
