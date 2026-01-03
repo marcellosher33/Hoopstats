@@ -227,6 +227,7 @@ class GamePlayerStats(BaseModel):
     player_name: str
     stats: PlayerStats = Field(default_factory=PlayerStats)
     shots: List[ShotAttempt] = []
+    stat_events: List[Dict[str, Any]] = []  # Track individual stat events with period
 
 class GameMedia(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
