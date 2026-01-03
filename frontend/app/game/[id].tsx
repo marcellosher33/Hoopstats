@@ -80,10 +80,21 @@ export default function LiveGameScreen() {
     }
   }, [token, id]);
 
+  // Load active players and court side from game data when it loads
   useEffect(() => {
     if (currentGame) {
       setOpponentScore(currentGame.opponent_score.toString());
       setOurScore(currentGame.our_score.toString());
+      
+      // Restore active players from saved game state
+      if (currentGame.active_player_ids && currentGame.active_player_ids.length > 0) {
+        setActivePlayerIds(new Set(currentGame.active_player_ids));
+      }
+      
+      // Restore court side preference
+      if (currentGame.court_side) {
+        setFirstHalfCourtSide(currentGame.court_side as 'top' | 'bottom');
+      }
       
       // Initialize minutes for all players
       const initialMinutes: Record<string, number> = {};
@@ -92,7 +103,35 @@ export default function LiveGameScreen() {
       });
       setPlayerMinutes(prev => ({ ...initialMinutes, ...prev }));
     }
-  }, [currentGame]);
+  }, [currentGame?.id]); // Only run when game ID changes to avoid resetting on every update
+
+  // Save active players to backend when they change
+  const saveActivePlayersDebounced = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  useEffect(() => {
+    if (!token || !id || !currentGame) return;
+    
+    // Debounce to avoid too many API calls
+    if (saveActivePlayersDebounced.current) {
+      clearTimeout(saveActivePlayersDebounced.current);
+    }
+    
+    saveActivePlayersDebounced.current = setTimeout(() => {
+      updateGame(id, { active_player_ids: Array.from(activePlayerIds) }, token);
+    }, 1000);
+    
+    return () => {
+      if (saveActivePlayersDebounced.current) {
+        clearTimeout(saveActivePlayersDebounced.current);
+      }
+    };
+  }, [activePlayerIds]);
+
+  // Save court side preference when it changes
+  useEffect(() => {
+    if (!token || !id || !currentGame) return;
+    updateGame(id, { court_side: firstHalfCourtSide }, token);
+  }, [firstHalfCourtSide]);
 
   // Minutes tracking interval for team mode
   useEffect(() => {
