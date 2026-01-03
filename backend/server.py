@@ -796,8 +796,26 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 stats["points"] = stats.get("points", 0) + 1
                 stats["ft_made"] = stats.get("ft_made", 0) + 1
                 stats["ft_attempted"] = stats.get("ft_attempted", 0) + 1
+                # Track FT event with period
+                ft_event_id = str(uuid.uuid4())
+                ps.setdefault("stat_events", []).append({
+                    "id": ft_event_id,
+                    "stat_type": "ft_made",
+                    "value": 1,
+                    "period": current_period,
+                    "timestamp": datetime.utcnow().isoformat()
+                })
             elif stat.stat_type == "ft_missed":
                 stats["ft_attempted"] = stats.get("ft_attempted", 0) + 1
+                # Track FT miss event with period
+                ft_event_id = str(uuid.uuid4())
+                ps.setdefault("stat_events", []).append({
+                    "id": ft_event_id,
+                    "stat_type": "ft_missed",
+                    "value": 1,
+                    "period": current_period,
+                    "timestamp": datetime.utcnow().isoformat()
+                })
             elif stat.stat_type == "miss_2":
                 stats["fg_attempted"] = stats.get("fg_attempted", 0) + 1
                 if stat.shot_location:
