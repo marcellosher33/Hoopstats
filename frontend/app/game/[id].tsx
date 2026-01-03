@@ -994,12 +994,22 @@ export default function LiveGameScreen() {
             ]}>
               {pendingShotMade ? '✓ Made' : '✗ Missed'} {pendingShotType === '3pt' ? '3-Point Shot' : '2-Point Shot'}
             </Text>
+            <TouchableOpacity 
+              style={styles.courtSideToggle}
+              onPress={() => setShowCourtSideModal(true)}
+            >
+              <Ionicons name="swap-vertical" size={16} color={colors.primary} />
+              <Text style={styles.courtSideToggleText}>
+                {firstHalfCourtSide === 'top' ? 'Top = 1st Half' : 'Bottom = 1st Half'}
+              </Text>
+            </TouchableOpacity>
             <FullCourtShotChart
               shots={getFilteredShots(selectedPlayerStats?.shots || [])}
               onCourtPress={handleShotChartPress}
               width={screenWidth - 64}
               height={(screenWidth - 64) * 1.6}
               interactive
+              firstHalfSide={firstHalfCourtSide}
             />
             <Button
               title="Cancel"
