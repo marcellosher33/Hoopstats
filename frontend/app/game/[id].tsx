@@ -63,6 +63,13 @@ export default function LiveGameScreen() {
   // Stats filter by period (null = all periods)
   const [statsFilterPeriod, setStatsFilterPeriod] = useState<number | null>(null);
   
+  // Court side selection: 'top' means top of screen is 1st half, 'bottom' means bottom is 1st half
+  const [firstHalfCourtSide, setFirstHalfCourtSide] = useState<'top' | 'bottom'>('top');
+  const [showCourtSideModal, setShowCourtSideModal] = useState(false);
+  
+  // Show opponent score adjustment modal
+  const [showOpponentScoreAdjust, setShowOpponentScoreAdjust] = useState(false);
+  
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0);
