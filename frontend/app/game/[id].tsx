@@ -334,7 +334,7 @@ export default function LiveGameScreen() {
   };
 
   const handleShotChartPress = (x: number, y: number) => {
-    if (!pendingShotType) return;
+    if (!pendingShotType || !selectedPlayer) return;
     
     let statType: StatType;
     if (pendingShotMade) {
@@ -343,7 +343,8 @@ export default function LiveGameScreen() {
       statType = pendingShotType === '3pt' ? 'miss_3' : 'miss_2';
     }
     
-    handleStatPress(statType, { x, y });
+    // Use handleTeamStatPress with selected player ID to avoid state timing issues
+    handleTeamStatPress(selectedPlayer, statType, { x, y });
     setShowShotChart(false);
     setPendingShotType(null);
     setPendingShotMade(true);
