@@ -602,6 +602,42 @@ export default function LiveGameScreen() {
                   </TouchableOpacity>
                 </View>
 
+                {/* Period Filter for Stats */}
+                <View style={styles.periodFilter}>
+                  <Text style={styles.periodFilterLabel}>View Stats:</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.periodFilterScroll}>
+                    <TouchableOpacity
+                      style={[
+                        styles.periodFilterBtn,
+                        statsFilterPeriod === null && styles.periodFilterBtnActive
+                      ]}
+                      onPress={() => setStatsFilterPeriod(null)}
+                    >
+                      <Text style={[
+                        styles.periodFilterBtnText,
+                        statsFilterPeriod === null && styles.periodFilterBtnTextActive
+                      ]}>ALL</Text>
+                    </TouchableOpacity>
+                    {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
+                      <TouchableOpacity
+                        key={p}
+                        style={[
+                          styles.periodFilterBtn,
+                          statsFilterPeriod === p && styles.periodFilterBtnActive
+                        ]}
+                        onPress={() => setStatsFilterPeriod(p)}
+                      >
+                        <Text style={[
+                          styles.periodFilterBtnText,
+                          statsFilterPeriod === p && styles.periodFilterBtnTextActive
+                        ]}>
+                          {currentGame.period_type === 'halves' ? `H${p}` : `Q${p}`}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+
                 {/* Scoring Buttons */}
                 <View style={styles.statSection}>
                   <Text style={styles.statSectionTitle}>SCORING (Long-press to adjust)</Text>
