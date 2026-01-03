@@ -779,4 +779,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
   },
+  // Game Options Modal Styles
+  gameOptionsModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    width: '90%',
+    maxWidth: 400,
+  },
+  gameOptionsContent: {
+    marginTop: spacing.md,
+  },
+  gameOptionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surfaceLight,
+    marginBottom: spacing.sm,
+    gap: spacing.md,
+  },
+  gameOptionText: {
+    color: colors.text,
+    fontSize: 16,
+    flex: 1,
+  },
+  gameOptionDelete: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  gameOptionDeleteText: {
+    color: colors.error,
+  },
 });
