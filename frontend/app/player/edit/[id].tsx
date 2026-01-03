@@ -456,4 +456,83 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.surfaceLight,
   },
+  // Team Section Styles
+  teamSection: {
+    marginTop: spacing.lg,
+  },
+  teamSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceLight,
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    gap: spacing.sm,
+  },
+  teamColorDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+  },
+  teamSelectorText: {
+    color: colors.text,
+    fontSize: 16,
+    flex: 1,
+  },
+  teamSelectorPlaceholder: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    flex: 1,
+  },
+  // Team Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  teamModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    width: '90%',
+    maxWidth: 400,
+    maxHeight: '70%',
+  },
+  teamModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  teamModalTitle: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  teamList: {
+    maxHeight: 300,
+  },
+  teamOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surfaceLight,
+    marginBottom: spacing.sm,
+    gap: spacing.md,
+  },
+  teamOptionSelected: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  teamOptionDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  teamOptionText: {
+    color: colors.text,
+    fontSize: 16,
+    flex: 1,
+  },
 });
