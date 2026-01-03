@@ -1171,6 +1171,116 @@ export default function LiveGameScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Opponent Score Adjustment Modal */}
+      <Modal visible={showOpponentScoreAdjust} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.adjustModal}>
+            <Text style={styles.modalTitle}>Adjust Opponent Score</Text>
+            <Text style={styles.modalSubtitle}>Current: {currentGame?.opponent_score || 0}</Text>
+            <View style={styles.adjustButtons}>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(-1)}
+              >
+                <Ionicons name="remove-circle" size={48} color={colors.error} />
+                <Text style={styles.adjustBtnLabel}>-1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(1)}
+              >
+                <Ionicons name="add-circle" size={48} color={colors.success} />
+                <Text style={styles.adjustBtnLabel}>+1</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.adjustButtons}>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(-2)}
+              >
+                <Text style={[styles.adjustBtnLabel, { color: colors.error, fontSize: 24 }]}>-2</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(2)}
+              >
+                <Text style={[styles.adjustBtnLabel, { color: colors.success, fontSize: 24 }]}>+2</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(-3)}
+              >
+                <Text style={[styles.adjustBtnLabel, { color: colors.error, fontSize: 24 }]}>-3</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.adjustBtn}
+                onPress={() => handleOpponentScore(3)}
+              >
+                <Text style={[styles.adjustBtnLabel, { color: colors.success, fontSize: 24 }]}>+3</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.adjustCloseBtn}
+              onPress={() => setShowOpponentScoreAdjust(false)}
+            >
+              <Text style={styles.adjustCloseBtnText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Court Side Selection Modal */}
+      <Modal visible={showCourtSideModal} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.courtSideModal}>
+            <Text style={styles.modalTitle}>Select Your Court Side</Text>
+            <Text style={styles.modalSubtitle}>Which end are you shooting at in the 1st half?</Text>
+            <View style={styles.courtSideOptions}>
+              <TouchableOpacity
+                style={[
+                  styles.courtSideOption,
+                  firstHalfCourtSide === 'top' && styles.courtSideOptionActive
+                ]}
+                onPress={() => {
+                  setFirstHalfCourtSide('top');
+                  setShowCourtSideModal(false);
+                }}
+              >
+                <Ionicons name="arrow-up" size={32} color={firstHalfCourtSide === 'top' ? colors.text : colors.textSecondary} />
+                <Text style={[
+                  styles.courtSideOptionText,
+                  firstHalfCourtSide === 'top' && styles.courtSideOptionTextActive
+                ]}>Top of Screen</Text>
+                <Text style={styles.courtSideOptionSubtext}>1st Half Basket</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.courtSideOption,
+                  firstHalfCourtSide === 'bottom' && styles.courtSideOptionActive
+                ]}
+                onPress={() => {
+                  setFirstHalfCourtSide('bottom');
+                  setShowCourtSideModal(false);
+                }}
+              >
+                <Ionicons name="arrow-down" size={32} color={firstHalfCourtSide === 'bottom' ? colors.text : colors.textSecondary} />
+                <Text style={[
+                  styles.courtSideOptionText,
+                  firstHalfCourtSide === 'bottom' && styles.courtSideOptionTextActive
+                ]}>Bottom of Screen</Text>
+                <Text style={styles.courtSideOptionSubtext}>1st Half Basket</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.adjustCloseBtn}
+              onPress={() => setShowCourtSideModal(false)}
+            >
+              <Text style={styles.adjustCloseBtnText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
