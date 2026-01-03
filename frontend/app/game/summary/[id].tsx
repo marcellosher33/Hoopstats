@@ -1463,4 +1463,34 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 2,
   },
+  // Individual Player Shot Chart Styles
+  playerShotChartContainer: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceLight,
+    alignItems: 'center',
+  },
+  playerShotChartTitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  shotLegendSmall: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.lg,
+    marginTop: spacing.sm,
+  },
+  legendDotSmall: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  legendTextSmall: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginLeft: 4,
+  },
 });
