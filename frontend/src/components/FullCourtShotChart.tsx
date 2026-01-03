@@ -10,6 +10,7 @@ interface FullCourtShotChartProps {
   width?: number;
   height?: number;
   interactive?: boolean;
+  firstHalfSide?: 'top' | 'bottom'; // Which side is the 1st half basket
 }
 
 export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
@@ -18,6 +19,7 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
   width = 300,
   height = 500,
   interactive = false,
+  firstHalfSide = 'top', // Default: top of screen is 1st half
 }) => {
   const containerRef = useRef<View>(null);
   const [layout, setLayout] = useState({ x: 0, y: 0, width: width, height: height });
