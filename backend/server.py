@@ -830,6 +830,15 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
                 # Also increment total rebounds for offensive/defensive
                 if stat.stat_type in ["offensive_rebounds", "defensive_rebounds"]:
                     stats["rebounds"] = stats.get("rebounds", 0) + stat.value
+                # Track stat event with period for filtering
+                stat_event_id = str(uuid.uuid4())
+                ps.setdefault("stat_events", []).append({
+                    "id": stat_event_id,
+                    "stat_type": stat.stat_type,
+                    "value": stat.value,
+                    "period": current_period,
+                    "timestamp": datetime.utcnow().isoformat()
+                })
             elif stat.stat_type == "plus_minus":
                 stats["plus_minus"] = stats.get("plus_minus", 0) + stat.value
             elif stat.stat_type == "minutes":
