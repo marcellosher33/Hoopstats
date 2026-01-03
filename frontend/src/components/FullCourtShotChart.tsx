@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Pressable, LayoutChangeEvent, GestureResponderEvent, Text } from 'react-native';
-import Svg, { Rect, Circle, Line, Path, G, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { View, StyleSheet, Pressable, LayoutChangeEvent, GestureResponderEvent, Text as RNText } from 'react-native';
+import Svg, { Rect, Circle, Line, Path, G, Defs, RadialGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { colors } from '../utils/theme';
 import { ShotAttempt } from '../types';
 
