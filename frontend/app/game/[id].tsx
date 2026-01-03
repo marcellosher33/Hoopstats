@@ -326,7 +326,7 @@ export default function LiveGameScreen() {
               <Text style={styles.quarterText}>
                 {currentGame.period_type === 'halves' 
                   ? `H${currentGame.current_period || 1}` 
-                  : `Q${currentGame.current_period || currentGame.current_quarter || 1}`}
+                  : `Q${currentGame.current_period || 1}`}
               </Text>
             </View>
             <Text style={styles.vsText}>VS</Text>
@@ -369,23 +369,23 @@ export default function LiveGameScreen() {
               key={p}
               style={[
                 styles.quarterBtn,
-                (currentGame.current_period || currentGame.current_quarter || 1) === p && styles.quarterBtnActive,
+                (currentGame.current_period || 1) === p && styles.quarterBtnActive,
               ]}
               onPress={() => handleQuarterChange(p)}
             >
               <Text style={[
                 styles.quarterBtnText,
-                (currentGame.current_period || currentGame.current_quarter || 1) === p && styles.quarterBtnTextActive,
+                (currentGame.current_period || 1) === p && styles.quarterBtnTextActive,
               ]}>
                 {currentGame.period_type === 'halves' ? `H${p}` : `Q${p}`}
               </Text>
             </TouchableOpacity>
           ))}
           <TouchableOpacity
-            style={[styles.quarterBtn, currentGame.current_quarter > 4 && styles.quarterBtnActive]}
+            style={[styles.quarterBtn, (currentGame.current_period || 1) > 4 && styles.quarterBtnActive]}
             onPress={() => handleQuarterChange(5)}
           >
-            <Text style={[styles.quarterBtnText, currentGame.current_quarter > 4 && styles.quarterBtnTextActive]}>OT</Text>
+            <Text style={[styles.quarterBtnText, (currentGame.current_period || 1) > 4 && styles.quarterBtnTextActive]}>OT</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>
