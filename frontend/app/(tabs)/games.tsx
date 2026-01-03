@@ -194,7 +194,7 @@ export default function GamesScreen() {
             </View>
           )}
           {isLive && (
-            <Text style={styles.quarterText}>Q{item.current_quarter}</Text>
+            <Text style={styles.quarterText}>Q{item.current_period || 1}</Text>
           )}
         </View>
       </TouchableOpacity>
