@@ -1501,10 +1501,54 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.error,
   },
+  opponentScoreBtnMinus: {
+    backgroundColor: 'rgba(100, 100, 100, 0.3)',
+    borderColor: colors.textSecondary,
+  },
   opponentScoreBtnText: {
     color: colors.error,
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  courtSideModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  courtSideOptions: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginVertical: spacing.lg,
+  },
+  courtSideOption: {
+    alignItems: 'center',
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surfaceLight,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    flex: 1,
+  },
+  courtSideOptionActive: {
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+  },
+  courtSideOptionText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: spacing.sm,
+  },
+  courtSideOptionTextActive: {
+    color: colors.text,
+  },
+  courtSideOptionSubtext: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 4,
   },
   gameInfo: {
     alignItems: 'center',
