@@ -233,7 +233,7 @@ export default function LiveGameScreen() {
       const photo = await cameraRef.current.takePictureAsync({ base64: true, quality: 0.5 });
       if (photo?.base64 && token && id) {
         await addMedia(id, 'photo', `data:image/jpeg;base64,${photo.base64}`, token, {
-          quarter: currentGame?.current_period || currentGame?.current_quarter,
+          quarter: currentGame?.current_period || 1,
         });
         Alert.alert('Success', 'Photo saved!');
       }
