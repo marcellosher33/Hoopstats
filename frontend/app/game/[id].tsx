@@ -360,7 +360,8 @@ export default function LiveGameScreen() {
     );
   }
 
-  const stats = selectedPlayerStats?.stats;
+  // Use filtered stats instead of raw stats
+  const stats = filteredStats;
 
   // Sort players: active (in) first, then bench (out)
   const sortedPlayerStats = [...currentGame.player_stats].sort((a, b) => {
