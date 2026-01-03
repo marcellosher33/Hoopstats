@@ -103,6 +103,8 @@ export interface Game {
   opponent_score: number;
   status: 'in_progress' | 'completed';
   current_period: number;
+  active_player_ids?: string[];  // Players currently "in" the game
+  court_side?: 'top' | 'bottom';  // Which side is 1st half
   player_stats: GamePlayerStats[];
   media: GameMedia[];
   scoreboard_photo?: string;
