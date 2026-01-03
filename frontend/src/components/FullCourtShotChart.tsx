@@ -263,11 +263,11 @@ export const FullCourtShotChart: React.FC<FullCourtShotChartProps> = ({
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.success }]} />
-            <Text style={styles.legendText}>Made ({shots.filter(s => s.made).length})</Text>
+            <RNText style={styles.legendText}>Made ({shots.filter(s => s.made).length})</RNText>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.error }]} />
-            <Text style={styles.legendText}>Missed ({shots.filter(s => !s.made).length})</Text>
+            <RNText style={styles.legendText}>Missed ({shots.filter(s => !s.made).length})</RNText>
           </View>
         </View>
       )}
