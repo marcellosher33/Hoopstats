@@ -200,7 +200,7 @@ export default function LiveGameScreen() {
   };
 
   // Get filtered shots for the shot chart
-  const getFilteredShots = (shots: typeof selectedPlayerStats?.shots) => {
+  const getFilteredShots = (shots: any[]) => {
     if (!shots) return [];
     if (statsFilterPeriod === null) return shots;
     return shots.filter(shot => (shot.period || shot.quarter) === statsFilterPeriod);
