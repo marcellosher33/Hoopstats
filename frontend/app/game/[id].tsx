@@ -873,7 +873,7 @@ export default function LiveGameScreen() {
                     </View>
                     {statsFilterPeriod !== null && (
                       <Text style={styles.filterNote}>
-                        *REB, AST, MIN show full game totals
+                        *MIN shows session total (not period-tracked)
                       </Text>
                     )}
                   </LinearGradient>
