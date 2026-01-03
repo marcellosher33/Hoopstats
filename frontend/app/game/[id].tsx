@@ -60,6 +60,9 @@ export default function LiveGameScreen() {
   const [isClockRunning, setIsClockRunning] = useState(false); // Single player mode clock
   const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
+  // Stats filter by period (null = all periods)
+  const [statsFilterPeriod, setStatsFilterPeriod] = useState<number | null>(null);
+  
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0);
