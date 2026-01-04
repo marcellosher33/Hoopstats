@@ -395,4 +395,98 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 12,
   },
+  // Final badge styles
+  finalBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginBottom: spacing.md,
+    gap: spacing.xs,
+  },
+  finalText: {
+    color: colors.success,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  // AI Summary styles
+  summarySection: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  summaryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  summaryTitle: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  summaryCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+  },
+  summaryText: {
+    color: colors.text,
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  // Final Score section styles
+  finalScoreSection: {
+    marginTop: spacing.lg,
+    alignItems: 'center',
+  },
+  finalScoreTitle: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  finalScoreCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    gap: spacing.lg,
+  },
+  finalTeam: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  finalTeamName: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+    textAlign: 'center',
+  },
+  finalScore: {
+    color: colors.text,
+    fontSize: 36,
+    fontWeight: 'bold',
+  },
+  winningScore: {
+    color: colors.success,
+  },
+  finalDash: {
+    color: colors.textSecondary,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  gameResult: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: spacing.md,
+  },
 });
