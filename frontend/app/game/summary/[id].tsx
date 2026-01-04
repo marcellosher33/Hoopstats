@@ -575,17 +575,6 @@ export default function GameSummaryScreen() {
       message += `${currentGame.ai_summary}\n\n`;
     }
     
-    // Add top performer stats
-    if (currentGame.player_stats && currentGame.player_stats.length > 0) {
-      const topScorer = currentGame.player_stats.reduce((top, ps) => 
-        (ps.stats.points || 0) > (top.stats.points || 0) ? ps : top
-      );
-      if (topScorer.stats.points > 0) {
-        const reb = (topScorer.stats.offensive_rebounds || 0) + (topScorer.stats.defensive_rebounds || 0);
-        message += `⭐ ${topScorer.player_name}: ${topScorer.stats.points} PTS, ${reb} REB, ${topScorer.stats.assists || 0} AST\n\n`;
-      }
-    }
-    
     // Add hashtags
     message += `#Basketball #HoopStats`;
     
