@@ -1726,9 +1726,9 @@ async def get_player_stats(player_id: str, user: dict = Depends(get_current_user
 # ==================== SUBSCRIPTION ROUTES ====================
 
 SUBSCRIPTION_PRICES = {
-    "pro_monthly": {"amount": 799, "name": "Pro Monthly", "interval": "month", "tier": "pro"},
+    "pro_monthly": {"amount": 599, "name": "Pro Monthly", "interval": "month", "tier": "pro"},
     "pro_yearly": {"amount": 5999, "name": "Pro Yearly", "interval": "year", "tier": "pro"},
-    "team_monthly": {"amount": 1999, "name": "Team Monthly", "interval": "month", "tier": "team"},
+    "team_monthly": {"amount": 1699, "name": "Team Monthly", "interval": "month", "tier": "team"},
     "team_yearly": {"amount": 15999, "name": "Team Yearly", "interval": "year", "tier": "team"}
 }
 
@@ -1737,12 +1737,12 @@ async def get_subscription_prices():
     """Get all subscription pricing options"""
     return {
         "pro": {
-            "monthly": {"price": 7.99, "price_id": "pro_monthly", "savings": None},
-            "yearly": {"price": 59.99, "price_id": "pro_yearly", "savings": "Save 37%"}
+            "monthly": {"price": 5.99, "yearly_total": 69.99, "price_id": "pro_monthly", "savings": None},
+            "yearly": {"price": 59.99, "price_id": "pro_yearly", "savings": "Save $10"}
         },
         "team": {
-            "monthly": {"price": 19.99, "price_id": "team_monthly", "savings": None},
-            "yearly": {"price": 159.99, "price_id": "team_yearly", "savings": "Save 33%"}
+            "monthly": {"price": 16.99, "yearly_total": 199.99, "price_id": "team_monthly", "savings": None},
+            "yearly": {"price": 159.99, "price_id": "team_yearly", "savings": "Save $40"}
         }
     }
 
