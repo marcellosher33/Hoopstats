@@ -1726,17 +1726,36 @@ async def get_player_stats(player_id: str, user: dict = Depends(get_current_user
 # ==================== SUBSCRIPTION ROUTES ====================
 
 SUBSCRIPTION_PRICES = {
-    "pro": {"amount": 6999, "name": "Pro", "interval": "year"},
-    "team": {"amount": 19999, "name": "Team", "interval": "year"}
+    "pro_monthly": {"amount": 799, "name": "Pro Monthly", "interval": "month", "tier": "pro"},
+    "pro_yearly": {"amount": 5999, "name": "Pro Yearly", "interval": "year", "tier": "pro"},
+    "team_monthly": {"amount": 1999, "name": "Team Monthly", "interval": "month", "tier": "team"},
+    "team_yearly": {"amount": 15999, "name": "Team Yearly", "interval": "year", "tier": "team"}
 }
+
+@api_router.get("/subscriptions/prices")
+async def get_subscription_prices():
+    """Get all subscription pricing options"""
+    return {
+        "pro": {
+            "monthly": {"price": 7.99, "price_id": "pro_monthly", "savings": None},
+            "yearly": {"price": 59.99, "price_id": "pro_yearly", "savings": "Save 37%"}
+        },
+        "team": {
+            "monthly": {"price": 19.99, "price_id": "team_monthly", "savings": None},
+            "yearly": {"price": 159.99, "price_id": "team_yearly", "savings": "Save 33%"}
+        }
+    }
 
 @api_router.post("/subscriptions/create-checkout")
 async def create_checkout_session(sub_data: SubscriptionCreate, user: dict = Depends(get_current_user)):
     """Create Stripe checkout session for subscription"""
-    if sub_data.tier not in SUBSCRIPTION_PRICES:
-        raise HTTPException(status_code=400, detail="Invalid subscription tier")
+    # Build price key from tier and billing period
+    price_key = f"{sub_data.tier}_{sub_data.billing_period}"
     
-    price_info = SUBSCRIPTION_PRICES[sub_data.tier]
+    if price_key not in SUBSCRIPTION_PRICES:
+        raise HTTPException(status_code=400, detail="Invalid subscription tier or billing period")
+    
+    price_info = SUBSCRIPTION_PRICES[price_key]
     
     try:
         # Create or get Stripe customer
@@ -1761,7 +1780,7 @@ async def create_checkout_session(sub_data: SubscriptionCreate, user: dict = Dep
                     "currency": "usd",
                     "unit_amount": price_info["amount"],
                     "product_data": {
-                        "name": f"Basketball Tracker {price_info['name']} Subscription"
+                        "name": f"CourtClock {price_info['name']} Subscription"
                     },
                     "recurring": {"interval": price_info["interval"]}
                 },
@@ -1770,7 +1789,7 @@ async def create_checkout_session(sub_data: SubscriptionCreate, user: dict = Dep
             mode="subscription",
             success_url=f"{os.environ.get('FRONTEND_URL', 'http://localhost:8081')}/subscription-success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{os.environ.get('FRONTEND_URL', 'http://localhost:8081')}/subscription-cancel",
-            metadata={"user_id": user["id"], "tier": sub_data.tier}
+            metadata={"user_id": user["id"], "tier": price_info["tier"], "billing_period": sub_data.billing_period}
         )
         
         return {"checkout_url": session.url, "session_id": session.id}
