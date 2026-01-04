@@ -260,6 +260,10 @@ class Game(BaseModel):
     active_player_ids: List[str] = []  # Players currently "in" the game (for team mode)
     court_side: str = "top"  # Which side is 1st half: "top" or "bottom"
     
+    # Sharing
+    share_token: Optional[str] = None  # Unique token for public sharing
+    is_public: bool = False  # Whether the game is publicly viewable
+    
     # Player stats
     player_stats: List[GamePlayerStats] = []
     
