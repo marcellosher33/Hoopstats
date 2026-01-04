@@ -1489,8 +1489,17 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '600',
   },
+  playerSubInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   playerPts: {
     color: colors.primary,
+    fontSize: 12,
+  },
+  playerMins: {
+    color: colors.textSecondary,
     fontSize: 12,
   },
   statsGrid: {
