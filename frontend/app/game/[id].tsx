@@ -85,6 +85,9 @@ export default function LiveGameScreen() {
   const [showUndoHistory, setShowUndoHistory] = useState(false);
   const [undoHistory, setUndoHistory] = useState<any[]>([]);
   
+  // Subscription status
+  const [subscriptionTier, setSubscriptionTier] = useState<string>('free');
+  
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0);
