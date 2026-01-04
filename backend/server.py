@@ -314,6 +314,7 @@ class GameUpdate(BaseModel):
     court_side: Optional[str] = None  # Which side is 1st half: "top" or "bottom"
     team_id: Optional[str] = None
     home_team_name: Optional[str] = None
+    player_minutes: Optional[Dict[str, int]] = None  # Player ID -> seconds played
 
 # Highlight Reel Models
 class HighlightReel(BaseModel):
