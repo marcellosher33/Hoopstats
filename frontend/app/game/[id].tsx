@@ -794,6 +794,7 @@ export default function LiveGameScreen() {
                   setShowShotChart(true);
                 }}
                 onLongPress={(statType, label) => handleLongPressAdjust(statType, label, ps.player_id)}
+                onMinutesPress={() => handleEditMinutes(ps.player_id, ps.player_name)}
                 token={token}
                 gameId={id}
               />
