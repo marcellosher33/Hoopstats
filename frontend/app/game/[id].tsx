@@ -64,6 +64,11 @@ export default function LiveGameScreen() {
   const [isClockRunning, setIsClockRunning] = useState(false); // Single player mode clock
   const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
+  // Minutes editing
+  const [showMinutesModal, setShowMinutesModal] = useState(false);
+  const [editingMinutesPlayerId, setEditingMinutesPlayerId] = useState<string | null>(null);
+  const [editingMinutesValue, setEditingMinutesValue] = useState<string>('0');
+  
   // Stats filter by period (null = all periods)
   const [statsFilterPeriod, setStatsFilterPeriod] = useState<number | null>(null);
   
