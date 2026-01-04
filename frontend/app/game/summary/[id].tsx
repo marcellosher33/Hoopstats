@@ -580,6 +580,13 @@ export default function GameSummaryScreen() {
   const photos = currentGame.media.filter(m => m.type === 'photo');
   const videos = currentGame.media.filter(m => m.type === 'video');
   
+  // Helper to format minutes from seconds
+  const formatMinutes = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+  
   // Get period options based on period_type
   const periodType = currentGame.period_type || 'halves';
   const periodOptions = periodType === 'quarters' 
