@@ -1550,6 +1550,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: spacing.xs,
   },
+  lockedFeature: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.surfaceLight,
+    borderStyle: 'dashed',
+  },
+  lockedFeatureTitle: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: spacing.sm,
+  },
+  lockedFeatureText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+  },
   playerStatCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
