@@ -1901,12 +1901,112 @@ async def stripe_webhook(request_body: dict):
 
 @api_router.get("/subscriptions/status")
 async def get_subscription_status(user: dict = Depends(get_current_user)):
-    """Get current subscription status"""
-    return {
-        "tier": user.get("subscription_tier", "free"),
-        "expires": user.get("subscription_expires"),
-        "is_active": check_subscription(user, user.get("subscription_tier", "free"))
+    """Get current subscription status with feature access info"""
+    user_tier = user.get("subscription_tier", "free")
+    sub_status = user.get("subscription_status", "active")
+    expires = user.get("subscription_expires")
+    
+    # Check if actually active
+    is_active = check_subscription(user, user_tier)
+    effective_tier = user_tier if is_active else "free"
+    
+    # Define features by tier
+    tier_features = {
+        "free": {
+            "max_games_visible": 2,
+            "video_recording": False,
+            "ai_summaries": False,
+            "highlight_reels": False,
+            "edit_completed_games": False,
+            "teams": False,
+            "export_pdf": True,
+            "live_sharing": True,
+        },
+        "pro": {
+            "max_games_visible": -1,  # unlimited
+            "video_recording": True,
+            "ai_summaries": True,
+            "highlight_reels": True,
+            "edit_completed_games": True,
+            "teams": False,
+            "export_pdf": True,
+            "live_sharing": True,
+        },
+        "team": {
+            "max_games_visible": -1,
+            "video_recording": True,
+            "ai_summaries": True,
+            "highlight_reels": True,
+            "edit_completed_games": True,
+            "teams": True,
+            "export_pdf": True,
+            "live_sharing": True,
+        },
     }
+    
+    return {
+        "tier": user_tier,
+        "effective_tier": effective_tier,
+        "status": sub_status,
+        "expires": expires,
+        "is_active": is_active,
+        "features": tier_features.get(effective_tier, tier_features["free"]),
+        "stripe_subscription_id": user.get("stripe_subscription_id"),
+    }
+
+@api_router.post("/subscriptions/cancel")
+async def cancel_subscription(user: dict = Depends(get_current_user)):
+    """Cancel the user's subscription"""
+    subscription_id = user.get("stripe_subscription_id")
+    
+    if not subscription_id:
+        raise HTTPException(status_code=400, detail="No active subscription found")
+    
+    try:
+        # Cancel in Stripe (at period end to let them use remaining time)
+        if stripe.api_key:
+            stripe.Subscription.modify(
+                subscription_id,
+                cancel_at_period_end=True
+            )
+        
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": {"subscription_status": "canceling"}}
+        )
+        
+        return {"message": "Subscription will be canceled at the end of the billing period"}
+    except Exception as e:
+        logger.error(f"Failed to cancel subscription: {e}")
+        raise HTTPException(status_code=500, detail="Failed to cancel subscription")
+
+@api_router.post("/subscriptions/reactivate")
+async def reactivate_subscription(user: dict = Depends(get_current_user)):
+    """Reactivate a canceled subscription before it expires"""
+    subscription_id = user.get("stripe_subscription_id")
+    
+    if not subscription_id:
+        raise HTTPException(status_code=400, detail="No subscription found")
+    
+    if user.get("subscription_status") != "canceling":
+        raise HTTPException(status_code=400, detail="Subscription is not in canceling state")
+    
+    try:
+        if stripe.api_key:
+            stripe.Subscription.modify(
+                subscription_id,
+                cancel_at_period_end=False
+            )
+        
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": {"subscription_status": "active"}}
+        )
+        
+        return {"message": "Subscription reactivated"}
+    except Exception as e:
+        logger.error(f"Failed to reactivate subscription: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reactivate subscription")
 
 # For testing: manually upgrade subscription
 @api_router.post("/subscriptions/test-upgrade")
