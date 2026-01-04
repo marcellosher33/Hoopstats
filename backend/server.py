@@ -1761,13 +1761,17 @@ async def create_checkout_session(sub_data: SubscriptionCreate, user: dict = Dep
 
 @api_router.post("/subscriptions/webhook")
 async def stripe_webhook(request_body: dict):
-    """Handle Stripe webhook events"""
+    """Handle Stripe webhook events for subscription changes"""
     event_type = request_body.get("type")
     data = request_body.get("data", {}).get("object", {})
     
+    logger.info(f"Stripe webhook received: {event_type}")
+    
     if event_type == "checkout.session.completed":
+        # New subscription purchase
         user_id = data.get("metadata", {}).get("user_id")
         tier = data.get("metadata", {}).get("tier")
+        subscription_id = data.get("subscription")
         
         if user_id and tier:
             expires = datetime.utcnow() + timedelta(days=365)
@@ -1775,9 +1779,110 @@ async def stripe_webhook(request_body: dict):
                 {"id": user_id},
                 {"$set": {
                     "subscription_tier": tier,
-                    "subscription_expires": expires
+                    "subscription_expires": expires,
+                    "stripe_subscription_id": subscription_id,
+                    "subscription_status": "active"
                 }}
             )
+            logger.info(f"User {user_id} subscribed to {tier}")
+    
+    elif event_type == "customer.subscription.updated":
+        # Subscription upgraded, downgraded, or modified
+        subscription_id = data.get("id")
+        status = data.get("status")  # active, past_due, canceled, etc.
+        
+        # Find user by subscription ID
+        user = await db.users.find_one({"stripe_subscription_id": subscription_id})
+        if user:
+            # Get the new price/tier from the subscription items
+            items = data.get("items", {}).get("data", [])
+            new_tier = "free"
+            
+            if items and status == "active":
+                price_id = items[0].get("price", {}).get("id")
+                # Map price ID to tier (you'd configure these in your Stripe dashboard)
+                price_to_tier = {
+                    os.environ.get("STRIPE_PRO_PRICE_ID", "price_pro"): "pro",
+                    os.environ.get("STRIPE_TEAM_PRICE_ID", "price_team"): "team",
+                }
+                new_tier = price_to_tier.get(price_id, "pro")
+            
+            # Handle different subscription statuses
+            if status == "active":
+                # Get period end for expiration
+                period_end = data.get("current_period_end")
+                expires = datetime.fromtimestamp(period_end) if period_end else datetime.utcnow() + timedelta(days=30)
+                
+                await db.users.update_one(
+                    {"id": user["id"]},
+                    {"$set": {
+                        "subscription_tier": new_tier,
+                        "subscription_expires": expires,
+                        "subscription_status": "active"
+                    }}
+                )
+                logger.info(f"User {user['id']} subscription updated to {new_tier}")
+                
+            elif status in ["past_due", "unpaid"]:
+                # Payment failed but subscription not yet canceled
+                await db.users.update_one(
+                    {"id": user["id"]},
+                    {"$set": {"subscription_status": status}}
+                )
+                logger.warning(f"User {user['id']} subscription payment issue: {status}")
+                
+            elif status == "canceled":
+                # Subscription canceled - downgrade to free
+                await db.users.update_one(
+                    {"id": user["id"]},
+                    {"$set": {
+                        "subscription_tier": "free",
+                        "subscription_expires": None,
+                        "subscription_status": "canceled"
+                    }}
+                )
+                logger.info(f"User {user['id']} subscription canceled, downgraded to free")
+    
+    elif event_type == "customer.subscription.deleted":
+        # Subscription fully deleted/expired - downgrade to free
+        subscription_id = data.get("id")
+        
+        user = await db.users.find_one({"stripe_subscription_id": subscription_id})
+        if user:
+            await db.users.update_one(
+                {"id": user["id"]},
+                {"$set": {
+                    "subscription_tier": "free",
+                    "subscription_expires": None,
+                    "subscription_status": "expired",
+                    "stripe_subscription_id": None
+                }}
+            )
+            logger.info(f"User {user['id']} subscription deleted, downgraded to free")
+    
+    elif event_type == "invoice.payment_failed":
+        # Payment failed
+        subscription_id = data.get("subscription")
+        
+        user = await db.users.find_one({"stripe_subscription_id": subscription_id})
+        if user:
+            await db.users.update_one(
+                {"id": user["id"]},
+                {"$set": {"subscription_status": "payment_failed"}}
+            )
+            logger.warning(f"User {user['id']} payment failed")
+    
+    elif event_type == "invoice.paid":
+        # Payment succeeded - ensure subscription is active
+        subscription_id = data.get("subscription")
+        
+        user = await db.users.find_one({"stripe_subscription_id": subscription_id})
+        if user:
+            await db.users.update_one(
+                {"id": user["id"]},
+                {"$set": {"subscription_status": "active"}}
+            )
+            logger.info(f"User {user['id']} payment succeeded")
     
     return {"status": "ok"}
 
