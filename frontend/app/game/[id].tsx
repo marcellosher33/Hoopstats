@@ -1525,7 +1525,9 @@ const TeamPlayerRow: React.FC<TeamPlayerRowProps> = ({
             <Text style={styles.teamModePlayerName}>{player.player_name}</Text>
             <View style={styles.teamModePlayerMiniStats}>
               <Text style={styles.teamModePlayerPoints}>{player.stats.points || 0} pts</Text>
-              <Text style={styles.teamModePlayerMinutes}>{formatTime(minutes)}</Text>
+              <TouchableOpacity onPress={onMinutesPress}>
+                <Text style={styles.teamModePlayerMinutesEditable}>{formatTime(minutes)}</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
