@@ -695,27 +695,28 @@ export default function GameSummaryScreen() {
 
   const allShots = currentGame.player_stats.flatMap(ps => filterShotsByPeriod(ps.shots || []));
 
-  // Calculate team totals
+  // Calculate team totals using filtered stats
   const teamStats = currentGame.player_stats.reduce((totals, ps) => {
-    const playerOreb = ps.stats.offensive_rebounds || 0;
-    const playerDreb = ps.stats.defensive_rebounds || 0;
-    const playerTotalReb = ps.stats.rebounds || (playerOreb + playerDreb);
+    const stats = getFilteredPlayerStats(ps);
+    const playerOreb = stats.offensive_rebounds || 0;
+    const playerDreb = stats.defensive_rebounds || 0;
+    const playerTotalReb = stats.rebounds || (playerOreb + playerDreb);
     return {
-      points: totals.points + (ps.stats.points || 0),
+      points: totals.points + (stats.points || 0),
       rebounds: totals.rebounds + playerTotalReb,
       offensive_rebounds: totals.offensive_rebounds + playerOreb,
       defensive_rebounds: totals.defensive_rebounds + playerDreb,
-      assists: totals.assists + (ps.stats.assists || 0),
-      steals: totals.steals + (ps.stats.steals || 0),
-      blocks: totals.blocks + (ps.stats.blocks || 0),
-      turnovers: totals.turnovers + (ps.stats.turnovers || 0),
-      fouls: totals.fouls + (ps.stats.fouls || 0),
-      fg_made: totals.fg_made + (ps.stats.fg_made || 0),
-      fg_attempted: totals.fg_attempted + (ps.stats.fg_attempted || 0),
-      three_pt_made: totals.three_pt_made + (ps.stats.three_pt_made || 0),
-      three_pt_attempted: totals.three_pt_attempted + (ps.stats.three_pt_attempted || 0),
-      ft_made: totals.ft_made + (ps.stats.ft_made || 0),
-      ft_attempted: totals.ft_attempted + (ps.stats.ft_attempted || 0),
+      assists: totals.assists + (stats.assists || 0),
+      steals: totals.steals + (stats.steals || 0),
+      blocks: totals.blocks + (stats.blocks || 0),
+      turnovers: totals.turnovers + (stats.turnovers || 0),
+      fouls: totals.fouls + (stats.fouls || 0),
+      fg_made: totals.fg_made + (stats.fg_made || 0),
+      fg_attempted: totals.fg_attempted + (stats.fg_attempted || 0),
+      three_pt_made: totals.three_pt_made + (stats.three_pt_made || 0),
+      three_pt_attempted: totals.three_pt_attempted + (stats.three_pt_attempted || 0),
+      ft_made: totals.ft_made + (stats.ft_made || 0),
+      ft_attempted: totals.ft_attempted + (stats.ft_attempted || 0),
     };
   }, {
     points: 0, rebounds: 0, offensive_rebounds: 0, defensive_rebounds: 0,
