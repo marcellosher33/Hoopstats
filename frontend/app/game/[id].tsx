@@ -1473,6 +1473,44 @@ export default function LiveGameScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Minutes Edit Modal */}
+      <Modal visible={showMinutesModal} animationType="fade" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.scoreModal}>
+            <Text style={styles.modalTitle}>Edit Minutes Played</Text>
+            <Text style={styles.modalSubtitle}>Enter time as MM:SS or just minutes</Text>
+            <TextInput
+              style={styles.scoreInput}
+              value={editingMinutesValue}
+              onChangeText={setEditingMinutesValue}
+              placeholder="0:00"
+              placeholderTextColor={colors.textSecondary}
+              keyboardType="numbers-and-punctuation"
+              autoFocus
+            />
+            <View style={styles.modalButtons}>
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setShowMinutesModal(false);
+                  setEditingMinutesPlayerId(null);
+                }}
+                variant="ghost"
+                style={{ flex: 1 }}
+              />
+              <Button
+                title="Save"
+                onPress={handleSaveMinutes}
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
