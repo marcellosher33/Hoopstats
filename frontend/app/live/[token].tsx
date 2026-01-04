@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,15 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
+  AppState,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game } from '../../src/types';
-import Constants from 'expo-constants';
 
-const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://courtsidepro.preview.emergentagent.com/api';
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
 export default function LiveGameViewer() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -23,12 +23,13 @@ export default function LiveGameViewer() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const appState = useRef(AppState.currentState);
 
   const fetchGame = useCallback(async () => {
     if (!token) return;
     
     try {
-      const response = await fetch(`${API_URL}/live/${token}`);
+      const response = await fetch(`${API_URL}/api/public/games/${token}`);
       if (!response.ok) {
         if (response.status === 404) {
           setError('Game not found or sharing has been disabled');
@@ -51,9 +52,22 @@ export default function LiveGameViewer() {
 
   useEffect(() => {
     fetchGame();
-    // Auto-refresh every 10 seconds for live games
-    const interval = setInterval(fetchGame, 10000);
-    return () => clearInterval(interval);
+    
+    // Fast refresh every 2 seconds for real-time updates
+    const interval = setInterval(fetchGame, 2000);
+    
+    // Handle app state changes (pause when backgrounded)
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        fetchGame(); // Refresh immediately when coming back to foreground
+      }
+      appState.current = nextAppState;
+    });
+    
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
   }, [fetchGame]);
 
   const onRefresh = useCallback(() => {
