@@ -2415,6 +2415,9 @@ const styles = StyleSheet.create({
   modeBtnActive: {
     backgroundColor: colors.primary,
   },
+  modeBtnDisabled: {
+    opacity: 0.6,
+  },
   modeBtnText: {
     color: colors.textSecondary,
     fontSize: 12,
