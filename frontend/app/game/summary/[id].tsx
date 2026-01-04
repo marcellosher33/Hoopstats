@@ -72,6 +72,7 @@ export default function GameSummaryScreen() {
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [videoLoading, setVideoLoading] = useState(false);
   const [savingMedia, setSavingMedia] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   const videoRef = useRef<Video>(null);
 
   useEffect(() => {
@@ -79,6 +80,294 @@ export default function GameSummaryScreen() {
       fetchGame(id, token);
     }
   }, [token, id]);
+
+  // Generate and share PDF report
+  const handleExportPdf = async () => {
+    if (!currentGame) return;
+    
+    setExportingPdf(true);
+    try {
+      // Format game date
+      const gameDate = new Date(currentGame.game_date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      // Calculate team totals
+      const teamTotals = {
+        points: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.points || 0), 0),
+        rebounds: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0), 0),
+        assists: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.assists || 0), 0),
+        steals: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.steals || 0), 0),
+        blocks: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.blocks || 0), 0),
+        turnovers: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.turnovers || 0), 0),
+        fgMade: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.fg_made || 0), 0),
+        fgAttempted: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.fg_attempted || 0), 0),
+        threePtMade: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.three_pt_made || 0), 0),
+        threePtAttempted: currentGame.player_stats.reduce((sum, ps) => sum + (ps.stats.three_pt_attempted || 0), 0),
+      };
+      
+      const teamFgPct = teamTotals.fgAttempted > 0 ? Math.round((teamTotals.fgMade / teamTotals.fgAttempted) * 100) : 0;
+      const team3PtPct = teamTotals.threePtAttempted > 0 ? Math.round((teamTotals.threePtMade / teamTotals.threePtAttempted) * 100) : 0;
+      
+      // Generate player rows for box score
+      const playerRows = currentGame.player_stats.map(ps => {
+        const reb = (ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0);
+        const fgPct = ps.stats.fg_attempted ? Math.round((ps.stats.fg_made || 0) / ps.stats.fg_attempted * 100) : 0;
+        return `
+          <tr>
+            <td style="text-align: left; font-weight: 600;">${ps.player_name}</td>
+            <td>${ps.stats.points || 0}</td>
+            <td>${reb}</td>
+            <td>${ps.stats.assists || 0}</td>
+            <td>${ps.stats.steals || 0}</td>
+            <td>${ps.stats.blocks || 0}</td>
+            <td>${ps.stats.turnovers || 0}</td>
+            <td>${ps.stats.fg_made || 0}/${ps.stats.fg_attempted || 0}</td>
+            <td>${fgPct}%</td>
+          </tr>
+        `;
+      }).join('');
+      
+      // Result styling
+      const isWin = currentGame.our_score > currentGame.opponent_score;
+      const isTie = currentGame.our_score === currentGame.opponent_score;
+      const resultText = isWin ? 'WIN' : (isTie ? 'TIE' : 'LOSS');
+      const resultColor = isWin ? '#10B981' : (isTie ? '#F59E0B' : '#EF4444');
+      
+      // Generate HTML for PDF
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Game Report - ${currentGame.home_team_name} vs ${currentGame.opponent_name}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              background: #f5f5f5;
+              padding: 20px;
+              color: #1a1a2e;
+            }
+            .header {
+              background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+              color: white;
+              padding: 30px;
+              border-radius: 16px;
+              margin-bottom: 20px;
+              text-align: center;
+            }
+            .header h1 { font-size: 28px; margin-bottom: 8px; }
+            .header .date { opacity: 0.8; font-size: 14px; }
+            .scoreboard {
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              margin: 24px 0;
+            }
+            .team {
+              text-align: center;
+            }
+            .team-name {
+              font-size: 16px;
+              font-weight: 600;
+              margin-bottom: 8px;
+            }
+            .score {
+              font-size: 48px;
+              font-weight: bold;
+            }
+            .result-badge {
+              background: ${resultColor};
+              color: white;
+              padding: 8px 24px;
+              border-radius: 20px;
+              font-weight: bold;
+              font-size: 18px;
+            }
+            .section {
+              background: white;
+              border-radius: 12px;
+              padding: 20px;
+              margin-bottom: 20px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+            .section h2 {
+              font-size: 18px;
+              margin-bottom: 16px;
+              color: #1a1a2e;
+              border-bottom: 2px solid #8B5CF6;
+              padding-bottom: 8px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 13px;
+            }
+            th, td {
+              padding: 10px 8px;
+              text-align: center;
+              border-bottom: 1px solid #e5e5e5;
+            }
+            th {
+              background: #f8f8f8;
+              font-weight: 600;
+              color: #666;
+              font-size: 11px;
+              text-transform: uppercase;
+            }
+            .totals-row {
+              font-weight: bold;
+              background: #f0f0ff;
+            }
+            .stats-grid {
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 16px;
+            }
+            .stat-box {
+              text-align: center;
+              padding: 16px;
+              background: #f8f8f8;
+              border-radius: 8px;
+            }
+            .stat-value {
+              font-size: 28px;
+              font-weight: bold;
+              color: #8B5CF6;
+            }
+            .stat-label {
+              font-size: 12px;
+              color: #666;
+              margin-top: 4px;
+            }
+            .ai-summary {
+              background: linear-gradient(135deg, #f0f0ff 0%, #fff 100%);
+              border-left: 4px solid #8B5CF6;
+              padding: 16px;
+              line-height: 1.6;
+              font-size: 14px;
+            }
+            .footer {
+              text-align: center;
+              color: #999;
+              font-size: 12px;
+              margin-top: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Game Report</h1>
+            <div class="date">${gameDate}</div>
+            
+            <div class="scoreboard">
+              <div class="team">
+                <div class="team-name">${currentGame.home_team_name}</div>
+                <div class="score">${currentGame.our_score}</div>
+              </div>
+              <div class="result-badge">${resultText}</div>
+              <div class="team">
+                <div class="team-name">${currentGame.opponent_name}</div>
+                <div class="score">${currentGame.opponent_score}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h2>Team Statistics</h2>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-value">${teamTotals.points}</div>
+                <div class="stat-label">Points</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${teamTotals.rebounds}</div>
+                <div class="stat-label">Rebounds</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${teamTotals.assists}</div>
+                <div class="stat-label">Assists</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">${teamFgPct}%</div>
+                <div class="stat-label">FG%</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="section">
+            <h2>Box Score</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align: left;">Player</th>
+                  <th>PTS</th>
+                  <th>REB</th>
+                  <th>AST</th>
+                  <th>STL</th>
+                  <th>BLK</th>
+                  <th>TO</th>
+                  <th>FG</th>
+                  <th>FG%</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${playerRows}
+                <tr class="totals-row">
+                  <td style="text-align: left;">TOTALS</td>
+                  <td>${teamTotals.points}</td>
+                  <td>${teamTotals.rebounds}</td>
+                  <td>${teamTotals.assists}</td>
+                  <td>${teamTotals.steals}</td>
+                  <td>${teamTotals.blocks}</td>
+                  <td>${teamTotals.turnovers}</td>
+                  <td>${teamTotals.fgMade}/${teamTotals.fgAttempted}</td>
+                  <td>${teamFgPct}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          ${currentGame.ai_summary ? `
+            <div class="section">
+              <h2>AI Game Summary</h2>
+              <div class="ai-summary">
+                ${currentGame.ai_summary.replace(/\n/g, '<br>')}
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="footer">
+            Generated by CourtClock • ${new Date().toLocaleDateString()}
+          </div>
+        </body>
+        </html>
+      `;
+      
+      // Generate PDF
+      const { uri } = await Print.printToFileAsync({ html });
+      
+      // Share the PDF
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: `Game Report - ${currentGame.home_team_name} vs ${currentGame.opponent_name}`,
+          UTI: 'com.adobe.pdf'
+        });
+      } else {
+        Alert.alert('Success', 'PDF saved to: ' + uri);
+      }
+    } catch (error) {
+      console.error('PDF export error:', error);
+      Alert.alert('Error', 'Failed to generate PDF report');
+    } finally {
+      setExportingPdf(false);
+    }
+  };
 
   // Save media to device
   const handleSaveMedia = async (media: GameMedia) => {
