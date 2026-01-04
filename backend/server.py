@@ -1914,33 +1914,33 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
     tier_features = {
         "free": {
             "max_games_visible": 2,
-            "video_recording": False,
             "ai_summaries": False,
             "highlight_reels": False,
             "edit_completed_games": False,
             "teams": False,
             "export_pdf": True,
             "live_sharing": True,
+            "season_stats": False,
         },
         "pro": {
             "max_games_visible": -1,  # unlimited
-            "video_recording": True,
             "ai_summaries": True,
             "highlight_reels": True,
             "edit_completed_games": True,
             "teams": False,
             "export_pdf": True,
             "live_sharing": True,
+            "season_stats": True,
         },
         "team": {
             "max_games_visible": -1,
-            "video_recording": True,
             "ai_summaries": True,
             "highlight_reels": True,
             "edit_completed_games": True,
             "teams": True,
             "export_pdf": True,
             "live_sharing": True,
+            "season_stats": True,
         },
     }
     
