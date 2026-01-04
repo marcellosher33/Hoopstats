@@ -338,6 +338,7 @@ class HighlightReelCreate(BaseModel):
 # Subscription Models
 class SubscriptionCreate(BaseModel):
     tier: str  # pro, team
+    billing_period: str = "yearly"  # monthly or yearly
     payment_method_id: Optional[str] = None
 
 # ==================== AUTH HELPERS ====================
