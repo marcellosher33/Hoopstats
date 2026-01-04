@@ -651,6 +651,8 @@ export default function LiveGameScreen() {
                   onToggleActive={() => toggleActivePlayer(ps.player_id)}
                   onStatPress={(statType) => handleTeamStatPress(ps.player_id, statType)}
                   onShotPress={(shotType, made) => {
+                    // Store player ID separately to avoid state timing issues
+                    setPendingShotPlayerId(ps.player_id);
                     setSelectedPlayer(ps.player_id);
                     setPendingShotType(shotType);
                     setPendingShotMade(made);
