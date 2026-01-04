@@ -150,48 +150,153 @@ export default function LiveGameViewer() {
           />
         }
       >
-        {/* Player Stats */}
-        <Text style={styles.sectionTitle}>Player Stats</Text>
-        
-        {game.player_stats.map((ps) => (
-          <View key={ps.player_id} style={styles.playerCard}>
-            <View style={styles.playerHeader}>
-              <Text style={styles.playerName}>{ps.player_name}</Text>
-              <Text style={styles.playerPoints}>{ps.stats.points || 0} PTS</Text>
+        {/* Player Stats - In/Out Format */}
+        {game.status === 'in_progress' && (
+          <>
+            {/* Players In */}
+            <View style={styles.playersSection}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.inBadge}>
+                  <Text style={styles.inBadgeText}>IN</Text>
+                </View>
+                <Text style={styles.sectionTitle}>On Court</Text>
+              </View>
+              {game.player_stats
+                .filter(ps => (game.active_player_ids || []).includes(ps.player_id))
+                .map((ps) => (
+                  <View key={ps.player_id} style={[styles.playerCard, styles.playerCardIn]}>
+                    <View style={styles.playerHeader}>
+                      <View style={styles.playerAvatar}>
+                        <Text style={styles.playerAvatarText}>{ps.player_name.charAt(0)}</Text>
+                      </View>
+                      <View style={styles.playerInfo}>
+                        <Text style={styles.playerName}>{ps.player_name}</Text>
+                        <Text style={styles.playerPoints}>{ps.stats.points || 0} PTS</Text>
+                      </View>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.points || 0}</Text>
+                        <Text style={styles.statLabel}>PTS</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>
+                          {(ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)}
+                        </Text>
+                        <Text style={styles.statLabel}>REB</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.assists || 0}</Text>
+                        <Text style={styles.statLabel}>AST</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.steals || 0}</Text>
+                        <Text style={styles.statLabel}>STL</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.blocks || 0}</Text>
+                        <Text style={styles.statLabel}>BLK</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))}
+              {game.player_stats.filter(ps => (game.active_player_ids || []).includes(ps.player_id)).length === 0 && (
+                <Text style={styles.emptyText}>No players on court</Text>
+              )}
             </View>
-            
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{ps.stats.points || 0}</Text>
-                <Text style={styles.statLabel}>PTS</Text>
+
+            {/* Players Out / Bench */}
+            <View style={styles.playersSection}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.outBadge}>
+                  <Text style={styles.outBadgeText}>OUT</Text>
+                </View>
+                <Text style={styles.sectionTitle}>Bench</Text>
               </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {(ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)}
-                </Text>
-                <Text style={styles.statLabel}>REB</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{ps.stats.assists || 0}</Text>
-                <Text style={styles.statLabel}>AST</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{ps.stats.steals || 0}</Text>
-                <Text style={styles.statLabel}>STL</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>{ps.stats.blocks || 0}</Text>
-                <Text style={styles.statLabel}>BLK</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>
-                  {ps.stats.fg_attempted ? Math.round((ps.stats.fg_made || 0) / ps.stats.fg_attempted * 100) : 0}%
-                </Text>
-                <Text style={styles.statLabel}>FG%</Text>
-              </View>
+              {game.player_stats
+                .filter(ps => !(game.active_player_ids || []).includes(ps.player_id))
+                .map((ps) => (
+                  <View key={ps.player_id} style={[styles.playerCard, styles.playerCardOut]}>
+                    <View style={styles.playerHeader}>
+                      <View style={[styles.playerAvatar, styles.playerAvatarOut]}>
+                        <Text style={styles.playerAvatarText}>{ps.player_name.charAt(0)}</Text>
+                      </View>
+                      <View style={styles.playerInfo}>
+                        <Text style={[styles.playerName, styles.playerNameOut]}>{ps.player_name}</Text>
+                        <Text style={styles.playerPointsOut}>{ps.stats.points || 0} PTS</Text>
+                      </View>
+                    </View>
+                    <View style={styles.statsRow}>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.points || 0}</Text>
+                        <Text style={styles.statLabel}>PTS</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>
+                          {(ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)}
+                        </Text>
+                        <Text style={styles.statLabel}>REB</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.assists || 0}</Text>
+                        <Text style={styles.statLabel}>AST</Text>
+                      </View>
+                    </View>
+                  </View>
+                ))}
             </View>
+          </>
+        )}
+
+        {/* All Player Stats (shown when game is completed) */}
+        {game.status === 'completed' && (
+          <View style={styles.playersSection}>
+            <Text style={styles.sectionTitle}>Player Stats</Text>
+            {game.player_stats.map((ps) => (
+              <View key={ps.player_id} style={styles.playerCard}>
+                <View style={styles.playerHeader}>
+                  <View style={styles.playerAvatar}>
+                    <Text style={styles.playerAvatarText}>{ps.player_name.charAt(0)}</Text>
+                  </View>
+                  <View style={styles.playerInfo}>
+                    <Text style={styles.playerName}>{ps.player_name}</Text>
+                    <Text style={styles.playerPoints}>{ps.stats.points || 0} PTS</Text>
+                  </View>
+                </View>
+                <View style={styles.statsRow}>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{ps.stats.points || 0}</Text>
+                    <Text style={styles.statLabel}>PTS</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>
+                      {(ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)}
+                    </Text>
+                    <Text style={styles.statLabel}>REB</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{ps.stats.assists || 0}</Text>
+                    <Text style={styles.statLabel}>AST</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{ps.stats.steals || 0}</Text>
+                    <Text style={styles.statLabel}>STL</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{ps.stats.blocks || 0}</Text>
+                    <Text style={styles.statLabel}>BLK</Text>
+                  </View>
+                  <View style={styles.statItem}>
+                    <Text style={styles.statValue}>
+                      {ps.stats.fg_attempted ? Math.round((ps.stats.fg_made || 0) / ps.stats.fg_attempted * 100) : 0}%
+                    </Text>
+                    <Text style={styles.statLabel}>FG%</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
           </View>
-        ))}
+        )}
 
         {/* AI Summary (shown when game is completed) */}
         {game.status === 'completed' && game.ai_summary && (
