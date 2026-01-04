@@ -374,7 +374,7 @@ export default function ProfileScreen() {
             </View>
           ) : (
             <Button
-              title="Upgrade to Team"
+              title={`Upgrade to Team - $${prices?.team[billingPeriod]?.price.toFixed(2) || '159.99'}/${billingPeriod === 'monthly' ? 'mo' : 'yr'}`}
               onPress={() => handleUpgrade('team')}
               variant="outline"
               loading={upgrading}
