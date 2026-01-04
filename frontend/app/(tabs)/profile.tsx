@@ -110,21 +110,30 @@ export default function ProfileScreen() {
   const handleUpgrade = async (tier: 'pro' | 'team') => {
     setUpgrading(true);
     try {
-      // For testing, use the test upgrade endpoint
-      const response = await fetch(`${API_URL}/api/subscriptions/test-upgrade?tier=${tier}`, {
+      // Create Stripe checkout session with billing period
+      const response = await fetch(`${API_URL}/api/subscriptions/create-checkout`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tier,
+          billing_period: billingPeriod,
+        }),
       });
       
       if (response.ok) {
-        await refreshUser();
-        Alert.alert('Success', `Upgraded to ${tier.toUpperCase()} tier!`);
+        const data = await response.json();
+        if (data.checkout_url) {
+          await Linking.openURL(data.checkout_url);
+        }
       } else {
         const error = await response.json();
-        Alert.alert('Error', error.detail || 'Failed to upgrade');
+        Alert.alert('Error', error.detail || 'Failed to start checkout');
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to upgrade subscription');
+      Alert.alert('Error', 'Failed to start subscription process');
     } finally {
       setUpgrading(false);
     }
