@@ -73,6 +73,7 @@ export default function GameSummaryScreen() {
   const [videoLoading, setVideoLoading] = useState(false);
   const [savingMedia, setSavingMedia] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('all'); // 'all', 'h1', 'h2', or 'q1', 'q2', 'q3', 'q4'
   const videoRef = useRef<Video>(null);
 
   useEffect(() => {
