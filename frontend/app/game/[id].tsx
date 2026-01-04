@@ -11,6 +11,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Share,
+  Clipboard,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,6 +27,7 @@ import { FullCourtShotChart } from '../../src/components/FullCourtShotChart';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { StatType } from '../../src/types';
 
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const screenWidth = Dimensions.get('window').width;
 
 // Format time as MM:SS
