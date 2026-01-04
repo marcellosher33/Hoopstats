@@ -907,12 +907,14 @@ export default function GameSummaryScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Player Statistics</Text>
         {currentGame.player_stats.map((ps) => {
-          const playerFgPct = ps.stats.fg_attempted > 0 ? Math.round((ps.stats.fg_made / ps.stats.fg_attempted) * 100) : 0;
-          const playerThreePct = ps.stats.three_pt_attempted > 0 ? Math.round((ps.stats.three_pt_made / ps.stats.three_pt_attempted) * 100) : 0;
-          const playerFtPct = ps.stats.ft_attempted > 0 ? Math.round((ps.stats.ft_made / ps.stats.ft_attempted) * 100) : 0;
-          const playerOreb = ps.stats.offensive_rebounds || 0;
-          const playerDreb = ps.stats.defensive_rebounds || 0;
-          const playerTotalReb = ps.stats.rebounds || (playerOreb + playerDreb);
+          const filteredStats = getFilteredPlayerStats(ps);
+          const playerFgPct = filteredStats.fg_attempted > 0 ? Math.round((filteredStats.fg_made / filteredStats.fg_attempted) * 100) : 0;
+          const playerThreePct = filteredStats.three_pt_attempted > 0 ? Math.round((filteredStats.three_pt_made / filteredStats.three_pt_attempted) * 100) : 0;
+          const playerFtPct = filteredStats.ft_attempted > 0 ? Math.round((filteredStats.ft_made / filteredStats.ft_attempted) * 100) : 0;
+          const playerOreb = filteredStats.offensive_rebounds || 0;
+          const playerDreb = filteredStats.defensive_rebounds || 0;
+          const playerTotalReb = filteredStats.rebounds || (playerOreb + playerDreb);
+          const filteredShots = filterShotsByPeriod(ps.shots || []);
           
           return (
           <View key={ps.player_id} style={styles.playerStatCard}>
@@ -922,18 +924,18 @@ export default function GameSummaryScreen() {
               </View>
               <View style={styles.playerInfo}>
                 <Text style={styles.playerName}>{ps.player_name}</Text>
-                <Text style={styles.playerPts}>{ps.stats.points || 0} PTS</Text>
+                <Text style={styles.playerPts}>{filteredStats.points || 0} PTS</Text>
               </View>
             </View>
             
             {/* All Stats Grid */}
             <View style={styles.statsGrid}>
-              <StatItem label="PTS" value={ps.stats.points || 0} color={colors.points} />
+              <StatItem label="PTS" value={filteredStats.points || 0} color={colors.points} />
               <StatItem label="REB" value={playerTotalReb} color={colors.rebounds} />
-              <StatItem label="AST" value={ps.stats.assists || 0} color={colors.assists} />
-              <StatItem label="STL" value={ps.stats.steals || 0} color={colors.steals} />
-              <StatItem label="BLK" value={ps.stats.blocks || 0} color={colors.blocks} />
-              <StatItem label="TO" value={ps.stats.turnovers || 0} color={colors.turnovers} />
+              <StatItem label="AST" value={filteredStats.assists || 0} color={colors.assists} />
+              <StatItem label="STL" value={filteredStats.steals || 0} color={colors.steals} />
+              <StatItem label="BLK" value={filteredStats.blocks || 0} color={colors.blocks} />
+              <StatItem label="TO" value={filteredStats.turnovers || 0} color={colors.turnovers} />
             </View>
             
             {/* Rebounds Breakdown */}
@@ -947,7 +949,7 @@ export default function GameSummaryScreen() {
                 <Text style={styles.reboundLabel}>DREB</Text>
               </View>
               <View style={styles.reboundItem}>
-                <Text style={styles.reboundValue}>{ps.stats.fouls || 0}</Text>
+                <Text style={styles.reboundValue}>{filteredStats.fouls || 0}</Text>
                 <Text style={styles.reboundLabel}>FOULS</Text>
               </View>
             </View>
@@ -957,26 +959,26 @@ export default function GameSummaryScreen() {
               <View style={styles.shootingPctItem}>
                 <Text style={styles.shootingPctValue}>{playerFgPct}%</Text>
                 <Text style={styles.shootingPctLabel}>FG</Text>
-                <Text style={styles.shootingPctDetail}>{ps.stats.fg_made || 0}/{ps.stats.fg_attempted || 0}</Text>
+                <Text style={styles.shootingPctDetail}>{filteredStats.fg_made || 0}/{filteredStats.fg_attempted || 0}</Text>
               </View>
               <View style={styles.shootingPctItem}>
                 <Text style={styles.shootingPctValue}>{playerThreePct}%</Text>
                 <Text style={styles.shootingPctLabel}>3PT</Text>
-                <Text style={styles.shootingPctDetail}>{ps.stats.three_pt_made || 0}/{ps.stats.three_pt_attempted || 0}</Text>
+                <Text style={styles.shootingPctDetail}>{filteredStats.three_pt_made || 0}/{filteredStats.three_pt_attempted || 0}</Text>
               </View>
               <View style={styles.shootingPctItem}>
                 <Text style={styles.shootingPctValue}>{playerFtPct}%</Text>
                 <Text style={styles.shootingPctLabel}>FT</Text>
-                <Text style={styles.shootingPctDetail}>{ps.stats.ft_made || 0}/{ps.stats.ft_attempted || 0}</Text>
+                <Text style={styles.shootingPctDetail}>{filteredStats.ft_made || 0}/{filteredStats.ft_attempted || 0}</Text>
               </View>
             </View>
             
             {/* Individual Player Shot Chart */}
-            {ps.shots && ps.shots.length > 0 && (
+            {filteredShots.length > 0 && (
               <View style={styles.playerShotChartContainer}>
-                <Text style={styles.playerShotChartTitle}>Shot Chart ({ps.shots.length} shots)</Text>
+                <Text style={styles.playerShotChartTitle}>Shot Chart ({filteredShots.length} shots)</Text>
                 <ShotChart 
-                  shots={ps.shots} 
+                  shots={filteredShots} 
                   width={screenWidth - 80} 
                   height={(screenWidth - 80) * 0.75} 
                 />
@@ -984,13 +986,13 @@ export default function GameSummaryScreen() {
                   <View style={styles.legendItem}>
                     <View style={[styles.legendDotSmall, { backgroundColor: colors.shotMade }]} />
                     <Text style={styles.legendTextSmall}>
-                      Made ({ps.shots.filter(s => s.made).length})
+                      Made ({filteredShots.filter(s => s.made).length})
                     </Text>
                   </View>
                   <View style={styles.legendItem}>
                     <View style={[styles.legendDotSmall, { backgroundColor: colors.shotMissed }]} />
                     <Text style={styles.legendTextSmall}>
-                      Missed ({ps.shots.filter(s => !s.made).length})
+                      Missed ({filteredShots.filter(s => !s.made).length})
                     </Text>
                   </View>
                 </View>
