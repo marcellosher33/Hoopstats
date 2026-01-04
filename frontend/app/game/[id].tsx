@@ -464,6 +464,42 @@ export default function LiveGameScreen() {
     await updateGame(id, { opponent_score: newOpponentScore }, token);
   };
 
+  // Handle editing player minutes
+  const handleEditMinutes = (playerId: string, playerName: string) => {
+    const currentMinutes = playerMinutes[playerId] || 0;
+    const mins = Math.floor(currentMinutes / 60);
+    const secs = currentMinutes % 60;
+    setEditingMinutesPlayerId(playerId);
+    setEditingMinutesValue(`${mins}:${secs.toString().padStart(2, '0')}`);
+    setShowMinutesModal(true);
+  };
+
+  const handleSaveMinutes = () => {
+    if (!editingMinutesPlayerId) return;
+    
+    // Parse the time value (format: MM:SS or just minutes)
+    let totalSeconds = 0;
+    const value = editingMinutesValue.trim();
+    
+    if (value.includes(':')) {
+      const parts = value.split(':');
+      const mins = parseInt(parts[0]) || 0;
+      const secs = parseInt(parts[1]) || 0;
+      totalSeconds = mins * 60 + secs;
+    } else {
+      // Assume it's just minutes
+      totalSeconds = (parseInt(value) || 0) * 60;
+    }
+    
+    setPlayerMinutes(prev => ({
+      ...prev,
+      [editingMinutesPlayerId]: totalSeconds
+    }));
+    
+    setShowMinutesModal(false);
+    setEditingMinutesPlayerId(null);
+  };
+
   const handleEndGame = async () => {
     if (!token || !id || !currentGame) return;
     // Use the actual current game scores, not the modal input state
