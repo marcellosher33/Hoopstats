@@ -1978,6 +1978,7 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
         "status": sub_status,
         "expires": expires,
         "is_active": is_active,
+        "billing_period": user.get("billing_period", "yearly"),
         "features": tier_features.get(effective_tier, tier_features["free"]),
         "stripe_subscription_id": user.get("stripe_subscription_id"),
     }
