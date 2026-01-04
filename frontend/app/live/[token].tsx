@@ -14,7 +14,7 @@ import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game } from '../../src/types';
 import Constants from 'expo-constants';
 
-const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://courtclock.preview.emergentagent.com/api';
+const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://courtsidepro.preview.emergentagent.com/api';
 
 export default function LiveGameViewer() {
   const { token } = useLocalSearchParams<{ token: string }>();
