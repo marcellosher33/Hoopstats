@@ -922,6 +922,7 @@ export default function GameSummaryScreen() {
           const playerDreb = filteredStats.defensive_rebounds || 0;
           const playerTotalReb = filteredStats.rebounds || (playerOreb + playerDreb);
           const filteredShots = filterShotsByPeriod(ps.shots || []);
+          const minutesPlayed = ps.stats.minutes_played || 0;
           
           return (
           <View key={ps.player_id} style={styles.playerStatCard}>
@@ -931,7 +932,12 @@ export default function GameSummaryScreen() {
               </View>
               <View style={styles.playerInfo}>
                 <Text style={styles.playerName}>{ps.player_name}</Text>
-                <Text style={styles.playerPts}>{filteredStats.points || 0} PTS</Text>
+                <View style={styles.playerSubInfo}>
+                  <Text style={styles.playerPts}>{filteredStats.points || 0} PTS</Text>
+                  {minutesPlayed > 0 && (
+                    <Text style={styles.playerMins}>{formatMinutes(minutesPlayed)} MIN</Text>
+                  )}
+                </View>
               </View>
             </View>
             
