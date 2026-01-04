@@ -1484,6 +1484,7 @@ interface TeamPlayerRowProps {
   onStatPress: (statType: StatType) => void;
   onShotPress: (shotType: '2pt' | '3pt', made: boolean) => void;
   onLongPress: (statType: string, label: string) => void;
+  onMinutesPress: () => void;
   token: string | null;
   gameId: string | undefined;
 }
@@ -1496,6 +1497,7 @@ const TeamPlayerRow: React.FC<TeamPlayerRowProps> = ({
   onStatPress,
   onShotPress,
   onLongPress,
+  onMinutesPress,
 }) => {
   return (
     <View style={[
