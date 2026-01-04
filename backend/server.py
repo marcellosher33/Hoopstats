@@ -733,6 +733,298 @@ async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(
     updated_game = await db.games.find_one({"id": game_id})
     return serialize_doc(updated_game)
 
+# ============ LIVE GAME SHARING ============
+
+import secrets
+
+@api_router.post("/games/{game_id}/share")
+async def create_share_link(game_id: str, user: dict = Depends(get_current_user)):
+    """Generate a share token for public game viewing"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Generate unique share token if not already exists
+    share_token = game.get("share_token") or secrets.token_urlsafe(16)
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"share_token": share_token, "is_public": True}}
+    )
+    
+    return {
+        "share_token": share_token,
+        "share_url": f"/live/{share_token}"
+    }
+
+@api_router.delete("/games/{game_id}/share")
+async def revoke_share_link(game_id: str, user: dict = Depends(get_current_user)):
+    """Revoke public sharing for a game"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {"is_public": False}}
+    )
+    
+    return {"message": "Share link revoked"}
+
+@api_router.get("/live/{share_token}")
+async def get_public_game(share_token: str):
+    """Public endpoint - no auth required. Get game by share token."""
+    game = await db.games.find_one({"share_token": share_token, "is_public": True})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found or not shared")
+    
+    # Return game data without sensitive info
+    game_data = serialize_doc(game)
+    # Remove user_id for privacy
+    game_data.pop("user_id", None)
+    return game_data
+
+# ============ SEASON STATS ============
+
+@api_router.get("/season-stats")
+async def get_season_stats(user: dict = Depends(get_current_user)):
+    """Get aggregated season statistics"""
+    games = await db.games.find({"user_id": user["id"]}).to_list(1000)
+    
+    if not games:
+        return {
+            "total_games": 0,
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_points_for": 0,
+            "total_points_against": 0,
+            "avg_points_for": 0,
+            "avg_points_against": 0,
+            "player_season_stats": [],
+            "recent_games": [],
+            "best_game": None,
+            "worst_game": None,
+        }
+    
+    completed_games = [g for g in games if g.get("status") == "completed"]
+    
+    # Calculate win/loss record
+    wins = sum(1 for g in completed_games if g.get("our_score", 0) > g.get("opponent_score", 0))
+    losses = sum(1 for g in completed_games if g.get("our_score", 0) < g.get("opponent_score", 0))
+    ties = sum(1 for g in completed_games if g.get("our_score", 0) == g.get("opponent_score", 0))
+    
+    # Calculate totals
+    total_points_for = sum(g.get("our_score", 0) for g in completed_games)
+    total_points_against = sum(g.get("opponent_score", 0) for g in completed_games)
+    
+    # Aggregate player stats across all games
+    player_totals = {}
+    for game in games:
+        for ps in game.get("player_stats", []):
+            pid = ps.get("player_id")
+            if pid not in player_totals:
+                player_totals[pid] = {
+                    "player_id": pid,
+                    "player_name": ps.get("player_name", "Unknown"),
+                    "games_played": 0,
+                    "total_points": 0,
+                    "total_rebounds": 0,
+                    "total_assists": 0,
+                    "total_steals": 0,
+                    "total_blocks": 0,
+                    "total_turnovers": 0,
+                    "total_fg_made": 0,
+                    "total_fg_attempted": 0,
+                    "total_3pt_made": 0,
+                    "total_3pt_attempted": 0,
+                    "total_ft_made": 0,
+                    "total_ft_attempted": 0,
+                    "game_scores": [],  # For trend data
+                }
+            
+            stats = ps.get("stats", {})
+            pt = player_totals[pid]
+            pt["games_played"] += 1
+            pt["total_points"] += stats.get("points", 0)
+            pt["total_rebounds"] += stats.get("rebounds", 0) or (stats.get("offensive_rebounds", 0) + stats.get("defensive_rebounds", 0))
+            pt["total_assists"] += stats.get("assists", 0)
+            pt["total_steals"] += stats.get("steals", 0)
+            pt["total_blocks"] += stats.get("blocks", 0)
+            pt["total_turnovers"] += stats.get("turnovers", 0)
+            pt["total_fg_made"] += stats.get("fg_made", 0)
+            pt["total_fg_attempted"] += stats.get("fg_attempted", 0)
+            pt["total_3pt_made"] += stats.get("three_pt_made", 0)
+            pt["total_3pt_attempted"] += stats.get("three_pt_attempted", 0)
+            pt["total_ft_made"] += stats.get("ft_made", 0)
+            pt["total_ft_attempted"] += stats.get("ft_attempted", 0)
+            
+            # Add to trend data
+            pt["game_scores"].append({
+                "game_id": game.get("id"),
+                "game_date": game.get("game_date"),
+                "opponent": game.get("opponent_name"),
+                "points": stats.get("points", 0),
+                "rebounds": stats.get("rebounds", 0) or (stats.get("offensive_rebounds", 0) + stats.get("defensive_rebounds", 0)),
+                "assists": stats.get("assists", 0),
+            })
+    
+    # Calculate averages
+    player_season_stats = []
+    for pid, pt in player_totals.items():
+        gp = pt["games_played"]
+        if gp > 0:
+            player_season_stats.append({
+                "player_id": pt["player_id"],
+                "player_name": pt["player_name"],
+                "games_played": gp,
+                "ppg": round(pt["total_points"] / gp, 1),
+                "rpg": round(pt["total_rebounds"] / gp, 1),
+                "apg": round(pt["total_assists"] / gp, 1),
+                "spg": round(pt["total_steals"] / gp, 1),
+                "bpg": round(pt["total_blocks"] / gp, 1),
+                "topg": round(pt["total_turnovers"] / gp, 1),
+                "fg_pct": round((pt["total_fg_made"] / pt["total_fg_attempted"] * 100) if pt["total_fg_attempted"] > 0 else 0, 1),
+                "three_pt_pct": round((pt["total_3pt_made"] / pt["total_3pt_attempted"] * 100) if pt["total_3pt_attempted"] > 0 else 0, 1),
+                "ft_pct": round((pt["total_ft_made"] / pt["total_ft_attempted"] * 100) if pt["total_ft_attempted"] > 0 else 0, 1),
+                "totals": {
+                    "points": pt["total_points"],
+                    "rebounds": pt["total_rebounds"],
+                    "assists": pt["total_assists"],
+                    "steals": pt["total_steals"],
+                    "blocks": pt["total_blocks"],
+                },
+                "trend_data": sorted(pt["game_scores"], key=lambda x: x.get("game_date") or ""),
+            })
+    
+    # Sort by PPG
+    player_season_stats.sort(key=lambda x: x["ppg"], reverse=True)
+    
+    # Find best/worst games by point differential
+    best_game = None
+    worst_game = None
+    if completed_games:
+        sorted_by_diff = sorted(completed_games, key=lambda g: g.get("our_score", 0) - g.get("opponent_score", 0), reverse=True)
+        best_game = serialize_doc(sorted_by_diff[0]) if sorted_by_diff else None
+        worst_game = serialize_doc(sorted_by_diff[-1]) if sorted_by_diff else None
+    
+    # Recent games (last 5)
+    recent_games = sorted(games, key=lambda g: g.get("game_date") or g.get("created_at"), reverse=True)[:5]
+    recent_games = [serialize_doc(g) for g in recent_games]
+    
+    return {
+        "total_games": len(games),
+        "completed_games": len(completed_games),
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "win_pct": round(wins / len(completed_games) * 100, 1) if completed_games else 0,
+        "total_points_for": total_points_for,
+        "total_points_against": total_points_against,
+        "avg_points_for": round(total_points_for / len(completed_games), 1) if completed_games else 0,
+        "avg_points_against": round(total_points_against / len(completed_games), 1) if completed_games else 0,
+        "point_differential": total_points_for - total_points_against,
+        "player_season_stats": player_season_stats,
+        "recent_games": recent_games,
+        "best_game": best_game,
+        "worst_game": worst_game,
+    }
+
+# ============ UNDO HISTORY ============
+
+@api_router.get("/games/{game_id}/undo-history")
+async def get_undo_history(game_id: str, user: dict = Depends(get_current_user)):
+    """Get last 10 stat events that can be undone"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    stat_history = game.get("stat_history", [])
+    # Return last 10 entries, most recent first
+    return {"history": stat_history[-10:][::-1]}
+
+@api_router.post("/games/{game_id}/undo/{entry_index}")
+async def undo_specific_stat(game_id: str, entry_index: int, user: dict = Depends(get_current_user)):
+    """Undo a specific stat entry by its index in history"""
+    game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    stat_history = game.get("stat_history", [])
+    if entry_index < 0 or entry_index >= len(stat_history):
+        raise HTTPException(status_code=400, detail="Invalid entry index")
+    
+    # Get the entry to undo (index from end, since we show reversed)
+    actual_index = len(stat_history) - 1 - entry_index
+    entry = stat_history[actual_index]
+    
+    player_id = entry.get("player_id")
+    stat_type = entry.get("stat_type")
+    value = entry.get("value", 1)
+    shot_id = entry.get("shot_id")
+    stat_event_id = entry.get("stat_event_id")
+    
+    # Find and update player stats
+    player_stats = game.get("player_stats", [])
+    for ps in player_stats:
+        if ps.get("player_id") == player_id:
+            stats = ps.get("stats", {})
+            
+            # Reverse the stat
+            if stat_type in ["points_2", "miss_2"]:
+                if stat_type == "points_2":
+                    stats["points"] = max(0, stats.get("points", 0) - 2)
+                    stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+                # Remove shot
+                if shot_id:
+                    ps["shots"] = [s for s in ps.get("shots", []) if s.get("id") != shot_id]
+            elif stat_type in ["points_3", "miss_3"]:
+                if stat_type == "points_3":
+                    stats["points"] = max(0, stats.get("points", 0) - 3)
+                    stats["fg_made"] = max(0, stats.get("fg_made", 0) - 1)
+                    stats["three_pt_made"] = max(0, stats.get("three_pt_made", 0) - 1)
+                stats["fg_attempted"] = max(0, stats.get("fg_attempted", 0) - 1)
+                stats["three_pt_attempted"] = max(0, stats.get("three_pt_attempted", 0) - 1)
+                if shot_id:
+                    ps["shots"] = [s for s in ps.get("shots", []) if s.get("id") != shot_id]
+            elif stat_type == "ft_made":
+                stats["points"] = max(0, stats.get("points", 0) - 1)
+                stats["ft_made"] = max(0, stats.get("ft_made", 0) - 1)
+                stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) - 1)
+            elif stat_type == "ft_missed":
+                stats["ft_attempted"] = max(0, stats.get("ft_attempted", 0) - 1)
+            elif stat_type in ["offensive_rebounds", "defensive_rebounds"]:
+                stats[stat_type] = max(0, stats.get(stat_type, 0) - value)
+                stats["rebounds"] = max(0, stats.get("rebounds", 0) - value)
+            elif stat_type in ["assists", "steals", "blocks", "turnovers", "fouls"]:
+                stats[stat_type] = max(0, stats.get(stat_type, 0) - value)
+            
+            # Remove stat event if exists
+            if stat_event_id:
+                ps["stat_events"] = [e for e in ps.get("stat_events", []) if e.get("id") != stat_event_id]
+            
+            ps["stats"] = stats
+            break
+    
+    # Remove from history
+    stat_history.pop(actual_index)
+    
+    # Recalculate score
+    our_score = sum(ps.get("stats", {}).get("points", 0) for ps in player_stats)
+    
+    await db.games.update_one(
+        {"id": game_id},
+        {"$set": {
+            "player_stats": player_stats,
+            "stat_history": stat_history,
+            "our_score": our_score
+        }}
+    )
+    
+    updated_game = await db.games.find_one({"id": game_id})
+    return serialize_doc(updated_game)
+
 # Debug endpoint to see raw request body
 from fastapi import Request
 @api_router.post("/games/{game_id}/stats-debug")
