@@ -532,6 +532,46 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.md,
   },
+  billingToggleContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  billingToggle: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.full,
+    padding: 4,
+  },
+  billingBtn: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.full,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  billingBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  billingBtnText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  billingBtnTextActive: {
+    color: colors.text,
+  },
+  saveBadge: {
+    backgroundColor: colors.success,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+  },
+  saveBadgeText: {
+    color: colors.text,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   restoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
