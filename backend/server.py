@@ -370,8 +370,15 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+# Master admin emails with full access
+MASTER_ADMIN_EMAILS = ["marcellosher33@yahoo.com"]
+
 def check_subscription(user: dict, required_tier: str) -> bool:
     """Check if user has required subscription tier"""
+    # Master admin emails always have full access
+    if user.get("email", "").lower() in [e.lower() for e in MASTER_ADMIN_EMAILS]:
+        return True
+    
     tier_levels = {"free": 0, "pro": 1, "team": 2}
     user_tier = user.get("subscription_tier", "free")
     
@@ -394,6 +401,10 @@ def check_subscription(user: dict, required_tier: str) -> bool:
             return tier_levels["free"] >= tier_levels[required_tier]
     
     return tier_levels.get(user_tier, 0) >= tier_levels.get(required_tier, 0)
+
+def is_master_admin(user: dict) -> bool:
+    """Check if user is a master admin"""
+    return user.get("email", "").lower() in [e.lower() for e in MASTER_ADMIN_EMAILS]
 
 # ==================== AUTH ROUTES ====================
 
