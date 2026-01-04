@@ -2054,12 +2054,16 @@ async def reactivate_subscription(user: dict = Depends(get_current_user)):
         logger.error(f"Failed to reactivate subscription: {e}")
         raise HTTPException(status_code=500, detail="Failed to reactivate subscription")
 
-# For testing: manually upgrade subscription
+# For testing: manually switch subscription tier (master admin only)
 @api_router.post("/subscriptions/test-upgrade")
 async def test_upgrade_subscription(tier: str, user: dict = Depends(get_current_user)):
-    """Test endpoint to upgrade subscription (for development only)"""
+    """Test endpoint to switch subscription tier (master admin only)"""
+    # Only master admins can use this endpoint
+    if not is_master_admin(user):
+        raise HTTPException(status_code=403, detail="Only master admins can use this endpoint")
+    
     if tier not in ["free", "pro", "team"]:
-        raise HTTPException(status_code=400, detail="Invalid tier")
+        raise HTTPException(status_code=400, detail="Invalid tier. Use: free, pro, or team")
     
     expires = datetime.utcnow() + timedelta(days=365) if tier != "free" else None
     
@@ -2067,11 +2071,17 @@ async def test_upgrade_subscription(tier: str, user: dict = Depends(get_current_
         {"id": user["id"]},
         {"$set": {
             "subscription_tier": tier,
-            "subscription_expires": expires
+            "subscription_expires": expires,
+            "subscription_status": "active" if tier != "free" else None
         }}
     )
     
-    return {"message": f"Upgraded to {tier}", "expires": expires}
+    return {
+        "message": f"Switched to {tier} tier for testing",
+        "tier": tier,
+        "expires": expires,
+        "note": "As master admin, you always have full access regardless of this setting. This is for testing tier restrictions."
+    }
 
 # ==================== MEDIA UPLOAD ====================
 
