@@ -98,6 +98,25 @@ export default function LiveGameScreen() {
     }
   }, [token, id]);
 
+  // Fetch subscription status
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      if (!token) return;
+      try {
+        const response = await fetch(`${API_URL}/api/subscriptions/status`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSubscriptionTier(data.effective_tier || data.tier || 'free');
+        }
+      } catch (error) {
+        console.error('Failed to fetch subscription status:', error);
+      }
+    };
+    fetchSubscription();
+  }, [token]);
+
   // Load active players and court side from game data when it loads
   useEffect(() => {
     if (currentGame) {
