@@ -261,7 +261,48 @@ export default function ProfileScreen() {
         <View style={[styles.tierBadge, { backgroundColor: tierColors[user?.subscription_tier || 'free'] }]}>
           <Text style={styles.tierText}>{user?.subscription_tier?.toUpperCase() || 'FREE'}</Text>
         </View>
+        {isMasterAdmin && (
+          <View style={styles.masterBadge}>
+            <Ionicons name="shield-checkmark" size={14} color={colors.text} />
+            <Text style={styles.masterBadgeText}>MASTER ADMIN</Text>
+          </View>
+        )}
       </View>
+
+      {/* Master Admin Tier Switcher */}
+      {isMasterAdmin && (
+        <View style={styles.masterSection}>
+          <Text style={styles.masterSectionTitle}>
+            <Ionicons name="settings" size={16} color={colors.warning} /> Test Subscription Tiers
+          </Text>
+          <Text style={styles.masterSectionSubtitle}>
+            Switch tiers to test feature restrictions. You always have full access as master admin.
+          </Text>
+          <View style={styles.tierSwitcher}>
+            <TouchableOpacity
+              style={[styles.tierSwitchBtn, user?.subscription_tier === 'free' && styles.tierSwitchBtnActive]}
+              onPress={() => handleTestTierSwitch('free')}
+              disabled={upgrading}
+            >
+              <Text style={[styles.tierSwitchBtnText, user?.subscription_tier === 'free' && styles.tierSwitchBtnTextActive]}>Free</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tierSwitchBtn, user?.subscription_tier === 'pro' && styles.tierSwitchBtnActive]}
+              onPress={() => handleTestTierSwitch('pro')}
+              disabled={upgrading}
+            >
+              <Text style={[styles.tierSwitchBtnText, user?.subscription_tier === 'pro' && styles.tierSwitchBtnTextActive]}>Pro</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tierSwitchBtn, user?.subscription_tier === 'team' && styles.tierSwitchBtnActive]}
+              onPress={() => handleTestTierSwitch('team')}
+              disabled={upgrading}
+            >
+              <Text style={[styles.tierSwitchBtnText, user?.subscription_tier === 'team' && styles.tierSwitchBtnTextActive]}>Team</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {/* Subscription Plans */}
       <View style={styles.section}>
