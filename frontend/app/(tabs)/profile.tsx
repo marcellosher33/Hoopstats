@@ -150,7 +150,24 @@ export default function ProfileScreen() {
   const handleUpgrade = async (tier: 'pro' | 'team') => {
     setUpgrading(true);
     try {
-      // Create Stripe checkout session with billing period
+      // Master admin uses test-upgrade endpoint (no Stripe needed)
+      if (isMasterAdmin) {
+        const response = await fetch(`${API_URL}/api/subscriptions/test-upgrade?tier=${tier}`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        
+        if (response.ok) {
+          await refreshUser();
+          Alert.alert('Success', `Switched to ${tier.toUpperCase()} tier for testing`);
+        } else {
+          const error = await response.json();
+          Alert.alert('Error', error.detail || 'Failed to switch tier');
+        }
+        return;
+      }
+      
+      // Regular users use Stripe checkout
       const response = await fetch(`${API_URL}/api/subscriptions/create-checkout`, {
         method: 'POST',
         headers: { 
