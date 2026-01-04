@@ -12,6 +12,7 @@ import {
   Dimensions,
   Platform,
   ActivityIndicator,
+  Clipboard,
 } from 'react-native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { File, Paths } from 'expo-file-system';
