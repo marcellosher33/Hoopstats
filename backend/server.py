@@ -765,6 +765,10 @@ import secrets
 @api_router.post("/games/{game_id}/share")
 async def create_share_link(game_id: str, user: dict = Depends(get_current_user)):
     """Generate a share token for public game viewing"""
+    # Check subscription - live sharing requires Pro
+    if not check_subscription(user, "pro"):
+        raise HTTPException(status_code=403, detail="Pro subscription required for live sharing")
+    
     game = await db.games.find_one({"id": game_id, "user_id": user["id"]})
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
