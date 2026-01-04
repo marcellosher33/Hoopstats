@@ -18,7 +18,7 @@ import { LineChart, BarChart } from 'react-native-gifted-charts';
 import Constants from 'expo-constants';
 
 const screenWidth = Dimensions.get('window').width;
-const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://courtsidepro.preview.emergentagent.com/api';
+const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://stattrack-app-1.preview.emergentagent.com/api';
 
 interface PlayerSeasonStats {
   player_id: string;
