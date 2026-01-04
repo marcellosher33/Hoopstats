@@ -727,6 +727,17 @@ async def update_game(game_id: str, game_data: GameUpdate, user: dict = Depends(
     if game_data.status == "completed":
         update_data["completed_at"] = datetime.utcnow()
     
+    # Handle player_minutes - update each player's stats with their minutes
+    if game_data.player_minutes:
+        player_stats = game.get("player_stats", [])
+        for ps in player_stats:
+            player_id = ps.get("player_id")
+            if player_id in game_data.player_minutes:
+                ps["stats"]["minutes_played"] = game_data.player_minutes[player_id]
+        update_data["player_stats"] = player_stats
+        # Remove player_minutes from update_data as we've processed it
+        del update_data["player_minutes"]
+    
     await db.games.update_one(
         {"id": game_id, "user_id": user["id"]},
         {"$set": update_data}
