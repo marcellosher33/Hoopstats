@@ -447,30 +447,103 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: spacing.md,
   },
+  playersSection: {
+    marginBottom: spacing.lg,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  inBadge: {
+    backgroundColor: colors.success,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+  },
+  inBadgeText: {
+    color: colors.text,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  outBadge: {
+    backgroundColor: colors.surfaceLight,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+  },
+  outBadgeText: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: spacing.md,
+  },
   playerCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.sm,
   },
+  playerCardIn: {
+    borderLeftWidth: 3,
+    borderLeftColor: colors.success,
+  },
+  playerCardOut: {
+    opacity: 0.7,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.surfaceLight,
+  },
   playerHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.sm,
     paddingBottom: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.surfaceLight,
   },
+  playerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  playerAvatarOut: {
+    backgroundColor: colors.surfaceLight,
+  },
+  playerAvatarText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  playerInfo: {
+    flex: 1,
+  },
   playerName: {
     color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
+  playerNameOut: {
+    color: colors.textSecondary,
+  },
   playerPoints: {
     color: colors.primary,
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
+  },
+  playerPointsOut: {
+    color: colors.textSecondary,
+    fontSize: 14,
   },
   statsRow: {
     flexDirection: 'row',
@@ -481,6 +554,11 @@ const styles = StyleSheet.create({
   },
   statValue: {
     color: colors.text,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  statValueOut: {
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: 'bold',
   },
