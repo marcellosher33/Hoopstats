@@ -1952,6 +1952,11 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
     is_active = check_subscription(user, user_tier)
     effective_tier = user_tier if is_active else "free"
     
+    # Master admin gets full access
+    if is_master_admin(user):
+        effective_tier = "team"
+        is_active = True
+    
     # Define features by tier
     tier_features = {
         "free": {
@@ -1986,9 +1991,10 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
     return {
         "tier": user_tier,
         "effective_tier": effective_tier,
-        "status": sub_status,
+        "status": sub_status if not is_master_admin(user) else "master",
         "expires": expires,
         "is_active": is_active,
+        "is_master": is_master_admin(user),
         "billing_period": user.get("billing_period", "yearly"),
         "features": tier_features.get(effective_tier, tier_features["free"]),
         "stripe_subscription_id": user.get("stripe_subscription_id"),
