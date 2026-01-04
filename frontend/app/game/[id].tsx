@@ -70,6 +70,12 @@ export default function LiveGameScreen() {
   // Show opponent score adjustment modal
   const [showOpponentScoreAdjust, setShowOpponentScoreAdjust] = useState(false);
   
+  // Share and Undo History
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareToken, setShareToken] = useState<string | null>(null);
+  const [showUndoHistory, setShowUndoHistory] = useState(false);
+  const [undoHistory, setUndoHistory] = useState<any[]>([]);
+  
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [cameraZoom, setCameraZoom] = useState(0);
