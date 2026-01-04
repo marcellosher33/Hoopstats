@@ -887,6 +887,7 @@ async def get_season_stats(user: dict = Depends(get_current_user)):
     player_season_stats = []
     for pid, pt in player_totals.items():
         gp = pt["games_played"]
+        total_mins = pt.get("total_minutes", 0)
         if gp > 0:
             player_season_stats.append({
                 "player_id": pt["player_id"],
@@ -898,6 +899,7 @@ async def get_season_stats(user: dict = Depends(get_current_user)):
                 "spg": round(pt["total_steals"] / gp, 1),
                 "bpg": round(pt["total_blocks"] / gp, 1),
                 "topg": round(pt["total_turnovers"] / gp, 1),
+                "mpg": round(total_mins / 60 / gp, 1),  # Minutes per game
                 "fg_pct": round((pt["total_fg_made"] / pt["total_fg_attempted"] * 100) if pt["total_fg_attempted"] > 0 else 0, 1),
                 "three_pt_pct": round((pt["total_3pt_made"] / pt["total_3pt_attempted"] * 100) if pt["total_3pt_attempted"] > 0 else 0, 1),
                 "ft_pct": round((pt["total_ft_made"] / pt["total_ft_attempted"] * 100) if pt["total_ft_attempted"] > 0 else 0, 1),
@@ -907,6 +909,7 @@ async def get_season_stats(user: dict = Depends(get_current_user)):
                     "assists": pt["total_assists"],
                     "steals": pt["total_steals"],
                     "blocks": pt["total_blocks"],
+                    "minutes": total_mins,  # Total seconds played
                 },
                 "trend_data": sorted(pt["game_scores"], key=lambda x: x.get("game_date") or ""),
             })
