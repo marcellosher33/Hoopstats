@@ -588,14 +588,34 @@ export default function GameSummaryScreen() {
     // Add hashtags
     message += `#Basketball #HoopStats`;
     
-    try {
-      await Share.share({ 
-        message,
-        title: `${currentGame.home_team_name || 'Game'} vs ${currentGame.opponent_name} - ${isWin ? 'Win' : 'Result'}`
-      });
-    } catch (error) {
-      console.error('Share error:', error);
-    }
+    // Show share options
+    Alert.alert(
+      'Share Game Summary',
+      'How would you like to share?',
+      [
+        {
+          text: 'Copy to Clipboard',
+          onPress: () => {
+            Clipboard.setString(message);
+            Alert.alert('Copied!', 'Game summary copied to clipboard. You can now paste it anywhere including Facebook.');
+          },
+        },
+        {
+          text: 'Share via Apps',
+          onPress: async () => {
+            try {
+              await Share.share({ 
+                message,
+                title: `${currentGame.home_team_name || 'Game'} vs ${currentGame.opponent_name} - ${isWin ? 'Win' : 'Result'}`
+              });
+            } catch (error) {
+              console.error('Share error:', error);
+            }
+          },
+        },
+        { text: 'Cancel', style: 'cancel' },
+      ]
+    );
   };
 
   const handleDelete = () => {
