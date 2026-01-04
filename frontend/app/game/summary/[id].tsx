@@ -539,10 +539,38 @@ export default function GameSummaryScreen() {
     if (!currentGame) return;
     
     const isWin = currentGame.our_score > currentGame.opponent_score;
-    const message = `${isWin ? 'W' : 'L'} vs ${currentGame.opponent_name}\nFinal: ${currentGame.our_score} - ${currentGame.opponent_score}\n\n${currentGame.ai_summary || ''}`;
+    const resultEmoji = isWin ? '🏆' : '📊';
+    const resultText = isWin ? 'VICTORY' : 'Game Result';
+    
+    // Build the full share message
+    let message = `${resultEmoji} ${resultText}\n`;
+    message += `${currentGame.home_team_name || 'Our Team'} vs ${currentGame.opponent_name}\n`;
+    message += `Final Score: ${currentGame.our_score} - ${currentGame.opponent_score}\n\n`;
+    
+    // Add AI summary if available
+    if (currentGame.ai_summary) {
+      message += `${currentGame.ai_summary}\n\n`;
+    }
+    
+    // Add top performer stats
+    if (currentGame.player_stats && currentGame.player_stats.length > 0) {
+      const topScorer = currentGame.player_stats.reduce((top, ps) => 
+        (ps.stats.points || 0) > (top.stats.points || 0) ? ps : top
+      );
+      if (topScorer.stats.points > 0) {
+        const reb = (topScorer.stats.offensive_rebounds || 0) + (topScorer.stats.defensive_rebounds || 0);
+        message += `⭐ ${topScorer.player_name}: ${topScorer.stats.points} PTS, ${reb} REB, ${topScorer.stats.assists || 0} AST\n\n`;
+      }
+    }
+    
+    // Add hashtags
+    message += `#Basketball #CourtClock #HoopStats`;
     
     try {
-      await Share.share({ message });
+      await Share.share({ 
+        message,
+        title: `${currentGame.home_team_name || 'Game'} vs ${currentGame.opponent_name} - ${isWin ? 'Win' : 'Result'}`
+      });
     } catch (error) {
       console.error('Share error:', error);
     }
