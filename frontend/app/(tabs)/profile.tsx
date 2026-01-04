@@ -8,6 +8,7 @@ import {
   Alert,
   Platform,
   Modal,
+  Linking,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +18,18 @@ import { Button } from '../../src/components/Button';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+
+interface PriceOption {
+  price: number;
+  yearly_total?: number;
+  price_id: string;
+  savings: string | null;
+}
+
+interface SubscriptionPrices {
+  pro: { monthly: PriceOption; yearly: PriceOption };
+  team: { monthly: PriceOption; yearly: PriceOption };
+}
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -33,6 +46,8 @@ export default function ProfileScreen() {
   } = usePurchaseStore();
   const [upgrading, setUpgrading] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
+  const [prices, setPrices] = useState<SubscriptionPrices | null>(null);
 
   // Initialize RevenueCat when user is available
   useEffect(() => {
@@ -40,6 +55,22 @@ export default function ProfileScreen() {
       initializePurchases(user.id);
     }
   }, [user?.id, isInitialized]);
+
+  // Fetch subscription prices
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/subscriptions/prices`);
+        if (response.ok) {
+          const data = await response.json();
+          setPrices(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch prices:', error);
+      }
+    };
+    fetchPrices();
+  }, []);
 
   const handlePurchase = async (packageIdentifier: string) => {
     const pkg = packages.find(p => p.identifier === packageIdentifier);
