@@ -94,6 +94,7 @@ export default function LiveGameViewer() {
   }
 
   const isLive = game.status === 'in_progress';
+  const isCompleted = game.status === 'completed';
 
   return (
     <View style={styles.container}>
@@ -106,6 +107,12 @@ export default function LiveGameViewer() {
           <View style={styles.liveBadge}>
             <View style={styles.liveIndicator} />
             <Text style={styles.liveText}>LIVE</Text>
+          </View>
+        )}
+        {isCompleted && (
+          <View style={styles.finalBadge}>
+            <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+            <Text style={styles.finalText}>FINAL</Text>
           </View>
         )}
         
