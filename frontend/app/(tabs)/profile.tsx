@@ -633,6 +633,23 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: colors.textSecondary,
   },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  yearlyTotalText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: -spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  savingsText: {
+    fontSize: 14,
+    color: colors.success,
+    fontWeight: '600',
+    marginTop: -spacing.sm,
+    marginBottom: spacing.sm,
+  },
   planFeatures: {
     gap: spacing.xs,
   },
