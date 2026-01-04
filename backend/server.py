@@ -870,6 +870,7 @@ async def get_season_stats(user: dict = Depends(get_current_user)):
             pt["total_3pt_attempted"] += stats.get("three_pt_attempted", 0)
             pt["total_ft_made"] += stats.get("ft_made", 0)
             pt["total_ft_attempted"] += stats.get("ft_attempted", 0)
+            pt["total_minutes"] = pt.get("total_minutes", 0) + stats.get("minutes_played", 0)
             
             # Add to trend data
             pt["game_scores"].append({
@@ -879,6 +880,7 @@ async def get_season_stats(user: dict = Depends(get_current_user)):
                 "points": stats.get("points", 0),
                 "rebounds": stats.get("rebounds", 0) or (stats.get("offensive_rebounds", 0) + stats.get("defensive_rebounds", 0)),
                 "assists": stats.get("assists", 0),
+                "minutes": stats.get("minutes_played", 0),
             })
     
     # Calculate averages
