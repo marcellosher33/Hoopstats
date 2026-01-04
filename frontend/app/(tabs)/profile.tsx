@@ -48,6 +48,8 @@ export default function ProfileScreen() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('yearly');
   const [prices, setPrices] = useState<SubscriptionPrices | null>(null);
+  const [isMasterAdmin, setIsMasterAdmin] = useState(false);
+  const [effectiveTier, setEffectiveTier] = useState<string>('free');
 
   // Initialize RevenueCat when user is available
   useEffect(() => {
@@ -56,21 +58,59 @@ export default function ProfileScreen() {
     }
   }, [user?.id, isInitialized]);
 
-  // Fetch subscription prices
+  // Fetch subscription prices and check master admin status
   useEffect(() => {
-    const fetchPrices = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/subscriptions/prices`);
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch prices
+        const pricesRes = await fetch(`${API_URL}/api/subscriptions/prices`);
+        if (pricesRes.ok) {
+          const data = await pricesRes.json();
           setPrices(data);
         }
+        
+        // Fetch subscription status to check master admin
+        if (token) {
+          const statusRes = await fetch(`${API_URL}/api/subscriptions/status`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (statusRes.ok) {
+            const statusData = await statusRes.json();
+            setIsMasterAdmin(statusData.is_master || false);
+            setEffectiveTier(statusData.effective_tier || 'free');
+          }
+        }
       } catch (error) {
-        console.error('Failed to fetch prices:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
-    fetchPrices();
-  }, []);
+    fetchData();
+  }, [token]);
+
+  // Master admin tier switch for testing
+  const handleTestTierSwitch = async (tier: string) => {
+    if (!isMasterAdmin) return;
+    
+    setUpgrading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/subscriptions/test-upgrade?tier=${tier}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (response.ok) {
+        await refreshUser();
+        Alert.alert('Tier Switched', `Now testing as ${tier.toUpperCase()} tier`);
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to switch tier');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to switch tier');
+    } finally {
+      setUpgrading(false);
+    }
+  };
 
   const handlePurchase = async (packageIdentifier: string) => {
     const pkg = packages.find(p => p.identifier === packageIdentifier);
