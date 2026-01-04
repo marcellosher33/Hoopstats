@@ -45,6 +45,7 @@ export default function LiveGameScreen() {
   const [showShotChart, setShowShotChart] = useState(false);
   const [pendingShotType, setPendingShotType] = useState<'2pt' | '3pt' | null>(null);
   const [pendingShotMade, setPendingShotMade] = useState(true);
+  const [pendingShotPlayerId, setPendingShotPlayerId] = useState<string | null>(null); // Track player for shot chart in team mode
   const [showEndGameModal, setShowEndGameModal] = useState(false);
   const [showScoreModal, setShowScoreModal] = useState(false);
   const [opponentScore, setOpponentScore] = useState('0');
