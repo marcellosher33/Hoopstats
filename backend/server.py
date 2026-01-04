@@ -1918,8 +1918,8 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
             "highlight_reels": False,
             "edit_completed_games": False,
             "teams": False,
-            "export_pdf": True,
-            "live_sharing": True,
+            "export_pdf": False,
+            "live_sharing": False,
             "season_stats": False,
         },
         "pro": {
