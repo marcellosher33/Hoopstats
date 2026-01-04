@@ -1230,26 +1230,58 @@ export default function GameSummaryScreen() {
 
       {/* Actions */}
       <View style={styles.actions}>
-        <Button
-          title={exportingPdf ? "Generating PDF..." : "Export PDF Report"}
-          onPress={handleExportPdf}
-          loading={exportingPdf}
-          disabled={exportingPdf}
-          variant="primary"
-          icon={<Ionicons name="document-text" size={20} color={colors.text} />}
-        />
+        {subscriptionTier === 'free' ? (
+          <Button
+            title="Export PDF Report"
+            onPress={() => Alert.alert(
+              'Pro Feature',
+              'PDF export is available with a Pro or Team subscription.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Upgrade', onPress: () => router.push('/subscription') }
+              ]
+            )}
+            variant="outline"
+            icon={<Ionicons name="lock-closed" size={20} color={colors.textSecondary} />}
+          />
+        ) : (
+          <Button
+            title={exportingPdf ? "Generating PDF..." : "Export PDF Report"}
+            onPress={handleExportPdf}
+            loading={exportingPdf}
+            disabled={exportingPdf}
+            variant="primary"
+            icon={<Ionicons name="document-text" size={20} color={colors.text} />}
+          />
+        )}
         <Button
           title="Edit Stats"
           onPress={() => setShowEditStats(!showEditStats)}
           variant={showEditStats ? 'primary' : 'outline'}
           icon={<Ionicons name="pencil" size={20} color={showEditStats ? colors.text : colors.primary} />}
         />
-        <Button
-          title="Share Game"
-          onPress={handleShare}
-          variant="outline"
-          icon={<Ionicons name="share-social" size={20} color={colors.primary} />}
-        />
+        {subscriptionTier === 'free' ? (
+          <Button
+            title="Share Game"
+            onPress={() => Alert.alert(
+              'Pro Feature',
+              'Sharing game summaries is available with a Pro or Team subscription.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Upgrade', onPress: () => router.push('/subscription') }
+              ]
+            )}
+            variant="outline"
+            icon={<Ionicons name="lock-closed" size={20} color={colors.textSecondary} />}
+          />
+        ) : (
+          <Button
+            title="Share Game"
+            onPress={handleShare}
+            variant="outline"
+            icon={<Ionicons name="share-social" size={20} color={colors.primary} />}
+          />
+        )}
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
           <Ionicons name="trash" size={20} color={colors.error} />
           <Text style={styles.deleteBtnText}>Delete Game</Text>
