@@ -2507,6 +2507,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontVariant: ['tabular-nums'],
   },
+  teamModePlayerMinutesEditable: {
+    fontSize: 12,
+    color: colors.primary,
+    fontVariant: ['tabular-nums'],
+    textDecorationLine: 'underline',
+  },
   teamModeStatsContainer: {
     gap: spacing.xs,
   },
