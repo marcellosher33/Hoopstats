@@ -380,7 +380,12 @@ export default function LiveGameScreen() {
   };
 
   const handleShotChartPress = (x: number, y: number) => {
-    if (!pendingShotType || !selectedPlayer) return;
+    // Use pendingShotPlayerId if available (team mode), otherwise use selectedPlayer
+    const playerId = pendingShotPlayerId || selectedPlayer;
+    if (!pendingShotType || !playerId) {
+      console.log('[handleShotChartPress] Missing data:', { pendingShotType, playerId, pendingShotPlayerId, selectedPlayer });
+      return;
+    }
     
     let statType: StatType;
     if (pendingShotMade) {
@@ -389,11 +394,12 @@ export default function LiveGameScreen() {
       statType = pendingShotType === '3pt' ? 'miss_3' : 'miss_2';
     }
     
-    // Use handleTeamStatPress with selected player ID to avoid state timing issues
-    handleTeamStatPress(selectedPlayer, statType, { x, y });
+    // Use handleTeamStatPress with player ID to avoid state timing issues
+    handleTeamStatPress(playerId, statType, { x, y });
     setShowShotChart(false);
     setPendingShotType(null);
     setPendingShotMade(true);
+    setPendingShotPlayerId(null); // Clear the pending player
   };
 
   // Team mode shot chart handler
