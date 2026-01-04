@@ -579,7 +579,121 @@ export default function GameSummaryScreen() {
   const isWin = currentGame.our_score > currentGame.opponent_score;
   const photos = currentGame.media.filter(m => m.type === 'photo');
   const videos = currentGame.media.filter(m => m.type === 'video');
-  const allShots = currentGame.player_stats.flatMap(ps => ps.shots || []);
+  
+  // Get period options based on period_type
+  const periodType = currentGame.period_type || 'halves';
+  const periodOptions = periodType === 'quarters' 
+    ? ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'] 
+    : ['all', 'h1', 'h2'];
+
+  // Helper to filter shots by period
+  const filterShotsByPeriod = (shots: any[]) => {
+    if (selectedPeriod === 'all') return shots;
+    if (selectedPeriod === 'h1') {
+      return periodType === 'quarters' 
+        ? shots.filter(s => s.period === 1 || s.period === 2)
+        : shots.filter(s => s.period === 1);
+    }
+    if (selectedPeriod === 'h2') {
+      return periodType === 'quarters'
+        ? shots.filter(s => s.period === 3 || s.period === 4)
+        : shots.filter(s => s.period === 2);
+    }
+    // q1, q2, q3, q4
+    const qNum = parseInt(selectedPeriod.substring(1));
+    return shots.filter(s => s.period === qNum);
+  };
+
+  // Helper to filter stat_events by period
+  const filterStatEventsByPeriod = (events: any[] | undefined) => {
+    if (!events || selectedPeriod === 'all') return events || [];
+    if (selectedPeriod === 'h1') {
+      return periodType === 'quarters'
+        ? events.filter(e => e.period === 1 || e.period === 2)
+        : events.filter(e => e.period === 1);
+    }
+    if (selectedPeriod === 'h2') {
+      return periodType === 'quarters'
+        ? events.filter(e => e.period === 3 || e.period === 4)
+        : events.filter(e => e.period === 2);
+    }
+    const qNum = parseInt(selectedPeriod.substring(1));
+    return events.filter(e => e.period === qNum);
+  };
+
+  // Calculate stats from shots for a period
+  const calculateShotsStats = (shots: any[]) => {
+    const filteredShots = filterShotsByPeriod(shots);
+    let points = 0;
+    let fgMade = 0;
+    let fgAttempted = 0;
+    let threePtMade = 0;
+    let threePtAttempted = 0;
+    
+    filteredShots.forEach(shot => {
+      if (shot.shot_type === '3pt') {
+        threePtAttempted++;
+        fgAttempted++;
+        if (shot.made) {
+          threePtMade++;
+          fgMade++;
+          points += 3;
+        }
+      } else if (shot.shot_type === '2pt') {
+        fgAttempted++;
+        if (shot.made) {
+          fgMade++;
+          points += 2;
+        }
+      }
+    });
+    
+    return { points, fgMade, fgAttempted, threePtMade, threePtAttempted };
+  };
+
+  // Calculate non-shot stats from stat_events for a period
+  const calculateEventStats = (events: any[] | undefined) => {
+    const filteredEvents = filterStatEventsByPeriod(events);
+    const stats: { [key: string]: number } = {};
+    
+    filteredEvents.forEach(event => {
+      const type = event.stat_type;
+      stats[type] = (stats[type] || 0) + (event.value || 1);
+    });
+    
+    return stats;
+  };
+
+  // Get player stats filtered by period
+  const getFilteredPlayerStats = (ps: any) => {
+    if (selectedPeriod === 'all') {
+      return ps.stats;
+    }
+    
+    // Calculate from shots and stat_events
+    const shotStats = calculateShotsStats(ps.shots || []);
+    const eventStats = calculateEventStats(ps.stat_events);
+    
+    return {
+      points: shotStats.points + (eventStats.ft_made || 0),
+      rebounds: (eventStats.offensive_rebounds || 0) + (eventStats.defensive_rebounds || 0),
+      offensive_rebounds: eventStats.offensive_rebounds || 0,
+      defensive_rebounds: eventStats.defensive_rebounds || 0,
+      assists: eventStats.assists || 0,
+      steals: eventStats.steals || 0,
+      blocks: eventStats.blocks || 0,
+      turnovers: eventStats.turnovers || 0,
+      fouls: eventStats.fouls || 0,
+      fg_made: shotStats.fgMade,
+      fg_attempted: shotStats.fgAttempted,
+      three_pt_made: shotStats.threePtMade,
+      three_pt_attempted: shotStats.threePtAttempted,
+      ft_made: eventStats.ft_made || 0,
+      ft_attempted: eventStats.ft_attempted || 0,
+    };
+  };
+
+  const allShots = currentGame.player_stats.flatMap(ps => filterShotsByPeriod(ps.shots || []));
 
   // Calculate team totals
   const teamStats = currentGame.player_stats.reduce((totals, ps) => {
