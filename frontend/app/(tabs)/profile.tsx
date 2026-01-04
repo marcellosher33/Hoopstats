@@ -227,6 +227,31 @@ export default function ProfileScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Subscription Plans</Text>
         
+        {/* Billing Period Toggle */}
+        <View style={styles.billingToggleContainer}>
+          <View style={styles.billingToggle}>
+            <TouchableOpacity
+              style={[styles.billingBtn, billingPeriod === 'monthly' && styles.billingBtnActive]}
+              onPress={() => setBillingPeriod('monthly')}
+            >
+              <Text style={[styles.billingBtnText, billingPeriod === 'monthly' && styles.billingBtnTextActive]}>
+                Monthly
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.billingBtn, billingPeriod === 'yearly' && styles.billingBtnActive]}
+              onPress={() => setBillingPeriod('yearly')}
+            >
+              <Text style={[styles.billingBtnText, billingPeriod === 'yearly' && styles.billingBtnTextActive]}>
+                Yearly
+              </Text>
+              <View style={styles.saveBadge}>
+                <Text style={styles.saveBadgeText}>SAVE</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
         {/* Restore Purchases Button */}
         <TouchableOpacity 
           style={styles.restoreButton}
@@ -248,7 +273,9 @@ export default function ProfileScreen() {
             <PlanFeature text="Last 2 completed games" included />
             <PlanFeature text="Photo capture" included />
             <PlanFeature text="AI summaries" />
-            <PlanFeature text="Shot charts" />
+            <PlanFeature text="PDF Export" />
+            <PlanFeature text="Live Sharing" />
+            <PlanFeature text="Team Mode" />
           </View>
           {user?.subscription_tier === 'free' ? (
             <View style={styles.currentPlan}>
@@ -272,15 +299,27 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.planHeader}>
             <Text style={styles.planName}>Pro</Text>
-            <Text style={styles.planPrice}>$69.99<Text style={styles.planPeriod}>/year</Text></Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.planPrice}>
+                ${prices?.pro[billingPeriod]?.price.toFixed(2) || (billingPeriod === 'monthly' ? '5.99' : '59.99')}
+              </Text>
+              <Text style={styles.planPeriod}>/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</Text>
+            </View>
           </View>
+          {billingPeriod === 'monthly' && prices?.pro.monthly.yearly_total && (
+            <Text style={styles.yearlyTotalText}>${prices.pro.monthly.yearly_total}/year if paid monthly</Text>
+          )}
+          {billingPeriod === 'yearly' && prices?.pro.yearly.savings && (
+            <Text style={styles.savingsText}>{prices.pro.yearly.savings}</Text>
+          )}
           <View style={styles.planFeatures}>
             <PlanFeature text="All stats tracking" included />
             <PlanFeature text="Unlimited game history" included />
-            <PlanFeature text="Photo capture" included />
             <PlanFeature text="AI game summaries" included />
-            <PlanFeature text="Shot charts & analytics" included />
-            <PlanFeature text="Team roster management" />
+            <PlanFeature text="PDF Export" included />
+            <PlanFeature text="Live Sharing" included />
+            <PlanFeature text="Season Stats" included />
+            <PlanFeature text="Team Mode" />
           </View>
           {user?.subscription_tier === 'pro' ? (
             <View style={styles.currentPlan}>
@@ -296,7 +335,7 @@ export default function ProfileScreen() {
             />
           ) : (
             <Button
-              title="Upgrade to Pro"
+              title={`Upgrade to Pro - $${prices?.pro[billingPeriod]?.price.toFixed(2) || '59.99'}/${billingPeriod === 'monthly' ? 'mo' : 'yr'}`}
               onPress={() => handleUpgrade('pro')}
               loading={upgrading}
               style={{ marginTop: spacing.md }}
@@ -308,14 +347,25 @@ export default function ProfileScreen() {
         <View style={[styles.planCard, user?.subscription_tier === 'team' && styles.planActive]}>
           <View style={styles.planHeader}>
             <Text style={styles.planName}>Team</Text>
-            <Text style={styles.planPrice}>$199.99<Text style={styles.planPeriod}>/year</Text></Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.planPrice}>
+                ${prices?.team[billingPeriod]?.price.toFixed(2) || (billingPeriod === 'monthly' ? '16.99' : '159.99')}
+              </Text>
+              <Text style={styles.planPeriod}>/{billingPeriod === 'monthly' ? 'mo' : 'yr'}</Text>
+            </View>
           </View>
+          {billingPeriod === 'monthly' && prices?.team.monthly.yearly_total && (
+            <Text style={styles.yearlyTotalText}>${prices.team.monthly.yearly_total}/year if paid monthly</Text>
+          )}
+          {billingPeriod === 'yearly' && prices?.team.yearly.savings && (
+            <Text style={styles.savingsText}>{prices.team.yearly.savings}</Text>
+          )}
           <View style={styles.planFeatures}>
             <PlanFeature text="Everything in Pro" included />
+            <PlanFeature text="Team Mode" included />
             <PlanFeature text="Full team roster management" included />
+            <PlanFeature text="In/Out player tracking" included />
             <PlanFeature text="Team-wide statistics" included />
-            <PlanFeature text="Season stat compilations" included />
-            <PlanFeature text="Export & sharing tools" included />
             <PlanFeature text="Priority support" included />
           </View>
           {user?.subscription_tier === 'team' ? (
