@@ -502,11 +502,12 @@ export default function LiveGameScreen() {
 
   const handleEndGame = async () => {
     if (!token || !id || !currentGame) return;
-    // Use the actual current game scores, not the modal input state
+    // Use the actual current game scores and include player minutes
     await updateGame(id, { 
       status: 'completed', 
       our_score: currentGame.our_score,
-      opponent_score: currentGame.opponent_score
+      opponent_score: currentGame.opponent_score,
+      player_minutes: playerMinutes, // Save all player minutes
     }, token);
     setShowEndGameModal(false);
     router.replace(`/game/summary/${id}`);
