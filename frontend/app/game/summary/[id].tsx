@@ -564,7 +564,7 @@ export default function GameSummaryScreen() {
     }
     
     // Add hashtags
-    message += `#Basketball #CourtClock #HoopStats`;
+    message += `#Basketball #HoopStats`;
     
     try {
       await Share.share({ 
