@@ -852,7 +852,7 @@ export default function GameSummaryScreen() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Game Summary</Text>
-          {user?.subscription_tier !== 'free' && (
+          {subscriptionTier !== 'free' && (
             <TouchableOpacity onPress={handleGenerateSummary} disabled={generatingSummary}>
               <Ionicons 
                 name="sparkles" 
@@ -863,7 +863,21 @@ export default function GameSummaryScreen() {
           )}
         </View>
         
-        {currentGame.ai_summary ? (
+        {subscriptionTier === 'free' ? (
+          <View style={styles.lockedFeature}>
+            <Ionicons name="lock-closed" size={32} color={colors.textSecondary} />
+            <Text style={styles.lockedFeatureTitle}>AI Game Summary</Text>
+            <Text style={styles.lockedFeatureText}>
+              Get AI-powered game summaries with a Pro or Team subscription
+            </Text>
+            <Button
+              title="Upgrade to Unlock"
+              onPress={() => router.push('/subscription')}
+              size="small"
+              style={{ marginTop: spacing.md }}
+            />
+          </View>
+        ) : currentGame.ai_summary ? (
           <View style={styles.summaryCard}>
             <Text style={styles.summaryText}>{currentGame.ai_summary}</Text>
             <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
@@ -875,17 +889,13 @@ export default function GameSummaryScreen() {
           <View style={styles.noSummary}>
             <Ionicons name="sparkles-outline" size={32} color={colors.textSecondary} />
             <Text style={styles.noSummaryText}>No AI summary yet</Text>
-            {user?.subscription_tier === 'free' ? (
-              <Text style={styles.proRequired}>Pro subscription required</Text>
-            ) : (
-              <Button
-                title="Generate Summary"
-                onPress={handleGenerateSummary}
-                loading={generatingSummary}
-                size="small"
-                style={{ marginTop: spacing.md }}
-              />
-            )}
+            <Button
+              title="Generate Summary"
+              onPress={handleGenerateSummary}
+              loading={generatingSummary}
+              size="small"
+              style={{ marginTop: spacing.md }}
+            />
           </View>
         )}
       </View>
