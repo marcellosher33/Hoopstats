@@ -16,6 +16,8 @@ import {
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { File, Paths } from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../../src/stores/authStore';
