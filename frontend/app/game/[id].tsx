@@ -1048,16 +1048,20 @@ export default function LiveGameScreen() {
         style={styles.actionBar}
       >
         <TouchableOpacity style={styles.actionBtn} onPress={handleUndo}>
-          <Ionicons name="arrow-undo" size={26} color={colors.primary} />
+          <Ionicons name="arrow-undo" size={24} color={colors.primary} />
           <Text style={[styles.actionBtnText, { color: colors.primary }]}>Undo</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.actionBtn} onPress={handleShareGame}>
+          <Ionicons name="share-social" size={24} color={colors.success} />
+          <Text style={[styles.actionBtnText, { color: colors.success }]}>Share</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => openCamera()}>
-          <Ionicons name="camera" size={26} color={colors.text} />
+          <Ionicons name="camera" size={24} color={colors.text} />
           <Text style={styles.actionBtnText}>Photo</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.endGameBtn} onPress={() => setShowEndGameModal(true)}>
-          <Ionicons name="flag" size={26} color={colors.text} />
-          <Text style={styles.endGameBtnText}>End Game</Text>
+          <Ionicons name="flag" size={24} color={colors.text} />
+          <Text style={styles.endGameBtnText}>End</Text>
         </TouchableOpacity>
       </LinearGradient>
 
