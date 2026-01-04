@@ -29,7 +29,7 @@ export default function LiveGameViewer() {
     if (!token) return;
     
     try {
-      const response = await fetch(`${API_URL}/api/public/games/${token}`);
+      const response = await fetch(`${API_URL}/api/live/${token}`);
       if (!response.ok) {
         if (response.status === 404) {
           setError('Game not found or sharing has been disabled');
