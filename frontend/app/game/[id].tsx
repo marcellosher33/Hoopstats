@@ -482,6 +482,63 @@ export default function LiveGameScreen() {
     setShowCamera(true);
   };
 
+  // Live Share functionality
+  const handleShareGame = async () => {
+    if (!token || !id) return;
+    
+    try {
+      // Generate share token from backend
+      const response = await fetch(`${API_URL}/api/games/${id}/share`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to create share link');
+        return;
+      }
+      
+      const data = await response.json();
+      const shareUrl = `${API_URL}/live/${data.share_token}`;
+      
+      // Show share options
+      Alert.alert(
+        'Share Live Game',
+        `Anyone with this link can view the game live:\n\n${shareUrl}`,
+        [
+          {
+            text: 'Copy Link',
+            onPress: () => {
+              Clipboard.setString(shareUrl);
+              Alert.alert('Copied!', 'Share link copied to clipboard');
+            },
+          },
+          {
+            text: 'Share',
+            onPress: async () => {
+              try {
+                await Share.share({
+                  message: `Watch the live game: ${currentGame?.home_team_name || 'Our Team'} vs ${currentGame?.opponent_name}\n\n${shareUrl}`,
+                  url: shareUrl,
+                });
+              } catch (e) {
+                console.error('Share error:', e);
+              }
+            },
+          },
+          { text: 'Cancel', style: 'cancel' },
+        ]
+      );
+    } catch (error) {
+      console.error('Share error:', error);
+      Alert.alert('Error', 'Failed to create share link');
+    }
+  };
+
   if (!currentGame) {
     return (
       <View style={styles.loading}>
