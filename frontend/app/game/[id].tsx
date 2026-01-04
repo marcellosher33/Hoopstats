@@ -1089,6 +1089,7 @@ export default function LiveGameScreen() {
                 setShowShotChart(false);
                 setPendingShotType(null);
                 setPendingShotMade(true);
+                setPendingShotPlayerId(null); // Clear the pending player
               }}
               variant="ghost"
             />
