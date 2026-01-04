@@ -1,4 +1,4 @@
-# CourtClock - App Store Deployment Guide
+# HoopStats - App Store Deployment Guide
 
 ## Prerequisites
 
@@ -16,8 +16,8 @@
 
 ### Update app.json
 The `app.json` file has been configured with:
-- App name: "CourtClock"
-- Bundle identifier: `com.courtclock.app`
+- App name: "HoopStats"
+- Bundle identifier: `com.hoopstats.app`
 - Required permissions for camera and photo library
 
 **You need to update these placeholders:**
@@ -83,10 +83,10 @@ Edit `/app/frontend/eas.json` and update:
 2. Click "My Apps" → "+" → "New App"
 3. Fill in:
    - Platform: iOS
-   - Name: CourtClock
+   - Name: HoopStats
    - Primary Language: English (U.S.)
-   - Bundle ID: com.courtclock.app (create this identifier first)
-   - SKU: courtclock-001
+   - Bundle ID: com.hoopstats.app (create this identifier first)
+   - SKU: hoopstats-001
 
 ---
 
@@ -133,9 +133,9 @@ In App Store Connect, you'll need to provide:
 
 2. **App Description**:
 ```
-CourtClock - Your Ultimate Basketball Stat Tracker
+HoopStats - Your Ultimate Basketball Stat Tracker
 
-Track every moment of the game with CourtClock! Whether you're a coach, parent, or player, capture comprehensive basketball statistics with ease.
+Track every moment of the game with HoopStats! Whether you're a coach, parent, or player, capture comprehensive basketball statistics with ease.
 
 Features:
 • Real-time stat tracking for points, rebounds, assists, steals, blocks, and more
