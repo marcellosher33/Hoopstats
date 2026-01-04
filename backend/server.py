@@ -1808,20 +1808,27 @@ async def stripe_webhook(request_body: dict):
         # New subscription purchase
         user_id = data.get("metadata", {}).get("user_id")
         tier = data.get("metadata", {}).get("tier")
+        billing_period = data.get("metadata", {}).get("billing_period", "yearly")
         subscription_id = data.get("subscription")
         
         if user_id and tier:
-            expires = datetime.utcnow() + timedelta(days=365)
+            # Set expiration based on billing period
+            if billing_period == "monthly":
+                expires = datetime.utcnow() + timedelta(days=30)
+            else:
+                expires = datetime.utcnow() + timedelta(days=365)
+            
             await db.users.update_one(
                 {"id": user_id},
                 {"$set": {
                     "subscription_tier": tier,
                     "subscription_expires": expires,
                     "stripe_subscription_id": subscription_id,
-                    "subscription_status": "active"
+                    "subscription_status": "active",
+                    "billing_period": billing_period
                 }}
             )
-            logger.info(f"User {user_id} subscribed to {tier}")
+            logger.info(f"User {user_id} subscribed to {tier} ({billing_period})")
     
     elif event_type == "customer.subscription.updated":
         # Subscription upgraded, downgraded, or modified
