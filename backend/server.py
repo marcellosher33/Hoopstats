@@ -374,10 +374,23 @@ def check_subscription(user: dict, required_tier: str) -> bool:
     tier_levels = {"free": 0, "pro": 1, "team": 2}
     user_tier = user.get("subscription_tier", "free")
     
+    # Check subscription status
+    sub_status = user.get("subscription_status", "active")
+    if sub_status in ["canceled", "expired", "payment_failed"]:
+        # If subscription is canceled/expired/failed, treat as free tier
+        return tier_levels["free"] >= tier_levels[required_tier]
+    
     # Check if subscription is expired
     expires = user.get("subscription_expires")
-    if expires and isinstance(expires, datetime) and expires < datetime.utcnow():
-        return tier_levels["free"] >= tier_levels[required_tier]
+    if expires:
+        # Handle both datetime objects and strings
+        if isinstance(expires, str):
+            try:
+                expires = datetime.fromisoformat(expires.replace('Z', '+00:00'))
+            except:
+                expires = None
+        if expires and isinstance(expires, datetime) and expires < datetime.utcnow():
+            return tier_levels["free"] >= tier_levels[required_tier]
     
     return tier_levels.get(user_tier, 0) >= tier_levels.get(required_tier, 0)
 
