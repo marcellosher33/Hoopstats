@@ -1024,6 +1024,14 @@ export default function GameSummaryScreen() {
       {/* Actions */}
       <View style={styles.actions}>
         <Button
+          title={exportingPdf ? "Generating PDF..." : "Export PDF Report"}
+          onPress={handleExportPdf}
+          loading={exportingPdf}
+          disabled={exportingPdf}
+          variant="primary"
+          icon={<Ionicons name="document-text" size={20} color={colors.text} />}
+        />
+        <Button
           title="Edit Stats"
           onPress={() => setShowEditStats(!showEditStats)}
           variant={showEditStats ? 'primary' : 'outline'}
