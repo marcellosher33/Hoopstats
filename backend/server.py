@@ -1919,7 +1919,6 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
         "free": {
             "max_games_visible": 2,
             "ai_summaries": False,
-            "highlight_reels": False,
             "edit_completed_games": False,
             "teams": False,
             "export_pdf": False,
@@ -1929,7 +1928,6 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
         "pro": {
             "max_games_visible": -1,  # unlimited
             "ai_summaries": True,
-            "highlight_reels": True,
             "edit_completed_games": True,
             "teams": False,
             "export_pdf": True,
@@ -1939,7 +1937,6 @@ async def get_subscription_status(user: dict = Depends(get_current_user)):
         "team": {
             "max_games_visible": -1,
             "ai_summaries": True,
-            "highlight_reels": True,
             "edit_completed_games": True,
             "teams": True,
             "export_pdf": True,
