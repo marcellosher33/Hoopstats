@@ -186,6 +186,44 @@ export default function LiveGameViewer() {
           </View>
         ))}
 
+        {/* AI Summary (shown when game is completed) */}
+        {game.status === 'completed' && game.ai_summary && (
+          <View style={styles.summarySection}>
+            <View style={styles.summaryHeader}>
+              <Ionicons name="sparkles" size={20} color={colors.primary} />
+              <Text style={styles.summaryTitle}>Game Summary</Text>
+            </View>
+            <View style={styles.summaryCard}>
+              <Text style={styles.summaryText}>{game.ai_summary}</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Final Score Card (shown when game is completed) */}
+        {game.status === 'completed' && (
+          <View style={styles.finalScoreSection}>
+            <Text style={styles.finalScoreTitle}>Final Score</Text>
+            <View style={styles.finalScoreCard}>
+              <View style={styles.finalTeam}>
+                <Text style={styles.finalTeamName}>{game.home_team_name}</Text>
+                <Text style={[styles.finalScore, game.our_score > game.opponent_score && styles.winningScore]}>
+                  {game.our_score}
+                </Text>
+              </View>
+              <Text style={styles.finalDash}>-</Text>
+              <View style={styles.finalTeam}>
+                <Text style={styles.finalTeamName}>{game.opponent_name}</Text>
+                <Text style={[styles.finalScore, game.opponent_score > game.our_score && styles.winningScore]}>
+                  {game.opponent_score}
+                </Text>
+              </View>
+            </View>
+            <Text style={styles.gameResult}>
+              {game.our_score > game.opponent_score ? '🏆 Victory!' : game.our_score < game.opponent_score ? 'Defeat' : 'Tie Game'}
+            </Text>
+          </View>
+        )}
+
         {/* Footer */}
         <View style={styles.footer}>
           <Ionicons name="basketball" size={20} color={colors.textSecondary} />
