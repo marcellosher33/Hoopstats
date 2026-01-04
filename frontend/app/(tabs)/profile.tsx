@@ -604,6 +604,62 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 12,
   },
+  masterBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.warning,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.sm,
+  },
+  masterBadgeText: {
+    color: colors.text,
+    fontWeight: 'bold',
+    fontSize: 10,
+  },
+  masterSection: {
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.warning,
+  },
+  masterSectionTitle: {
+    color: colors.warning,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: spacing.xs,
+  },
+  masterSectionSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginBottom: spacing.md,
+  },
+  tierSwitcher: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  tierSwitchBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+  },
+  tierSwitchBtnActive: {
+    backgroundColor: colors.warning,
+  },
+  tierSwitchBtnText: {
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  tierSwitchBtnTextActive: {
+    color: colors.text,
+  },
   section: {
     marginBottom: spacing.lg,
   },
