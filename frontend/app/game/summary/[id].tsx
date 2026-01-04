@@ -1934,4 +1934,40 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginLeft: 4,
   },
+  // Period Filter Styles
+  periodFilterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  periodFilterLabel: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    marginRight: spacing.sm,
+  },
+  periodFilterScroll: {
+    flexGrow: 0,
+  },
+  periodFilterBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surface,
+    marginRight: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.surfaceLight,
+  },
+  periodFilterBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  periodFilterBtnText: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  periodFilterBtnTextActive: {
+    color: colors.text,
+  },
 });
