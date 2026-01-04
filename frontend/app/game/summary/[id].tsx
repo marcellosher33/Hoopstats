@@ -765,6 +765,32 @@ export default function GameSummaryScreen() {
         )}
       </View>
 
+      {/* Period Filter */}
+      <View style={styles.periodFilterContainer}>
+        <Text style={styles.periodFilterLabel}>View Stats:</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.periodFilterScroll}>
+          {periodOptions.map((period) => (
+            <TouchableOpacity
+              key={period}
+              style={[
+                styles.periodFilterBtn,
+                selectedPeriod === period && styles.periodFilterBtnActive,
+              ]}
+              onPress={() => setSelectedPeriod(period)}
+            >
+              <Text
+                style={[
+                  styles.periodFilterBtnText,
+                  selectedPeriod === period && styles.periodFilterBtnTextActive,
+                ]}
+              >
+                {period === 'all' ? 'Full Game' : period.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       {/* AI Summary */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
