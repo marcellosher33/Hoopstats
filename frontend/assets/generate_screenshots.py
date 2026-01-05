@@ -1,24 +1,27 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 import os
 
 os.makedirs('/app/frontend/assets/screenshots', exist_ok=True)
 
-# iPhone 15 Pro Max dimensions (1290 x 2796)
-# We'll create at a smaller scale for web display: 430 x 932
 WIDTH = 430
 HEIGHT = 932
 
-# Colors
 DARK_BG = (26, 26, 46)
 ORANGE = (255, 107, 53)
 WHITE = (255, 255, 255)
 GRAY = (156, 163, 175)
 CARD_BG = (37, 37, 64)
 GREEN = (16, 185, 129)
+RED = (239, 68, 68)
 
 def draw_rounded_rect(draw, bbox, radius, fill):
-    """Draw a rounded rectangle"""
     x1, y1, x2, y2 = bbox
+    if radius > (y2 - y1) / 2:
+        radius = (y2 - y1) // 2
+    if radius > (x2 - x1) / 2:
+        radius = (x2 - x1) // 2
+    if radius < 1:
+        radius = 1
     draw.rectangle([x1 + radius, y1, x2 - radius, y2], fill=fill)
     draw.rectangle([x1, y1 + radius, x2, y2 - radius], fill=fill)
     draw.ellipse([x1, y1, x1 + 2*radius, y1 + 2*radius], fill=fill)
@@ -27,442 +30,274 @@ def draw_rounded_rect(draw, bbox, radius, fill):
     draw.ellipse([x2 - 2*radius, y2 - 2*radius, x2, y2], fill=fill)
 
 def draw_basketball(draw, cx, cy, radius):
-    """Draw a basketball icon"""
     draw.ellipse([cx-radius, cy-radius, cx+radius, cy+radius], fill=ORANGE)
-    # Lines
     draw.line([(cx-radius, cy), (cx+radius, cy)], fill=DARK_BG, width=2)
     draw.line([(cx, cy-radius), (cx, cy+radius)], fill=DARK_BG, width=2)
 
-def draw_bottom_nav(draw, height, active_tab=0):
-    """Draw bottom navigation bar"""
-    nav_y = height - 80
-    draw.rectangle([0, nav_y, WIDTH, height], fill=(15, 15, 26))
-    
-    tabs = ['🏠', '🏀', '👥', '🎮', '📊', '👤']
-    labels = ['Home', 'Games', 'Teams', 'Players', 'Stats', 'Profile']
-    tab_width = WIDTH // len(tabs)
-    
-    for i, (icon, label) in enumerate(zip(tabs, labels)):
-        x = i * tab_width + tab_width // 2
-        color = ORANGE if i == active_tab else GRAY
-        # Simple circle for icon placeholder
-        draw.ellipse([x-12, nav_y+15, x+12, nav_y+39], fill=color if i == active_tab else (60,60,80))
+def draw_bottom_nav(draw, active=0):
+    nav_y = HEIGHT - 70
+    draw.rectangle([0, nav_y, WIDTH, HEIGHT], fill=(15, 15, 26))
+    tabs = 5
+    tab_w = WIDTH // tabs
+    for i in range(tabs):
+        x = i * tab_w + tab_w // 2
+        color = ORANGE if i == active else (60, 60, 80)
+        draw.ellipse([x-15, nav_y+15, x+15, nav_y+45], fill=color)
+        draw.rectangle([x-20, nav_y+50, x+20, nav_y+62], fill=GRAY if i != active else ORANGE)
 
-def create_landing_screen():
+def create_landing():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Basketball logo
-    draw_basketball(draw, WIDTH//2, 150, 50)
-    
-    # Title area
-    draw.rectangle([WIDTH//2-100, 230, WIDTH//2+100, 260], fill=WHITE)  # HoopStats text placeholder
-    draw.rectangle([WIDTH//2-80, 275, WIDTH//2+80, 295], fill=GRAY)  # Tagline
-    
-    # Feature list
-    features_y = 350
+    draw_basketball(draw, WIDTH//2, 130, 45)
+    draw.rectangle([WIDTH//2-90, 200, WIDTH//2+90, 235], fill=WHITE)
+    draw.rectangle([WIDTH//2-70, 250, WIDTH//2+70, 270], fill=GRAY)
     for i in range(4):
-        draw.ellipse([40, features_y + i*45, 60, features_y + i*45 + 20], fill=ORANGE)
-        draw.rectangle([75, features_y + i*45 + 5, 300, features_y + i*45 + 15], fill=WHITE)
-    
-    # Get Started button
-    draw_rounded_rect(draw, [30, 580, WIDTH-30, 640], 30, ORANGE)
-    
-    # Login link
-    draw.rectangle([WIDTH//2-80, 680, WIDTH//2+80, 700], fill=ORANGE)
-    
-    # Subscription plans
-    plan_y = 780
-    plan_width = 120
-    colors = [CARD_BG, ORANGE, CARD_BG]
-    for i, color in enumerate(colors):
-        x = 25 + i * (plan_width + 15)
-        draw_rounded_rect(draw, [x, plan_y, x + plan_width, plan_y + 100], 10, color)
-    
+        draw.ellipse([40, 320+i*40, 58, 338+i*40], fill=ORANGE)
+        draw.rectangle([70, 323+i*40, 280, 335+i*40], fill=WHITE)
+    draw_rounded_rect(draw, [30, 530, WIDTH-30, 590], 30, ORANGE)
+    draw.rectangle([WIDTH//2-100, 630, WIDTH//2+100, 650], fill=ORANGE)
+    draw.rectangle([WIDTH//2-70, 710, WIDTH//2+70, 730], fill=GRAY)
+    for i in range(3):
+        x = 30 + i * 130
+        c = ORANGE if i == 1 else CARD_BG
+        draw_rounded_rect(draw, [x, 770, x+115, 880], 12, c)
     img.save('/app/frontend/assets/screenshots/01_landing.png')
     print("Created: 01_landing.png")
 
-def create_home_screen():
+def create_home():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([0, 0, WIDTH, 60], fill=DARK_BG)
-    draw.rectangle([15, 20, 80, 40], fill=WHITE)  # "Home" text
-    
-    # Welcome section
-    draw.rectangle([15, 80, 200, 100], fill=GRAY)  # "Welcome back,"
-    draw.rectangle([15, 105, 250, 140], fill=WHITE)  # Username
-    draw_rounded_rect(draw, [350, 95, 410, 125], 15, GREEN)  # FREE badge
-    
-    # New Game button
-    draw_rounded_rect(draw, [15, 160, WIDTH-15, 260], 15, ORANGE)
-    draw.ellipse([WIDTH//2-20, 185, WIDTH//2+20, 225], fill=WHITE)  # + icon
-    
-    # Quick Stats
-    draw.rectangle([15, 300, 150, 320], fill=WHITE)  # "Quick Stats"
-    
-    # Stat cards (2x2 grid)
-    for row in range(2):
-        for col in range(2):
-            x = 15 + col * 205
-            y = 340 + row * 110
-            draw_rounded_rect(draw, [x, y, x + 195, y + 100], 10, CARD_BG)
-            draw.ellipse([x+15, y+15, x+35, y+35], fill=ORANGE)
-            draw.rectangle([x+15, y+50, x+50, y+80], fill=WHITE)  # Number
-    
-    # Recent Games
-    draw.rectangle([15, 580, 150, 600], fill=WHITE)
-    draw.rectangle([350, 580, 410, 600], fill=ORANGE)  # "See All"
-    
-    # Empty state
-    draw_rounded_rect(draw, [15, 620, WIDTH-15, 780], 15, CARD_BG)
-    draw_basketball(draw, WIDTH//2, 680, 30)
-    draw.rectangle([WIDTH//2-80, 730, WIDTH//2+80, 750], fill=GRAY)
-    
-    # Upgrade banner
-    draw_rounded_rect(draw, [15, 800, WIDTH-15, 850], 10, (50, 40, 60))
-    
-    draw_bottom_nav(draw, HEIGHT, 0)
-    
+    draw.rectangle([15, 25, 70, 45], fill=WHITE)
+    draw.rectangle([15, 75, 130, 93], fill=GRAY)
+    draw.rectangle([15, 100, 200, 130], fill=WHITE)
+    draw_rounded_rect(draw, [330, 100, 400, 130], 15, GREEN)
+    draw_rounded_rect(draw, [15, 155, WIDTH-15, 250], 15, ORANGE)
+    draw.ellipse([WIDTH//2-18, 178, WIDTH//2+18, 214], fill=WHITE)
+    draw.rectangle([15, 280, 110, 300], fill=WHITE)
+    for r in range(2):
+        for c in range(2):
+            x, y = 15 + c*205, 320 + r*100
+            draw_rounded_rect(draw, [x, y, x+195, y+90], 10, CARD_BG)
+            draw.ellipse([x+12, y+12, x+35, y+35], fill=ORANGE)
+            draw.rectangle([x+12, y+50, x+60, y+75], fill=WHITE)
+    draw.rectangle([15, 540, 120, 560], fill=WHITE)
+    draw.rectangle([350, 540, 400, 560], fill=ORANGE)
+    draw_rounded_rect(draw, [15, 580, WIDTH-15, 720], 15, CARD_BG)
+    draw_basketball(draw, WIDTH//2, 630, 25)
+    draw.rectangle([WIDTH//2-70, 680, WIDTH//2+70, 700], fill=GRAY)
+    draw_rounded_rect(draw, [15, 750, WIDTH-15, 800], 10, (50, 40, 60))
+    draw_bottom_nav(draw, 0)
     img.save('/app/frontend/assets/screenshots/02_home.png')
     print("Created: 02_home.png")
 
-def create_game_tracking_screen():
+def create_game_tracking():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header with back button and title
-    draw.rectangle([15, 20, 45, 40], fill=WHITE)  # Back
-    draw.rectangle([WIDTH//2-50, 20, WIDTH//2+50, 45], fill=WHITE)  # "Live Game"
-    
-    # Score display
-    draw_rounded_rect(draw, [15, 70, WIDTH-15, 180], 15, CARD_BG)
-    draw.rectangle([50, 100, 150, 150], fill=WHITE)  # Home score
-    draw.rectangle([WIDTH//2-20, 115, WIDTH//2+20, 135], fill=GRAY)  # VS
-    draw.rectangle([WIDTH-150, 100, WIDTH-50, 150], fill=WHITE)  # Away score
-    
-    # Timer
-    draw_rounded_rect(draw, [WIDTH//2-60, 190, WIDTH//2+60, 230], 20, ORANGE)
-    
-    # Shot chart (basketball court)
-    draw_rounded_rect(draw, [15, 250, WIDTH-15, 450], 10, CARD_BG)
-    # Court markings
-    draw.rectangle([30, 300, WIDTH-30, 440], outline=GRAY, width=2)
-    draw.arc([WIDTH//2-50, 380, WIDTH//2+50, 440], 180, 0, fill=GRAY, width=2)
-    draw.ellipse([WIDTH//2-30, 260, WIDTH//2+30, 320], outline=GRAY, width=2)
-    # Shot markers
-    for pos in [(100, 350), (200, 320), (320, 380), (150, 400)]:
-        draw.ellipse([pos[0]-8, pos[1]-8, pos[0]+8, pos[1]+8], fill=GREEN)
-    for pos in [(250, 350), (180, 390)]:
-        draw.ellipse([pos[0]-8, pos[1]-8, pos[0]+8, pos[1]+8], fill=(239, 68, 68))
-    
-    # Player stats section
-    draw.rectangle([15, 470, 150, 490], fill=WHITE)  # "Player Stats"
-    
-    # Stat buttons grid
-    stats = ['PTS', 'REB', 'AST', 'STL', 'BLK', 'TO']
-    for i, stat in enumerate(stats):
-        row = i // 3
-        col = i % 3
-        x = 15 + col * 135
-        y = 510 + row * 70
-        draw_rounded_rect(draw, [x, y, x + 125, y + 60], 10, CARD_BG)
-    
-    # Action buttons
-    draw_rounded_rect(draw, [15, 670, WIDTH//2-10, 720], 10, GREEN)  # Made
-    draw_rounded_rect(draw, [WIDTH//2+10, 670, WIDTH-15, 720], 10, (239, 68, 68))  # Missed
-    
-    # Player selector
-    draw_rounded_rect(draw, [15, 740, WIDTH-15, 850], 15, CARD_BG)
+    draw.rectangle([15, 25, 40, 45], fill=WHITE)
+    draw.rectangle([WIDTH//2-45, 25, WIDTH//2+45, 48], fill=WHITE)
+    draw_rounded_rect(draw, [15, 65, WIDTH-15, 155], 15, CARD_BG)
+    draw.rectangle([45, 85, 120, 135], fill=WHITE)
+    draw.rectangle([WIDTH//2-15, 105, WIDTH//2+15, 120], fill=GRAY)
+    draw.rectangle([WIDTH-120, 85, WIDTH-45, 135], fill=WHITE)
+    draw_rounded_rect(draw, [WIDTH//2-55, 165, WIDTH//2+55, 200], 18, ORANGE)
+    draw_rounded_rect(draw, [15, 220, WIDTH-15, 400], 10, CARD_BG)
+    draw.rectangle([25, 250, WIDTH-25, 390], outline=GRAY, width=2)
+    draw.arc([WIDTH//2-45, 340, WIDTH//2+45, 390], 180, 0, fill=GRAY, width=2)
+    for p in [(90, 310), (190, 280), (300, 340), (140, 360)]:
+        draw.ellipse([p[0]-7, p[1]-7, p[0]+7, p[1]+7], fill=GREEN)
+    for p in [(240, 320), (170, 355)]:
+        draw.ellipse([p[0]-7, p[1]-7, p[0]+7, p[1]+7], fill=RED)
+    draw.rectangle([15, 420, 110, 440], fill=WHITE)
+    for i in range(6):
+        r, c = i // 3, i % 3
+        x, y = 15 + c*137, 460 + r*65
+        draw_rounded_rect(draw, [x, y, x+127, y+55], 10, CARD_BG)
+    draw_rounded_rect(draw, [15, 605, WIDTH//2-10, 655], 10, GREEN)
+    draw_rounded_rect(draw, [WIDTH//2+10, 605, WIDTH-15, 655], 10, RED)
+    draw_rounded_rect(draw, [15, 680, WIDTH-15, 780], 15, CARD_BG)
     for i in range(4):
-        x = 30 + i * 95
-        draw.ellipse([x, 760, x+70, 830], fill=(60, 60, 80))
-    
+        x = 28 + i * 98
+        draw.ellipse([x, 695, x+75, 770], fill=(60, 60, 80))
+    draw.rectangle([350, 25, 410, 48], fill=ORANGE)
     img.save('/app/frontend/assets/screenshots/03_game_tracking.png')
     print("Created: 03_game_tracking.png")
 
-def create_players_screen():
+def create_players():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 100, 45], fill=WHITE)  # "Players"
-    draw_rounded_rect(draw, [WIDTH-100, 15, WIDTH-15, 50], 20, ORANGE)  # Add button
-    
-    # Search bar
-    draw_rounded_rect(draw, [15, 70, WIDTH-15, 120], 25, CARD_BG)
-    
-    # Player cards
+    draw.rectangle([15, 25, 90, 48], fill=WHITE)
+    draw_rounded_rect(draw, [WIDTH-90, 20, WIDTH-15, 55], 18, ORANGE)
+    draw_rounded_rect(draw, [15, 75, WIDTH-15, 120], 25, CARD_BG)
     for i in range(5):
-        y = 140 + i * 130
-        draw_rounded_rect(draw, [15, y, WIDTH-15, y+120], 15, CARD_BG)
-        # Avatar
-        draw.ellipse([30, y+20, 100, y+90], fill=ORANGE)
-        # Name and details
-        draw.rectangle([120, y+25, 280, y+50], fill=WHITE)
-        draw.rectangle([120, y+60, 200, y+80], fill=GRAY)
-        # Stats
-        draw.rectangle([300, y+30, 400, y+50], fill=GRAY)
-        draw.rectangle([300, y+60, 380, y+80], fill=GRAY)
-    
-    draw_bottom_nav(draw, HEIGHT, 3)
-    
+        y = 145 + i * 115
+        draw_rounded_rect(draw, [15, y, WIDTH-15, y+105], 15, CARD_BG)
+        draw.ellipse([28, y+18, 90, y+80], fill=ORANGE)
+        draw.rectangle([110, y+25, 260, y+48], fill=WHITE)
+        draw.rectangle([110, y+58, 190, y+75], fill=GRAY)
+        draw.rectangle([300, y+30, 390, y+48], fill=GRAY)
+        draw.rectangle([300, y+58, 370, y+75], fill=GRAY)
+    draw_bottom_nav(draw, 3)
     img.save('/app/frontend/assets/screenshots/04_players.png')
     print("Created: 04_players.png")
 
-def create_teams_screen():
+def create_teams():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 100, 45], fill=WHITE)  # "Teams"
-    draw_rounded_rect(draw, [WIDTH-100, 15, WIDTH-15, 50], 20, ORANGE)  # Add button
-    
-    # Team cards
+    draw.rectangle([15, 25, 80, 48], fill=WHITE)
+    draw_rounded_rect(draw, [WIDTH-90, 20, WIDTH-15, 55], 18, ORANGE)
     for i in range(3):
-        y = 80 + i * 200
-        draw_rounded_rect(draw, [15, y, WIDTH-15, y+180], 15, CARD_BG)
-        # Team icon
-        draw.ellipse([30, y+20, 110, y+100], fill=ORANGE)
-        draw_basketball(draw, 70, y+60, 25)
-        # Team name
-        draw.rectangle([130, y+30, 300, y+60], fill=WHITE)
-        # Player count
-        draw.rectangle([130, y+75, 250, y+95], fill=GRAY)
-        # Stats row
+        y = 80 + i * 185
+        draw_rounded_rect(draw, [15, y, WIDTH-15, y+170], 15, CARD_BG)
+        draw.ellipse([28, y+18, 100, y+90], fill=ORANGE)
+        draw_basketball(draw, 64, y+54, 22)
+        draw.rectangle([120, y+30, 280, y+58], fill=WHITE)
+        draw.rectangle([120, y+70, 240, y+88], fill=GRAY)
         for j in range(3):
-            x = 30 + j * 130
-            draw_rounded_rect(draw, [x, y+120, x+110, y+160], 8, (50, 50, 70))
-    
-    draw_bottom_nav(draw, HEIGHT, 2)
-    
+            x = 28 + j * 130
+            draw_rounded_rect(draw, [x, y+110, x+115, y+150], 8, (50, 50, 70))
+    draw_bottom_nav(draw, 2)
     img.save('/app/frontend/assets/screenshots/05_teams.png')
     print("Created: 05_teams.png")
 
-def create_game_summary_screen():
+def create_game_summary():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 45, 40], fill=WHITE)  # Back
-    draw.rectangle([WIDTH//2-70, 20, WIDTH//2+70, 45], fill=WHITE)  # "Game Summary"
-    draw_rounded_rect(draw, [WIDTH-80, 15, WIDTH-15, 50], 15, ORANGE)  # Share
-    
-    # Final Score
-    draw_rounded_rect(draw, [15, 70, WIDTH-15, 170], 15, CARD_BG)
-    draw.rectangle([WIDTH//2-100, 85, WIDTH//2-20, 150], fill=WHITE)  # Home score
-    draw.rectangle([WIDTH//2-10, 110, WIDTH//2+10, 130], fill=GRAY)  # -
-    draw.rectangle([WIDTH//2+20, 85, WIDTH//2+100, 150], fill=WHITE)  # Away score
-    
-    # AI Summary
-    draw.rectangle([15, 190, 130, 210], fill=WHITE)  # "AI Summary"
-    draw_rounded_rect(draw, [15, 220, WIDTH-15, 380], 15, CARD_BG)
+    draw.rectangle([15, 25, 40, 45], fill=WHITE)
+    draw.rectangle([WIDTH//2-65, 25, WIDTH//2+65, 48], fill=WHITE)
+    draw_rounded_rect(draw, [WIDTH-75, 20, WIDTH-15, 55], 15, ORANGE)
+    draw_rounded_rect(draw, [15, 70, WIDTH-15, 160], 15, CARD_BG)
+    draw.rectangle([WIDTH//2-85, 85, WIDTH//2-15, 140], fill=WHITE)
+    draw.rectangle([WIDTH//2-8, 105, WIDTH//2+8, 120], fill=GRAY)
+    draw.rectangle([WIDTH//2+15, 85, WIDTH//2+85, 140], fill=WHITE)
+    draw.rectangle([15, 180, 115, 200], fill=WHITE)
+    draw_rounded_rect(draw, [15, 215, WIDTH-15, 360], 15, CARD_BG)
     for i in range(5):
-        draw.rectangle([30, 240 + i*25, WIDTH-45, 255 + i*25], fill=GRAY)
-    
-    # Stats Table
-    draw.rectangle([15, 400, 130, 420], fill=WHITE)  # "Player Stats"
-    
-    # Period filter
-    for i, label in enumerate(['H1', 'H2', 'All']):
-        x = 250 + i * 55
-        color = ORANGE if i == 2 else CARD_BG
-        draw_rounded_rect(draw, [x, 395, x+50, 425], 15, color)
-    
-    # Stats header
-    draw_rounded_rect(draw, [15, 440, WIDTH-15, 480], 10, (40, 40, 60))
-    
-    # Player stats rows
+        draw.rectangle([28, 235 + i*23, WIDTH-45, 248 + i*23], fill=GRAY)
+    draw.rectangle([15, 385, 120, 405], fill=WHITE)
+    for i, lbl in enumerate(['H1', 'H2', 'All']):
+        x = 260 + i * 55
+        c = ORANGE if i == 2 else CARD_BG
+        draw_rounded_rect(draw, [x, 380, x+48, 410], 12, c)
+    draw_rounded_rect(draw, [15, 430, WIDTH-15, 465], 8, (40, 40, 60))
     for i in range(4):
-        y = 490 + i * 60
+        y = 475 + i * 55
         bg = CARD_BG if i % 2 == 0 else (45, 45, 70)
-        draw_rounded_rect(draw, [15, y, WIDTH-15, y+55], 8, bg)
-        draw.ellipse([25, y+10, 60, y+45], fill=ORANGE)  # Avatar
-    
-    # Export button
-    draw_rounded_rect(draw, [15, 740, WIDTH-15, 800], 25, ORANGE)
-    
-    draw_bottom_nav(draw, HEIGHT, 1)
-    
+        draw_rounded_rect(draw, [15, y, WIDTH-15, y+50], 8, bg)
+        draw.ellipse([22, y+8, 55, y+42], fill=ORANGE)
+    draw_rounded_rect(draw, [15, 710, WIDTH-15, 770], 25, ORANGE)
+    draw_bottom_nav(draw, 1)
     img.save('/app/frontend/assets/screenshots/06_game_summary.png')
     print("Created: 06_game_summary.png")
 
-def create_profile_screen():
+def create_profile():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 100, 45], fill=WHITE)  # "Profile"
-    
-    # Avatar section
-    draw.ellipse([WIDTH//2-50, 80, WIDTH//2+50, 180], fill=ORANGE)
-    draw.rectangle([WIDTH//2-60, 195, WIDTH//2+60, 220], fill=WHITE)  # Name
-    draw.rectangle([WIDTH//2-80, 230, WIDTH//2+80, 250], fill=GRAY)  # Email
-    
-    # Subscription card
-    draw_rounded_rect(draw, [15, 280, WIDTH-15, 400], 15, CARD_BG)
-    draw_rounded_rect(draw, [30, 295, 100, 325], 10, GREEN)  # PRO badge
-    draw.rectangle([30, 340, 200, 360], fill=WHITE)  # Plan name
-    draw.rectangle([30, 370, 250, 385], fill=GRAY)  # Details
-    draw_rounded_rect(draw, [WIDTH-130, 330, WIDTH-30, 375], 20, ORANGE)  # Manage
-    
-    # Settings options
-    options_y = 430
+    draw.rectangle([15, 25, 85, 48], fill=WHITE)
+    draw.ellipse([WIDTH//2-45, 80, WIDTH//2+45, 170], fill=ORANGE)
+    draw.rectangle([WIDTH//2-55, 185, WIDTH//2+55, 208], fill=WHITE)
+    draw.rectangle([WIDTH//2-75, 220, WIDTH//2+75, 238], fill=GRAY)
+    draw_rounded_rect(draw, [15, 265, WIDTH-15, 375], 15, CARD_BG)
+    draw_rounded_rect(draw, [28, 280, 90, 308], 10, GREEN)
+    draw.rectangle([28, 325, 190, 348], fill=WHITE)
+    draw.rectangle([28, 355, 240, 370], fill=GRAY)
+    draw_rounded_rect(draw, [WIDTH-125, 315, WIDTH-28, 358], 20, ORANGE)
     for i in range(5):
-        y = options_y + i * 65
-        draw_rounded_rect(draw, [15, y, WIDTH-15, y+55], 10, CARD_BG)
-        draw.ellipse([30, y+12, 60, y+42], fill=(60, 60, 80))
-        draw.rectangle([80, y+20, 250, y+38], fill=WHITE)
-    
-    # Logout button
-    draw_rounded_rect(draw, [15, 770, WIDTH-15, 830], 25, (80, 30, 30))
-    
-    draw_bottom_nav(draw, HEIGHT, 5)
-    
+        y = 400 + i * 62
+        draw_rounded_rect(draw, [15, y, WIDTH-15, y+52], 10, CARD_BG)
+        draw.ellipse([28, y+10, 58, y+40], fill=(60, 60, 80))
+        draw.rectangle([75, y+18, 230, y+35], fill=WHITE)
+    draw_rounded_rect(draw, [15, 720, WIDTH-15, 775], 25, (80, 30, 30))
+    draw_bottom_nav(draw, 4)
     img.save('/app/frontend/assets/screenshots/07_profile.png')
     print("Created: 07_profile.png")
 
-def create_subscription_screen():
+def create_subscription():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 45, 40], fill=WHITE)  # Back
-    draw.rectangle([WIDTH//2-80, 20, WIDTH//2+80, 45], fill=WHITE)  # "Choose Plan"
-    
-    # Toggle Monthly/Yearly
-    draw_rounded_rect(draw, [WIDTH//2-100, 70, WIDTH//2+100, 110], 20, CARD_BG)
-    draw_rounded_rect(draw, [WIDTH//2-95, 75, WIDTH//2, 105], 18, ORANGE)  # Active
-    
-    # Plan cards
-    plans = [
-        ('Free', '$0', CARD_BG),
-        ('Pro', '$6.99/mo', ORANGE),
-        ('Team', '$19.99/mo', CARD_BG)
-    ]
-    
-    for i, (name, price, color) in enumerate(plans):
-        y = 140 + i * 230
-        draw_rounded_rect(draw, [15, y, WIDTH-15, y+210], 15, color)
-        # Plan name
-        draw.rectangle([30, y+20, 150, y+50], fill=WHITE if color == ORANGE else WHITE)
-        # Price
-        draw.rectangle([30, y+60, 180, y+100], fill=WHITE)
-        # Features
+    draw.rectangle([15, 25, 40, 45], fill=WHITE)
+    draw.rectangle([WIDTH//2-70, 25, WIDTH//2+70, 48], fill=WHITE)
+    draw_rounded_rect(draw, [WIDTH//2-95, 70, WIDTH//2+95, 108], 19, CARD_BG)
+    draw_rounded_rect(draw, [WIDTH//2-92, 73, WIDTH//2, 105], 17, ORANGE)
+    plans = [(CARD_BG, '$0'), (ORANGE, '$6.99'), (CARD_BG, '$19.99')]
+    for i, (c, p) in enumerate(plans):
+        y = 135 + i * 215
+        draw_rounded_rect(draw, [15, y, WIDTH-15, y+200], 15, c)
+        draw.rectangle([28, y+18, 130, y+45], fill=WHITE)
+        draw.rectangle([28, y+55, 170, y+90], fill=WHITE)
         for j in range(3):
-            draw.ellipse([30, y+115+j*25, 50, y+135+j*25], fill=GREEN)
-            draw.rectangle([60, y+120+j*25, 250, y+135+j*25], fill=GRAY)
-    
+            draw.ellipse([28, y+108+j*25, 48, y+128+j*25], fill=GREEN)
+            draw.rectangle([58, y+113+j*25, 240, y+126+j*25], fill=GRAY)
     img.save('/app/frontend/assets/screenshots/08_subscription.png')
     print("Created: 08_subscription.png")
 
-def create_new_game_screen():
+def create_new_game():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header
-    draw.rectangle([15, 20, 45, 40], fill=WHITE)  # Back
-    draw.rectangle([WIDTH//2-60, 20, WIDTH//2+60, 45], fill=WHITE)  # "New Game"
-    
-    # Game Mode toggle
-    draw.rectangle([15, 70, 120, 90], fill=WHITE)  # "Game Mode"
-    draw_rounded_rect(draw, [15, 100, WIDTH-15, 150], 25, CARD_BG)
-    draw_rounded_rect(draw, [20, 105, WIDTH//2-5, 145], 20, ORANGE)  # Individual
-    
-    # Team selection
-    draw.rectangle([15, 175, 120, 195], fill=WHITE)  # "Your Team"
-    draw_rounded_rect(draw, [15, 205, WIDTH-15, 280], 15, CARD_BG)
-    draw.ellipse([30, 220, 90, 265], fill=ORANGE)
-    draw.rectangle([110, 235, 280, 255], fill=WHITE)
-    
-    # Opponent
-    draw.rectangle([15, 305, 100, 325], fill=WHITE)  # "Opponent"
-    draw_rounded_rect(draw, [15, 335, WIDTH-15, 395], 15, CARD_BG)
-    
-    # Select Players
-    draw.rectangle([15, 420, 150, 440], fill=WHITE)  # "Select Players"
-    
-    # Player grid
-    for row in range(2):
-        for col in range(3):
-            x = 15 + col * 135
-            y = 460 + row * 120
-            draw_rounded_rect(draw, [x, y, x+125, y+110], 10, CARD_BG)
-            draw.ellipse([x+35, y+15, x+90, y+70], fill=ORANGE)
-            draw.rectangle([x+20, y+80, x+105, y+100], fill=GRAY)
-    
-    # Start Game button
-    draw_rounded_rect(draw, [15, 720, WIDTH-15, 790], 30, GREEN)
-    
-    draw_bottom_nav(draw, HEIGHT, 1)
-    
+    draw.rectangle([15, 25, 40, 45], fill=WHITE)
+    draw.rectangle([WIDTH//2-55, 25, WIDTH//2+55, 48], fill=WHITE)
+    draw.rectangle([15, 75, 105, 95], fill=WHITE)
+    draw_rounded_rect(draw, [15, 105, WIDTH-15, 150], 23, CARD_BG)
+    draw_rounded_rect(draw, [20, 110, WIDTH//2-5, 145], 20, ORANGE)
+    draw.rectangle([15, 175, 105, 195], fill=WHITE)
+    draw_rounded_rect(draw, [15, 205, WIDTH-15, 275], 15, CARD_BG)
+    draw.ellipse([28, 218, 85, 262], fill=ORANGE)
+    draw.rectangle([105, 233, 260, 255], fill=WHITE)
+    draw.rectangle([15, 300, 95, 320], fill=WHITE)
+    draw_rounded_rect(draw, [15, 330, WIDTH-15, 385], 15, CARD_BG)
+    draw.rectangle([15, 410, 135, 430], fill=WHITE)
+    for r in range(2):
+        for c in range(3):
+            x, y = 15 + c * 137, 450 + r * 115
+            draw_rounded_rect(draw, [x, y, x+127, y+105], 10, CARD_BG)
+            draw.ellipse([x+33, y+12, x+95, y+65], fill=ORANGE)
+            draw.rectangle([x+18, y+75, x+108, y+93], fill=GRAY)
+    draw_rounded_rect(draw, [15, 700, WIDTH-15, 765], 30, GREEN)
+    draw_bottom_nav(draw, 1)
     img.save('/app/frontend/assets/screenshots/09_new_game.png')
     print("Created: 09_new_game.png")
 
-def create_live_share_screen():
+def create_live_share():
     img = Image.new('RGB', (WIDTH, HEIGHT), DARK_BG)
     draw = ImageDraw.Draw(img)
-    
-    # Header with LIVE badge
-    draw_rounded_rect(draw, [15, 15, 70, 45], 10, (239, 68, 68))  # LIVE
-    draw.rectangle([WIDTH//2-70, 20, WIDTH//2+70, 45], fill=WHITE)  # "Live Game"
-    
-    # Score
-    draw_rounded_rect(draw, [15, 70, WIDTH-15, 180], 15, CARD_BG)
-    draw.rectangle([50, 90, 100, 160], fill=WHITE)  # Home score big
-    draw.rectangle([WIDTH-100, 90, WIDTH-50, 160], fill=WHITE)  # Away score
-    draw.rectangle([WIDTH//2-30, 115, WIDTH//2+30, 140], fill=GRAY)  # Quarter
-    
-    # Timer
-    draw_rounded_rect(draw, [WIDTH//2-50, 190, WIDTH//2+50, 230], 15, ORANGE)
-    
-    # Live Stats
-    draw.rectangle([15, 250, 120, 270], fill=WHITE)  # "Live Stats"
-    
-    # Stats comparison
-    draw_rounded_rect(draw, [15, 290, WIDTH-15, 500], 15, CARD_BG)
-    stats_labels = ['Points', 'Rebounds', 'Assists', 'Steals']
-    for i, label in enumerate(stats_labels):
-        y = 310 + i * 45
-        draw.rectangle([30, y, 100, y+15], fill=GRAY)  # Label
-        draw.rectangle([30, y+20, 80, y+35], fill=WHITE)  # Home stat
-        draw.rectangle([WIDTH-80, y+20, WIDTH-30, y+35], fill=WHITE)  # Away stat
-        # Progress bar
-        draw.rectangle([110, y+25, WIDTH-110, y+30], fill=(50, 50, 70))
-        draw.rectangle([110, y+25, 200, y+30], fill=ORANGE)
-    
-    # On Court / Bench
-    draw.rectangle([15, 530, 100, 550], fill=WHITE)  # "On Court"
-    draw_rounded_rect(draw, [15, 560, WIDTH-15, 700], 15, CARD_BG)
+    draw_rounded_rect(draw, [15, 20, 65, 48], 10, RED)
+    draw.rectangle([WIDTH//2-60, 25, WIDTH//2+60, 48], fill=WHITE)
+    draw_rounded_rect(draw, [15, 70, WIDTH-15, 170], 15, CARD_BG)
+    draw.rectangle([45, 88, 105, 150], fill=WHITE)
+    draw.rectangle([WIDTH-105, 88, WIDTH-45, 150], fill=WHITE)
+    draw.rectangle([WIDTH//2-28, 108, WIDTH//2+28, 128], fill=GRAY)
+    draw_rounded_rect(draw, [WIDTH//2-48, 180, WIDTH//2+48, 215], 15, ORANGE)
+    draw.rectangle([15, 235, 110, 255], fill=WHITE)
+    draw_rounded_rect(draw, [15, 275, WIDTH-15, 470], 15, CARD_BG)
+    for i in range(4):
+        y = 295 + i * 42
+        draw.rectangle([28, y, 95, y+12], fill=GRAY)
+        draw.rectangle([28, y+18, 75, y+30], fill=WHITE)
+        draw.rectangle([WIDTH-75, y+18, WIDTH-28, y+30], fill=WHITE)
+        draw.rectangle([105, y+22, WIDTH-105, y+26], fill=(50, 50, 70))
+        draw.rectangle([105, y+22, 195, y+26], fill=ORANGE)
+    draw.rectangle([15, 500, 90, 520], fill=WHITE)
+    draw_rounded_rect(draw, [15, 535, WIDTH-15, 670], 15, CARD_BG)
     for i in range(5):
-        x = 25 + i * 78
-        draw.ellipse([x, 580, x+65, 645], fill=ORANGE)
-        draw.rectangle([x+5, 655, x+60, 670], fill=GRAY)
-    
-    # Share info
-    draw_rounded_rect(draw, [15, 720, WIDTH-15, 800], 15, CARD_BG)
-    draw.ellipse([30, 740, 70, 780], fill=GREEN)  # QR placeholder
-    draw.rectangle([90, 750, 300, 770], fill=GRAY)
-    
+        x = 23 + i * 80
+        draw.ellipse([x, 550, x+65, 615], fill=ORANGE)
+        draw.rectangle([x+5, 625, x+60, 640], fill=GRAY)
+    draw_rounded_rect(draw, [15, 695, WIDTH-15, 770], 15, CARD_BG)
+    draw.ellipse([28, 712, 68, 752], fill=GREEN)
+    draw.rectangle([85, 725, 280, 742], fill=GRAY)
     img.save('/app/frontend/assets/screenshots/10_live_share.png')
     print("Created: 10_live_share.png")
 
-# Generate all screenshots
 print("Generating App Screenshots...")
 print("="*40)
-
-create_landing_screen()
-create_home_screen()
-create_game_tracking_screen()
-create_players_screen()
-create_teams_screen()
-create_game_summary_screen()
-create_profile_screen()
-create_subscription_screen()
-create_new_game_screen()
-create_live_share_screen()
-
+create_landing()
+create_home()
+create_game_tracking()
+create_players()
+create_teams()
+create_game_summary()
+create_profile()
+create_subscription()
+create_new_game()
+create_live_share()
 print("="*40)
 print("✅ All 10 screenshots generated!")
-print("Screenshots are in: /app/frontend/assets/screenshots/")
