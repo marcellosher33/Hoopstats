@@ -1112,6 +1112,45 @@ const styles = StyleSheet.create({
   tierSwitchBtnTextActive: {
     color: colors.text,
   },
+  // Collapsible Section Styles
+  collapsibleSection: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  collapsibleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+  },
+  collapsibleHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  collapsibleTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  collapsibleContent: {
+    padding: spacing.md,
+    paddingTop: 0,
+  },
+  tierBadgeSmall: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+    marginLeft: spacing.xs,
+  },
+  tierBadgeSmallText: {
+    color: colors.text,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   section: {
     marginBottom: spacing.lg,
   },
