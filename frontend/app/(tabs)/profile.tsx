@@ -699,6 +699,62 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Season Management - Pro+ only */}
+      {(effectiveTier === 'pro' || effectiveTier === 'team' || isMasterAdmin) && (
+        <View style={styles.seasonSection}>
+          <Text style={styles.sectionTitle}>
+            <Ionicons name="calendar" size={18} color={colors.primary} /> Season Management
+          </Text>
+          
+          <TouchableOpacity 
+            style={styles.newSeasonButton}
+            onPress={openNewSeasonModal}
+          >
+            <Ionicons name="add-circle" size={24} color={colors.text} />
+            <View style={styles.newSeasonTextContainer}>
+              <Text style={styles.newSeasonTitle}>Start New Season</Text>
+              <Text style={styles.newSeasonSubtitle}>Archive current stats and reset for new season</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+          
+          {archivedSeasons.length > 0 && (
+            <TouchableOpacity 
+              style={styles.seasonsHistoryButton}
+              onPress={() => setShowSeasonsHistory(!showSeasonsHistory)}
+            >
+              <Ionicons name="time" size={24} color={colors.text} />
+              <View style={styles.newSeasonTextContainer}>
+                <Text style={styles.newSeasonTitle}>Previous Seasons</Text>
+                <Text style={styles.newSeasonSubtitle}>{archivedSeasons.length} season{archivedSeasons.length !== 1 ? 's' : ''} archived</Text>
+              </View>
+              <Ionicons name={showSeasonsHistory ? "chevron-up" : "chevron-down"} size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+          
+          {showSeasonsHistory && archivedSeasons.length > 0 && (
+            <View style={styles.seasonsHistoryList}>
+              {archivedSeasons.map((season) => (
+                <View key={season.id} style={styles.seasonHistoryItem}>
+                  <View style={styles.seasonHistoryHeader}>
+                    <Text style={styles.seasonHistoryName}>{season.name}</Text>
+                    <Text style={styles.seasonHistoryRecord}>
+                      {season.team_stats?.wins || 0}-{season.team_stats?.losses || 0}
+                    </Text>
+                  </View>
+                  <Text style={styles.seasonHistoryDetails}>
+                    {season.games_count} games • {season.player_stats?.length || 0} players
+                  </Text>
+                  <Text style={styles.seasonHistoryDates}>
+                    {new Date(season.start_date).toLocaleDateString()} - {new Date(season.end_date).toLocaleDateString()}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      )}
+
       {/* Logout */}
       <Button
         title="Logout"
