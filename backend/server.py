@@ -1789,6 +1789,174 @@ async def get_player_stats(player_id: str, user: dict = Depends(get_current_user
     
     return total_stats
 
+# ==================== SEASON ROUTES ====================
+
+@api_router.post("/seasons/new")
+async def start_new_season(request: NewSeasonRequest, user: dict = Depends(get_current_user)):
+    """
+    Archive current season stats and start a new season.
+    Requires Pro or Team subscription.
+    """
+    # Check subscription tier
+    user_tier = user.get("subscription_tier", "free")
+    is_master = user.get("email", "").lower() in [e.lower() for e in MASTER_ADMIN_EMAILS]
+    
+    if user_tier == "free" and not is_master:
+        raise HTTPException(status_code=403, detail="Pro or Team subscription required for season management")
+    
+    user_id = user["id"]
+    
+    # Determine which players to archive
+    player_filter = {"user_id": user_id}
+    game_filter = {"user_id": user_id, "status": "completed"}
+    
+    if request.team_id:
+        # Only archive players from specific team
+        player_filter["team_id"] = request.team_id
+        game_filter["team_id"] = request.team_id
+    elif not request.apply_to_all_teams:
+        # For Pro users without team_id, archive all their players
+        pass
+    
+    # Get all completed games for this user/team
+    games = await db.games.find(game_filter).to_list(1000)
+    
+    if not games:
+        raise HTTPException(status_code=400, detail="No completed games found to archive")
+    
+    # Get all players
+    players = await db.players.find(player_filter).to_list(100)
+    
+    # Calculate aggregated stats for each player
+    player_stats = []
+    for player in players:
+        player_id = player["id"]
+        
+        # Aggregate stats from all games
+        stats = {
+            "player_id": player_id,
+            "player_name": player["name"],
+            "player_number": player.get("number"),
+            "team_id": player.get("team_id"),
+            "games_played": 0,
+            "total_points": 0,
+            "total_rebounds": 0,
+            "total_assists": 0,
+            "total_steals": 0,
+            "total_blocks": 0,
+            "total_turnovers": 0,
+            "total_fouls": 0,
+            "total_fg_made": 0,
+            "total_fg_attempted": 0,
+            "total_3pt_made": 0,
+            "total_3pt_attempted": 0,
+            "total_ft_made": 0,
+            "total_ft_attempted": 0,
+            "total_minutes": 0,
+        }
+        
+        for game in games:
+            player_game_stats = game.get("player_stats", {}).get(player_id, {})
+            if player_game_stats:
+                stats["games_played"] += 1
+                stats["total_points"] += player_game_stats.get("points", 0)
+                stats["total_rebounds"] += player_game_stats.get("rebounds", 0)
+                stats["total_assists"] += player_game_stats.get("assists", 0)
+                stats["total_steals"] += player_game_stats.get("steals", 0)
+                stats["total_blocks"] += player_game_stats.get("blocks", 0)
+                stats["total_turnovers"] += player_game_stats.get("turnovers", 0)
+                stats["total_fouls"] += player_game_stats.get("fouls", 0)
+                stats["total_fg_made"] += player_game_stats.get("fg_made", 0)
+                stats["total_fg_attempted"] += player_game_stats.get("fg_attempted", 0)
+                stats["total_3pt_made"] += player_game_stats.get("three_pt_made", 0)
+                stats["total_3pt_attempted"] += player_game_stats.get("three_pt_attempted", 0)
+                stats["total_ft_made"] += player_game_stats.get("ft_made", 0)
+                stats["total_ft_attempted"] += player_game_stats.get("ft_attempted", 0)
+                stats["total_minutes"] += player_game_stats.get("minutes_played", 0)
+        
+        if stats["games_played"] > 0:
+            # Calculate averages
+            gp = stats["games_played"]
+            stats["averages"] = {
+                "ppg": round(stats["total_points"] / gp, 1),
+                "rpg": round(stats["total_rebounds"] / gp, 1),
+                "apg": round(stats["total_assists"] / gp, 1),
+                "spg": round(stats["total_steals"] / gp, 1),
+                "bpg": round(stats["total_blocks"] / gp, 1),
+                "fg_pct": round((stats["total_fg_made"] / stats["total_fg_attempted"] * 100) if stats["total_fg_attempted"] > 0 else 0, 1),
+                "three_pt_pct": round((stats["total_3pt_made"] / stats["total_3pt_attempted"] * 100) if stats["total_3pt_attempted"] > 0 else 0, 1),
+                "ft_pct": round((stats["total_ft_made"] / stats["total_ft_attempted"] * 100) if stats["total_ft_attempted"] > 0 else 0, 1),
+            }
+            player_stats.append(stats)
+    
+    # Calculate team aggregate stats
+    team_stats = {
+        "total_games": len(games),
+        "total_points": sum(g.get("home_score", 0) for g in games),
+        "total_opponent_points": sum(g.get("away_score", 0) for g in games),
+        "wins": sum(1 for g in games if g.get("home_score", 0) > g.get("away_score", 0)),
+        "losses": sum(1 for g in games if g.get("home_score", 0) < g.get("away_score", 0)),
+    }
+    
+    # Get date range
+    game_dates = [g.get("created_at", datetime.utcnow()) for g in games]
+    start_date = min(game_dates) if game_dates else datetime.utcnow()
+    end_date = max(game_dates) if game_dates else datetime.utcnow()
+    
+    # Create season archive
+    season_archive = SeasonArchive(
+        user_id=user_id,
+        name=request.season_name,
+        team_id=request.team_id,
+        start_date=start_date,
+        end_date=end_date,
+        player_stats=player_stats,
+        team_stats=team_stats,
+        games_count=len(games),
+    )
+    
+    # Save to database
+    await db.seasons.insert_one(season_archive.model_dump())
+    
+    # Mark games as archived (add season reference)
+    season_id = season_archive.id
+    game_ids = [g["id"] for g in games]
+    await db.games.update_many(
+        {"id": {"$in": game_ids}},
+        {"$set": {"season": season_id, "archived": True}}
+    )
+    
+    return {
+        "message": "Season archived successfully",
+        "season_id": season_id,
+        "season_name": request.season_name,
+        "games_archived": len(games),
+        "players_archived": len(player_stats),
+        "team_stats": team_stats
+    }
+
+@api_router.get("/seasons")
+async def get_seasons(user: dict = Depends(get_current_user)):
+    """Get all archived seasons for the user"""
+    seasons = await db.seasons.find({"user_id": user["id"]}).sort("end_date", -1).to_list(50)
+    return [serialize_doc(s) for s in seasons]
+
+@api_router.get("/seasons/{season_id}")
+async def get_season(season_id: str, user: dict = Depends(get_current_user)):
+    """Get detailed season archive"""
+    season = await db.seasons.find_one({"id": season_id, "user_id": user["id"]})
+    if not season:
+        raise HTTPException(status_code=404, detail="Season not found")
+    return serialize_doc(season)
+
+@api_router.delete("/seasons/{season_id}")
+async def delete_season(season_id: str, user: dict = Depends(get_current_user)):
+    """Delete a season archive (does not restore games)"""
+    result = await db.seasons.delete_one({"id": season_id, "user_id": user["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Season not found")
+    return {"message": "Season archive deleted"}
+
 # ==================== SUBSCRIPTION ROUTES ====================
 
 SUBSCRIPTION_PRICES = {
