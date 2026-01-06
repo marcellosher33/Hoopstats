@@ -140,6 +140,12 @@ export default function ProfileScreen() {
       return;
     }
     
+    // Validate team selection if not applying to all
+    if (!applyToAllTeams && selectedTeamIds.length === 0) {
+      Alert.alert('Error', 'Please select at least one team or choose "All Teams"');
+      return;
+    }
+    
     setStartingNewSeason(true);
     try {
       const response = await fetch(`${API_URL}/api/seasons/new`, {
@@ -151,6 +157,7 @@ export default function ProfileScreen() {
         body: JSON.stringify({
           season_name: seasonName.trim(),
           apply_to_all_teams: applyToAllTeams,
+          team_ids: applyToAllTeams ? null : selectedTeamIds,
         }),
       });
       
@@ -158,6 +165,7 @@ export default function ProfileScreen() {
         const data = await response.json();
         setShowNewSeasonModal(false);
         setSeasonName('');
+        setSelectedTeamIds([]);
         
         // Refresh archived seasons
         const seasonsRes = await fetch(`${API_URL}/api/seasons`, {
