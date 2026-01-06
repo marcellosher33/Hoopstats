@@ -299,6 +299,48 @@ export default function ProfileScreen() {
     router.replace('/auth/login');
   };
 
+  const handleEditUsername = () => {
+    setNewUsername(user?.username || '');
+    setShowEditUsername(true);
+  };
+
+  const handleSaveUsername = async () => {
+    if (!newUsername.trim()) {
+      Alert.alert('Error', 'Username cannot be empty');
+      return;
+    }
+    
+    if (newUsername.trim() === user?.username) {
+      setShowEditUsername(false);
+      return;
+    }
+    
+    setSavingUsername(true);
+    try {
+      const response = await fetch(`${API_URL}/api/auth/me`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: newUsername.trim() }),
+      });
+      
+      if (response.ok) {
+        await refreshUser();
+        setShowEditUsername(false);
+        Alert.alert('Success', 'Username updated successfully');
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to update username');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update username');
+    } finally {
+      setSavingUsername(false);
+    }
+  };
+
   const tierColors = {
     free: colors.textSecondary,
     pro: colors.primary,
