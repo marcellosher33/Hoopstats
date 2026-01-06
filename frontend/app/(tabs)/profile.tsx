@@ -199,7 +199,17 @@ export default function ProfileScreen() {
   const openNewSeasonModal = () => {
     setSeasonName(getDefaultSeasonName());
     setApplyToAllTeams(true);
+    setSelectedTeamIds([]);
     setShowNewSeasonModal(true);
+  };
+
+  // Toggle team selection
+  const toggleTeamSelection = (teamId: string) => {
+    setSelectedTeamIds(prev => 
+      prev.includes(teamId) 
+        ? prev.filter(id => id !== teamId)
+        : [...prev, teamId]
+    );
   };
 
   // Master admin tier switch for testing
