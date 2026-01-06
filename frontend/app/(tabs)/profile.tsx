@@ -9,6 +9,7 @@ import {
   Platform,
   Modal,
   Linking,
+  TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -50,6 +51,11 @@ export default function ProfileScreen() {
   const [prices, setPrices] = useState<SubscriptionPrices | null>(null);
   const [isMasterAdmin, setIsMasterAdmin] = useState(false);
   const [effectiveTier, setEffectiveTier] = useState<string>('free');
+  
+  // Username editing
+  const [showEditUsername, setShowEditUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [savingUsername, setSavingUsername] = useState(false);
 
   // Initialize RevenueCat when user is available
   useEffect(() => {
