@@ -340,7 +340,7 @@ class SeasonArchive(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
     name: str  # e.g., "2024-2025 Season"
-    team_id: Optional[str] = None  # If specific to a team
+    team_ids: List[str] = []  # List of archived team IDs (empty = all teams)
     start_date: datetime
     end_date: datetime
     player_stats: List[dict] = []  # Archived player statistics
