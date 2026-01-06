@@ -1251,4 +1251,109 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: spacing.lg,
   },
+  // Season Management Styles
+  seasonSection: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  newSeasonButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  seasonsHistoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginTop: spacing.sm,
+  },
+  newSeasonTextContainer: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  newSeasonTitle: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  newSeasonSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+  },
+  seasonsHistoryList: {
+    marginTop: spacing.sm,
+  },
+  seasonHistoryItem: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  seasonHistoryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  seasonHistoryName: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  seasonHistoryRecord: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  seasonHistoryDetails: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 4,
+  },
+  seasonHistoryDates: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  inputLabel: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+    alignSelf: 'flex-start',
+    marginBottom: spacing.xs,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+    width: '100%',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.textSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  checkboxLabel: {
+    color: colors.text,
+    fontSize: 14,
+  },
+  newSeasonConfirmBtn: {
+    backgroundColor: colors.primary,
+  },
 });
