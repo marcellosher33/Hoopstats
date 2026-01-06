@@ -335,6 +335,24 @@ class HighlightReelCreate(BaseModel):
     media_ids: List[str] = []
     season: Optional[str] = None
 
+# Season Models
+class SeasonArchive(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    name: str  # e.g., "2024-2025 Season"
+    team_id: Optional[str] = None  # If specific to a team
+    start_date: datetime
+    end_date: datetime
+    player_stats: List[dict] = []  # Archived player statistics
+    team_stats: Optional[dict] = None  # Team aggregate stats
+    games_count: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class NewSeasonRequest(BaseModel):
+    season_name: str  # Name for the archived season
+    team_id: Optional[str] = None  # If None, applies to all players
+    apply_to_all_teams: bool = False  # In team mode, reset all teams
+
 # Subscription Models
 class SubscriptionCreate(BaseModel):
     tier: str  # pro, team
