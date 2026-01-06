@@ -334,12 +334,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       body: JSON.stringify(playerData),
     });
     
-    if (response.ok) {
-      const player = await response.json();
-      set((state) => ({
-        players: state.players.map((p) => (p.id === playerId ? player : p)),
-      }));
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Failed to update player' }));
+      throw new Error(error.detail || 'Failed to update player');
     }
+    
+    const player = await response.json();
+    set((state) => ({
+      players: state.players.map((p) => (p.id === playerId ? player : p)),
+    }));
+    
+    // Also refresh the players list to ensure consistency
+    const { fetchPlayers } = get();
+    await fetchPlayers(token);
   },
 
   deletePlayer: async (playerId: string, token: string) => {
