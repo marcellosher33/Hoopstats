@@ -891,16 +891,42 @@ export default function ProfileScreen() {
               placeholderTextColor={colors.textSecondary}
             />
             
-            {effectiveTier === 'team' && (
-              <TouchableOpacity 
-                style={styles.checkboxRow}
-                onPress={() => setApplyToAllTeams(!applyToAllTeams)}
-              >
-                <View style={[styles.checkbox, applyToAllTeams && styles.checkboxChecked]}>
-                  {applyToAllTeams && <Ionicons name="checkmark" size={16} color={colors.text} />}
-                </View>
-                <Text style={styles.checkboxLabel}>Apply to all teams</Text>
-              </TouchableOpacity>
+            {/* Team Selection */}
+            {teams.length > 0 && (
+              <View style={styles.teamSelectionContainer}>
+                <TouchableOpacity 
+                  style={styles.checkboxRow}
+                  onPress={() => {
+                    setApplyToAllTeams(!applyToAllTeams);
+                    if (!applyToAllTeams) {
+                      setSelectedTeamIds([]);
+                    }
+                  }}
+                >
+                  <View style={[styles.checkbox, applyToAllTeams && styles.checkboxChecked]}>
+                    {applyToAllTeams && <Ionicons name="checkmark" size={16} color={colors.text} />}
+                  </View>
+                  <Text style={styles.checkboxLabel}>Archive all teams</Text>
+                </TouchableOpacity>
+                
+                {!applyToAllTeams && (
+                  <View style={styles.teamsList}>
+                    <Text style={styles.teamsListLabel}>Select teams to archive:</Text>
+                    {teams.map((team) => (
+                      <TouchableOpacity 
+                        key={team.id}
+                        style={styles.teamCheckboxRow}
+                        onPress={() => toggleTeamSelection(team.id)}
+                      >
+                        <View style={[styles.checkbox, selectedTeamIds.includes(team.id) && styles.checkboxChecked]}>
+                          {selectedTeamIds.includes(team.id) && <Ionicons name="checkmark" size={16} color={colors.text} />}
+                        </View>
+                        <Text style={styles.checkboxLabel}>{team.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
             )}
             
             <View style={styles.modalButtons}>
