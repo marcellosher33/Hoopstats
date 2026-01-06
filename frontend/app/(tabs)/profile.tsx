@@ -738,6 +738,14 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
+  usernameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  editUsernameBtn: {
+    padding: spacing.xs,
+  },
   tierBadge: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
