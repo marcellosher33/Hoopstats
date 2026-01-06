@@ -528,6 +528,43 @@ async def get_me(user: dict = Depends(get_current_user)):
         created_at=user["created_at"]
     )
 
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+
+@api_router.put("/auth/me")
+async def update_me(user_data: UserUpdate, user: dict = Depends(get_current_user)):
+    """Update current user's profile"""
+    update_data = {}
+    
+    if user_data.username is not None:
+        # Check if username is already taken by another user
+        if user_data.username != user["username"]:
+            existing = await db.users.find_one({
+                "username": user_data.username,
+                "id": {"$ne": user["id"]}
+            })
+            if existing:
+                raise HTTPException(status_code=400, detail="Username already taken")
+        update_data["username"] = user_data.username
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": update_data}
+    )
+    
+    updated_user = await db.users.find_one({"id": user["id"]})
+    return UserResponse(
+        id=updated_user["id"],
+        email=updated_user["email"],
+        username=updated_user["username"],
+        subscription_tier=updated_user.get("subscription_tier", "free"),
+        subscription_expires=updated_user.get("subscription_expires"),
+        created_at=updated_user["created_at"]
+    )
+
 # ==================== PLAYER ROUTES ====================
 
 @api_router.post("/players")
