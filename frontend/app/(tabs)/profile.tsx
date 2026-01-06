@@ -104,6 +104,15 @@ export default function ProfileScreen() {
             const seasonsData = await seasonsRes.json();
             setArchivedSeasons(seasonsData);
           }
+          
+          // Fetch teams for season management
+          const teamsRes = await fetch(`${API_URL}/api/teams`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (teamsRes.ok) {
+            const teamsData = await teamsRes.json();
+            setTeams(teamsData);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
