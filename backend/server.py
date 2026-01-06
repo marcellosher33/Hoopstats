@@ -350,8 +350,8 @@ class SeasonArchive(BaseModel):
 
 class NewSeasonRequest(BaseModel):
     season_name: str  # Name for the archived season
-    team_id: Optional[str] = None  # If None, applies to all players
-    apply_to_all_teams: bool = False  # In team mode, reset all teams
+    team_ids: Optional[List[str]] = None  # List of team IDs to archive (None = all teams)
+    apply_to_all_teams: bool = False  # If True, archive all teams
 
 # Subscription Models
 class SubscriptionCreate(BaseModel):
