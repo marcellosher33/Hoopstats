@@ -1806,19 +1806,21 @@ async def start_new_season(request: NewSeasonRequest, user: dict = Depends(get_c
     
     user_id = user["id"]
     
-    # Determine which players to archive
+    # Determine which players to archive based on team selection
     player_filter = {"user_id": user_id}
     game_filter = {"user_id": user_id, "status": "completed"}
     
-    if request.team_id:
-        # Only archive players from specific team
-        player_filter["team_id"] = request.team_id
-        game_filter["team_id"] = request.team_id
+    selected_team_ids = []
+    if request.team_ids and len(request.team_ids) > 0:
+        # Archive specific teams
+        selected_team_ids = request.team_ids
+        player_filter["team_id"] = {"$in": request.team_ids}
+        game_filter["team_id"] = {"$in": request.team_ids}
     elif not request.apply_to_all_teams:
-        # For Pro users without team_id, archive all their players
+        # For Pro users without team selection, archive all their players
         pass
     
-    # Get all completed games for this user/team
+    # Get all completed games for this user/team(s)
     games = await db.games.find(game_filter).to_list(1000)
     
     if not games:
