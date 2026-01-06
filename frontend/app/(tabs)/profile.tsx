@@ -807,7 +807,34 @@ export default function ProfileScreen() {
 
         <TouchableOpacity 
           style={styles.settingRow}
-          onPress={() => Alert.alert('Help & Support', 'Need help? Contact us at support@hoopstats.app\n\nFAQ:\n• Tap stats to record them\n• Long-press to manually adjust\n• Use Team Mode for multiple players')}
+          onPress={() => Alert.alert(
+            'Help & Support',
+            'HoopStats Support Center\n\n' +
+            '📧 Email: support@hoopstats.app\n\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n' +
+            'QUICK START GUIDE\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n\n' +
+            '1️⃣ Add players in the Players tab\n' +
+            '2️⃣ Start a new game\n' +
+            '3️⃣ Select players for the game\n' +
+            '4️⃣ Tap stat buttons to record\n' +
+            '5️⃣ View summary when done\n\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n' +
+            'FAQ\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n\n' +
+            '❓ How do I record a stat?\n' +
+            'Tap the player, then tap the stat button.\n\n' +
+            '❓ How do I undo a stat?\n' +
+            'Long-press on the stat button.\n\n' +
+            '❓ What is Team Mode?\n' +
+            'Track multiple players with substitutions (Team subscription).\n\n' +
+            '❓ Can I share games live?\n' +
+            'Yes! Pro/Team can share live game links.\n\n' +
+            '❓ How do I start a new season?\n' +
+            'Profile → Season Management → Start New Season\n\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n' +
+            'Response time: Within 48 hours'
+          )}
         >
           <Ionicons name="help-circle" size={24} color={colors.text} />
           <Text style={styles.settingText}>Help & Support</Text>
@@ -816,7 +843,33 @@ export default function ProfileScreen() {
 
         <TouchableOpacity 
           style={styles.settingRow}
-          onPress={() => Alert.alert('Terms & Privacy', 'By using this app, you agree to our Terms of Service and Privacy Policy.\n\nYour data is stored securely and never shared with third parties without your consent.')}
+          onPress={() => Alert.alert(
+            'Terms & Privacy',
+            '📜 TERMS OF SERVICE\n' +
+            'Last Updated: January 2025\n\n' +
+            '• You must be 13+ to use this app\n' +
+            '• You retain ownership of your content\n' +
+            '• Subscriptions auto-renew unless canceled 24hrs before renewal\n' +
+            '• Manage subscriptions in App Store settings\n' +
+            '• App provided "as is" without warranties\n\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n\n' +
+            '🔒 PRIVACY POLICY\n' +
+            'Last Updated: January 2025\n\n' +
+            'We collect:\n' +
+            '• Account info (email, username)\n' +
+            '• Game data (stats, player names)\n' +
+            '• Usage data for improvements\n\n' +
+            'We do NOT sell your data.\n\n' +
+            'Your rights:\n' +
+            '• Access your data\n' +
+            '• Delete your account\n' +
+            '• Export your data\n\n' +
+            'Data stored securely with encryption.\n\n' +
+            '━━━━━━━━━━━━━━━━━━━━\n\n' +
+            '© 2025 HoopStats. All rights reserved.\n\n' +
+            'Contact: support@hoopstats.app',
+            [{ text: 'OK' }]
+          )}
         >
           <Ionicons name="document-text" size={24} color={colors.text} />
           <Text style={styles.settingText}>Terms & Privacy</Text>
