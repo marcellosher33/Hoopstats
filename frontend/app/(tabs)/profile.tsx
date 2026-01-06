@@ -1411,4 +1411,22 @@ const styles = StyleSheet.create({
   newSeasonConfirmBtn: {
     backgroundColor: colors.primary,
   },
+  teamSelectionContainer: {
+    width: '100%',
+    marginBottom: spacing.md,
+  },
+  teamsList: {
+    marginTop: spacing.sm,
+    marginLeft: spacing.md,
+  },
+  teamsListLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginBottom: spacing.xs,
+  },
+  teamCheckboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.xs,
+  },
 });
