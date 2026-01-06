@@ -57,6 +57,10 @@ export default function ProfileScreen() {
   const [newUsername, setNewUsername] = useState('');
   const [savingUsername, setSavingUsername] = useState(false);
   
+  // Collapsible sections
+  const [seasonSectionExpanded, setSeasonSectionExpanded] = useState(true);
+  const [subscriptionSectionExpanded, setSubscriptionSectionExpanded] = useState(false);
+  
   // New Season feature
   const [showNewSeasonModal, setShowNewSeasonModal] = useState(false);
   const [seasonName, setSeasonName] = useState('');
