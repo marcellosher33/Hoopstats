@@ -649,6 +649,48 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Edit Username Modal */}
+      <Modal
+        visible={showEditUsername}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowEditUsername(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Ionicons name="person-circle" size={48} color={colors.primary} style={{ marginBottom: spacing.md }} />
+            <Text style={styles.modalTitle}>Edit Username</Text>
+            <TextInput
+              style={styles.usernameInput}
+              value={newUsername}
+              onChangeText={setNewUsername}
+              placeholder="Enter new username"
+              placeholderTextColor={colors.textSecondary}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowEditUsername(false)}
+                disabled={savingUsername}
+              >
+                <Text style={styles.modalButtonTextCancel}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.modalButtonConfirm]}
+                onPress={handleSaveUsername}
+                disabled={savingUsername}
+              >
+                <Text style={styles.modalButtonTextConfirm}>
+                  {savingUsername ? 'Saving...' : 'Save'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
