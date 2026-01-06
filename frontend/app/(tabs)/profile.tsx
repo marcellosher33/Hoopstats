@@ -99,14 +99,26 @@ export default function ProfileScreen() {
       });
       
       if (response.ok) {
+        // Refresh user data to get updated tier
         await refreshUser();
+        
+        // Also refresh the local effective tier state
+        const statusRes = await fetch(`${API_URL}/api/subscriptions/status`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (statusRes.ok) {
+          const statusData = await statusRes.json();
+          setEffectiveTier(statusData.effective_tier || 'free');
+        }
+        
         Alert.alert('Tier Switched', `Now testing as ${tier.toUpperCase()} tier`);
       } else {
         const error = await response.json();
         Alert.alert('Error', error.detail || 'Failed to switch tier');
       }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to switch tier');
+    } catch (error: any) {
+      console.error('Tier switch error:', error);
+      Alert.alert('Error', error.message || 'Failed to switch tier');
     } finally {
       setUpgrading(false);
     }
