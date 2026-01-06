@@ -530,9 +530,99 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {/* Subscription Plans */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Subscription Plans</Text>
+      {/* Season Management - Pro+ only (MOVED ABOVE SUBSCRIPTION) */}
+      {(effectiveTier === 'pro' || effectiveTier === 'team' || isMasterAdmin) && (
+        <View style={styles.collapsibleSection}>
+          <TouchableOpacity 
+            style={styles.collapsibleHeader}
+            onPress={() => setSeasonSectionExpanded(!seasonSectionExpanded)}
+          >
+            <View style={styles.collapsibleHeaderLeft}>
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.collapsibleTitle}>Season Management</Text>
+            </View>
+            <Ionicons 
+              name={seasonSectionExpanded ? "chevron-up" : "chevron-down"} 
+              size={20} 
+              color={colors.textSecondary} 
+            />
+          </TouchableOpacity>
+          
+          {seasonSectionExpanded && (
+            <View style={styles.collapsibleContent}>
+              <TouchableOpacity 
+                style={styles.newSeasonButton}
+                onPress={openNewSeasonModal}
+              >
+                <Ionicons name="add-circle" size={24} color={colors.text} />
+                <View style={styles.newSeasonTextContainer}>
+                  <Text style={styles.newSeasonTitle}>Start New Season</Text>
+                  <Text style={styles.newSeasonSubtitle}>Archive current stats and reset for new season</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+              </TouchableOpacity>
+              
+              {archivedSeasons.length > 0 && (
+                <TouchableOpacity 
+                  style={styles.seasonsHistoryButton}
+                  onPress={() => setShowSeasonsHistory(!showSeasonsHistory)}
+                >
+                  <Ionicons name="time" size={24} color={colors.text} />
+                  <View style={styles.newSeasonTextContainer}>
+                    <Text style={styles.newSeasonTitle}>Previous Seasons</Text>
+                    <Text style={styles.newSeasonSubtitle}>{archivedSeasons.length} season{archivedSeasons.length !== 1 ? 's' : ''} archived</Text>
+                  </View>
+                  <Ionicons name={showSeasonsHistory ? "chevron-up" : "chevron-down"} size={20} color={colors.textSecondary} />
+                </TouchableOpacity>
+              )}
+              
+              {showSeasonsHistory && archivedSeasons.length > 0 && (
+                <View style={styles.seasonsHistoryList}>
+                  {archivedSeasons.map((season) => (
+                    <View key={season.id} style={styles.seasonHistoryItem}>
+                      <View style={styles.seasonHistoryHeader}>
+                        <Text style={styles.seasonHistoryName}>{season.name}</Text>
+                        <Text style={styles.seasonHistoryRecord}>
+                          {season.team_stats?.wins || 0}-{season.team_stats?.losses || 0}
+                        </Text>
+                      </View>
+                      <Text style={styles.seasonHistoryDetails}>
+                        {season.games_count} games • {season.player_stats?.length || 0} players
+                      </Text>
+                      <Text style={styles.seasonHistoryDates}>
+                        {new Date(season.start_date).toLocaleDateString()} - {new Date(season.end_date).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Subscription Plans - COLLAPSIBLE */}
+      <View style={styles.collapsibleSection}>
+        <TouchableOpacity 
+          style={styles.collapsibleHeader}
+          onPress={() => setSubscriptionSectionExpanded(!subscriptionSectionExpanded)}
+        >
+          <View style={styles.collapsibleHeaderLeft}>
+            <Ionicons name="card" size={20} color={colors.primary} />
+            <Text style={styles.collapsibleTitle}>Subscription Plans</Text>
+            <View style={[styles.tierBadgeSmall, { backgroundColor: tierColors[effectiveTier] || colors.textSecondary }]}>
+              <Text style={styles.tierBadgeSmallText}>{effectiveTier?.toUpperCase()}</Text>
+            </View>
+          </View>
+          <Ionicons 
+            name={subscriptionSectionExpanded ? "chevron-up" : "chevron-down"} 
+            size={20} 
+            color={colors.textSecondary} 
+          />
+        </TouchableOpacity>
+        
+        {subscriptionSectionExpanded && (
+          <View style={styles.collapsibleContent}>
         
         {/* Billing Period Toggle */}
         <View style={styles.billingToggleContainer}>
