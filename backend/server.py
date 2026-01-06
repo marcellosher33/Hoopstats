@@ -1858,7 +1858,20 @@ async def start_new_season(request: NewSeasonRequest, user: dict = Depends(get_c
         }
         
         for game in games:
-            player_game_stats = game.get("player_stats", {}).get(player_id, {})
+            # Handle both dict and list formats for player_stats
+            game_player_stats = game.get("player_stats", {})
+            
+            # If it's a list, convert to dict by player_id
+            if isinstance(game_player_stats, list):
+                player_game_stats = None
+                for ps in game_player_stats:
+                    if ps.get("player_id") == player_id:
+                        player_game_stats = ps
+                        break
+            else:
+                # It's a dict keyed by player_id
+                player_game_stats = game_player_stats.get(player_id, {})
+            
             if player_game_stats:
                 stats["games_played"] += 1
                 stats["total_points"] += player_game_stats.get("points", 0)
