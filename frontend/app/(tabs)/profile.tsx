@@ -239,6 +239,16 @@ export default function ProfileScreen() {
               
               if (response.ok) {
                 await refreshUser();
+                
+                // Refresh the subscription status to update UI
+                const statusRes = await fetch(`${API_URL}/api/subscriptions/status`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (statusRes.ok) {
+                  const statusData = await statusRes.json();
+                  setEffectiveTier(statusData.effective_tier || 'free');
+                }
+                
                 Alert.alert('Success', `Downgraded to ${tierName} tier`);
               } else {
                 const error = await response.json();
