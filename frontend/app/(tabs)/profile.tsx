@@ -354,7 +354,12 @@ export default function ProfileScreen() {
         <View style={styles.avatar}>
           <Ionicons name="person" size={48} color={colors.text} />
         </View>
-        <Text style={styles.username}>{user?.username}</Text>
+        <View style={styles.usernameRow}>
+          <Text style={styles.username}>{user?.username}</Text>
+          <TouchableOpacity onPress={handleEditUsername} style={styles.editUsernameBtn}>
+            <Ionicons name="pencil" size={16} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
         <Text style={styles.email}>{user?.email}</Text>
         <View style={[styles.tierBadge, { backgroundColor: tierColors[user?.subscription_tier || 'free'] }]}>
           <Text style={styles.tierText}>{user?.subscription_tier?.toUpperCase() || 'FREE'}</Text>
