@@ -61,9 +61,11 @@ export default function ProfileScreen() {
   const [showNewSeasonModal, setShowNewSeasonModal] = useState(false);
   const [seasonName, setSeasonName] = useState('');
   const [applyToAllTeams, setApplyToAllTeams] = useState(true);
+  const [selectedTeamIds, setSelectedTeamIds] = useState<string[]>([]);
   const [startingNewSeason, setStartingNewSeason] = useState(false);
   const [archivedSeasons, setArchivedSeasons] = useState<any[]>([]);
   const [showSeasonsHistory, setShowSeasonsHistory] = useState(false);
+  const [teams, setTeams] = useState<any[]>([]);
 
   // Initialize RevenueCat when user is available
   useEffect(() => {
