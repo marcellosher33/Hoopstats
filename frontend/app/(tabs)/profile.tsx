@@ -837,6 +837,64 @@ export default function ProfileScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* New Season Modal */}
+      <Modal
+        visible={showNewSeasonModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowNewSeasonModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Ionicons name="calendar" size={48} color={colors.primary} style={{ marginBottom: spacing.md }} />
+            <Text style={styles.modalTitle}>Start New Season</Text>
+            <Text style={styles.modalMessage}>
+              This will archive all current game statistics and start fresh. Your previous data will be saved and accessible.
+            </Text>
+            
+            <Text style={styles.inputLabel}>Season Name</Text>
+            <TextInput
+              style={styles.usernameInput}
+              value={seasonName}
+              onChangeText={setSeasonName}
+              placeholder="e.g., 2024-2025 Season"
+              placeholderTextColor={colors.textSecondary}
+            />
+            
+            {effectiveTier === 'team' && (
+              <TouchableOpacity 
+                style={styles.checkboxRow}
+                onPress={() => setApplyToAllTeams(!applyToAllTeams)}
+              >
+                <View style={[styles.checkbox, applyToAllTeams && styles.checkboxChecked]}>
+                  {applyToAllTeams && <Ionicons name="checkmark" size={16} color={colors.text} />}
+                </View>
+                <Text style={styles.checkboxLabel}>Apply to all teams</Text>
+              </TouchableOpacity>
+            )}
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowNewSeasonModal(false)}
+                disabled={startingNewSeason}
+              >
+                <Text style={styles.modalButtonTextCancel}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.modalButton, styles.newSeasonConfirmBtn]}
+                onPress={handleStartNewSeason}
+                disabled={startingNewSeason}
+              >
+                <Text style={styles.modalButtonTextConfirm}>
+                  {startingNewSeason ? 'Archiving...' : 'Start New Season'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
