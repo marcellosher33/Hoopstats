@@ -196,7 +196,8 @@ export default function PlayerStatsScreen() {
               yAxisTextStyle={{ color: colors.textSecondary, fontSize: 10 }}
               xAxisLabelTextStyle={{ color: colors.textSecondary, fontSize: 10 }}
               hideRules
-              isAnimated
+              isAnimated={false}
+              disablePress
             />
           </View>
         </View>
