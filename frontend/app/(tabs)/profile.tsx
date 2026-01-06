@@ -93,6 +93,15 @@ export default function ProfileScreen() {
             setIsMasterAdmin(statusData.is_master || false);
             setEffectiveTier(statusData.effective_tier || 'free');
           }
+          
+          // Fetch archived seasons
+          const seasonsRes = await fetch(`${API_URL}/api/seasons`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (seasonsRes.ok) {
+            const seasonsData = await seasonsRes.json();
+            setArchivedSeasons(seasonsData);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -100,6 +109,79 @@ export default function ProfileScreen() {
     };
     fetchData();
   }, [token]);
+
+  // Generate default season name based on current date
+  const getDefaultSeasonName = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    // If we're in second half of year, use current-next year format
+    if (month >= 6) {
+      return `${year}-${year + 1} Season`;
+    }
+    return `${year - 1}-${year} Season`;
+  };
+
+  // Handle starting new season
+  const handleStartNewSeason = async () => {
+    if (!seasonName.trim()) {
+      Alert.alert('Error', 'Please enter a season name');
+      return;
+    }
+    
+    setStartingNewSeason(true);
+    try {
+      const response = await fetch(`${API_URL}/api/seasons/new`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          season_name: seasonName.trim(),
+          apply_to_all_teams: applyToAllTeams,
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setShowNewSeasonModal(false);
+        setSeasonName('');
+        
+        // Refresh archived seasons
+        const seasonsRes = await fetch(`${API_URL}/api/seasons`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (seasonsRes.ok) {
+          const seasonsData = await seasonsRes.json();
+          setArchivedSeasons(seasonsData);
+        }
+        
+        Alert.alert(
+          'New Season Started! 🎉',
+          `"${data.season_name}" has been archived.\n\n` +
+          `Games archived: ${data.games_archived}\n` +
+          `Players stats saved: ${data.players_archived}\n` +
+          `Record: ${data.team_stats.wins}-${data.team_stats.losses}`,
+          [{ text: 'OK' }]
+        );
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to start new season');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to start new season');
+    } finally {
+      setStartingNewSeason(false);
+    }
+  };
+
+  // Open new season modal
+  const openNewSeasonModal = () => {
+    setSeasonName(getDefaultSeasonName());
+    setApplyToAllTeams(true);
+    setShowNewSeasonModal(true);
+  };
 
   // Master admin tier switch for testing
   const handleTestTierSwitch = async (tier: string) => {
