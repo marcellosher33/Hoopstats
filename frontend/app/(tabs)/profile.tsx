@@ -1038,4 +1038,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: '600',
   },
+  usernameInput: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    color: colors.text,
+    fontSize: 16,
+    width: '100%',
+    marginBottom: spacing.lg,
+  },
 });
