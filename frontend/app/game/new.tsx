@@ -62,6 +62,7 @@ export default function NewGameScreen() {
   const [location, setLocation] = useState<LocationType>(null);
   const [gameType, setGameType] = useState<GameType>(null);
   const [periodType, setPeriodType] = useState<PeriodType>('quarters');
+  const [periodTimeMinutes, setPeriodTimeMinutes] = useState(8); // Default 8 minutes per period
   const [homeTeamName, setHomeTeamName] = useState('');
   const [venue, setVenue] = useState('');
   const [gameDate, setGameDate] = useState(new Date());
