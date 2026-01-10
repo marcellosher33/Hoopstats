@@ -774,6 +774,13 @@ export default function LiveGameScreen() {
         colors={['#1A1A2E', '#16213E']}
         style={styles.header}
       >
+        {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
+        {getPeriodStatusText() && (
+          <View style={styles.periodStatusOverlay}>
+            <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
+          </View>
+        )}
+        
         <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
           <View style={styles.teamScore}>
             <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
@@ -787,10 +794,32 @@ export default function LiveGameScreen() {
                   : `Q${currentGame.current_period || 1}`}
               </Text>
             </View>
-            <Text style={styles.vsText}>VS</Text>
+            
+            {/* Game Clock Display */}
+            <TouchableOpacity onPress={openClockEdit} style={styles.gameClockContainer}>
+              <Text style={[styles.gameClock, gameClockSeconds <= 60 && styles.gameClockLow]}>
+                {formatClock(gameClockSeconds)}
+              </Text>
+            </TouchableOpacity>
+            
+            {/* Master Time In/Out Button */}
+            <TouchableOpacity 
+              style={[styles.masterClockBtn, isClockRunning && styles.masterClockBtnActive]}
+              onPress={toggleMasterClock}
+            >
+              <Ionicons 
+                name={isClockRunning ? "pause" : "play"} 
+                size={16} 
+                color={isClockRunning ? colors.text : colors.success} 
+              />
+              <Text style={[styles.masterClockBtnText, isClockRunning && styles.masterClockBtnTextActive]}>
+                {isClockRunning ? 'STOP' : 'START'}
+              </Text>
+            </TouchableOpacity>
+            
             <TouchableOpacity style={styles.editScoreHint}>
               <Ionicons name="create-outline" size={14} color={colors.textSecondary} />
-              <Text style={styles.editHintText}>Tap to edit</Text>
+              <Text style={styles.editHintText}>Tap scores to edit</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.teamScore}>
