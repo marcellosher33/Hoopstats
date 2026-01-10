@@ -385,6 +385,24 @@ export default function NewGameScreen() {
               }}
             />
           )}
+
+          {/* Game Goals / Notes */}
+          <View style={styles.dropdownSection}>
+            <Text style={styles.label}>Game Goals / Notes (Optional)</Text>
+            <TextInput
+              style={styles.notesInput}
+              value={gameNotes}
+              onChangeText={setGameNotes}
+              placeholder="e.g., Focus on defense, work on 3-point shots, practice new plays..."
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              numberOfLines={3}
+              textAlignVertical="top"
+            />
+            <Text style={styles.notesHint}>
+              <Ionicons name="lock-closed" size={12} color={colors.textSecondary} /> Only you can see these notes
+            </Text>
+          </View>
         </View>
 
         {/* Player Selection */}
