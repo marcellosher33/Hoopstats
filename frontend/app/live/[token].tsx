@@ -299,6 +299,33 @@ export default function LiveGameViewer() {
                         <Text style={styles.statLabel}>BLK</Text>
                       </View>
                     </View>
+                    {/* Complete Stats Row */}
+                    <View style={styles.statsRow}>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.turnovers || 0}</Text>
+                        <Text style={styles.statLabel}>TO</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{ps.stats.fouls || 0}</Text>
+                        <Text style={styles.statLabel}>PF</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>
+                          {ps.stats.fg_made || 0}/{ps.stats.fg_attempted || 0}
+                        </Text>
+                        <Text style={styles.statLabel}>FG</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>
+                          {ps.stats.three_pt_made || 0}/{ps.stats.three_pt_attempted || 0}
+                        </Text>
+                        <Text style={styles.statLabel}>3PT</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValue}>{formatTime(ps.stats.minutes_played || 0)}</Text>
+                        <Text style={styles.statLabel}>MIN</Text>
+                      </View>
+                    </View>
                   </View>
                 ))}
               {game.player_stats.filter(ps => (game.active_player_ids || []).includes(ps.player_id)).length === 0 && (
@@ -341,6 +368,41 @@ export default function LiveGameViewer() {
                       <View style={styles.statItem}>
                         <Text style={styles.statValueOut}>{ps.stats.assists || 0}</Text>
                         <Text style={styles.statLabel}>AST</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.steals || 0}</Text>
+                        <Text style={styles.statLabel}>STL</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.blocks || 0}</Text>
+                        <Text style={styles.statLabel}>BLK</Text>
+                      </View>
+                    </View>
+                    {/* Complete Stats Row */}
+                    <View style={styles.statsRow}>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.turnovers || 0}</Text>
+                        <Text style={styles.statLabel}>TO</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{ps.stats.fouls || 0}</Text>
+                        <Text style={styles.statLabel}>PF</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>
+                          {ps.stats.fg_made || 0}/{ps.stats.fg_attempted || 0}
+                        </Text>
+                        <Text style={styles.statLabel}>FG</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>
+                          {ps.stats.three_pt_made || 0}/{ps.stats.three_pt_attempted || 0}
+                        </Text>
+                        <Text style={styles.statLabel}>3PT</Text>
+                      </View>
+                      <View style={styles.statItem}>
+                        <Text style={styles.statValueOut}>{formatTime(ps.stats.minutes_played || 0)}</Text>
+                        <Text style={styles.statLabel}>MIN</Text>
                       </View>
                     </View>
                   </View>
