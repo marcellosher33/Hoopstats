@@ -198,7 +198,8 @@ export default function LiveGameScreen() {
     saveClockDebounced.current = setTimeout(() => {
       updateGame(id, { 
         game_clock_seconds: gameClockSeconds,
-        clock_running: isClockRunning 
+        clock_running: isClockRunning,
+        player_minutes: playerMinutes // Save player minutes with clock state
       }, token);
     }, 2000); // Save every 2 seconds
     
