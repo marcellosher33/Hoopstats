@@ -291,14 +291,18 @@ export default function LiveGameViewer() {
   
   // Local clock countdown effect - runs when clock is running
   useEffect(() => {
+    console.log('[LiveView] Clock useEffect triggered, isClockRunning:', isClockRunning);
+    
     // Clear any existing interval first
     if (clockIntervalRef.current) {
+      console.log('[LiveView] Clearing existing interval');
       clearInterval(clockIntervalRef.current);
       clockIntervalRef.current = null;
     }
     
     // Start countdown if clock is running
     if (isClockRunning) {
+      console.log('[LiveView] Starting clock interval, current seconds:', localClockSeconds);
       clockIntervalRef.current = setInterval(() => {
         setLocalClockSeconds(prev => {
           if (prev === null || prev <= 0) {
@@ -309,9 +313,12 @@ export default function LiveGameViewer() {
             }
             return prev;
           }
+          console.log('[LiveView] Tick:', prev, '->', prev - 1);
           return prev - 1;
         });
       }, 1000);
+    } else {
+      console.log('[LiveView] Clock is NOT running, no interval started');
     }
     
     return () => {
