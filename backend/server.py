@@ -427,7 +427,7 @@ def check_subscription(user: dict, required_tier: str) -> bool:
         if isinstance(expires, str):
             try:
                 expires = datetime.fromisoformat(expires.replace('Z', '+00:00'))
-            except:
+            except (ValueError, TypeError):
                 expires = None
         if expires and isinstance(expires, datetime) and expires < datetime.utcnow():
             return tier_levels["free"] >= tier_levels[required_tier]
