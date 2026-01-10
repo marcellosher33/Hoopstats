@@ -776,17 +776,10 @@ export default function LiveGameScreen() {
       >
         {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
         {getPeriodStatusText() && (
-          <TouchableOpacity 
-            style={styles.periodStatusOverlay}
-            onPress={() => {
-              // Allow dismissing by tapping - user can then interact with scoreboard
-              // This is just informational, not blocking
-            }}
-            activeOpacity={1}
-          >
+          <View style={styles.periodStatusOverlay} pointerEvents="none">
             <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
-            <Text style={styles.periodStatusHint}>Tap scoreboard to continue</Text>
-          </TouchableOpacity>
+            <Text style={styles.periodStatusHint}>Tap clock to edit time</Text>
+          </View>
         )}
         
         <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
