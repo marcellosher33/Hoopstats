@@ -737,9 +737,9 @@ export default function LiveGameViewer() {
               <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName} scores!</Text>
             )}
             
-            {/* Use the actual FullCourtShotChart component */}
+            {/* Use the half court ShotChart component */}
             <View style={styles.shotChartWrapper}>
-              <FullCourtShotChart
+              <ShotChart
                 shots={[{
                   id: 'live-shot',
                   x: lastShotLocation.x / 100, // Convert percentage to 0-1 range
@@ -749,9 +749,8 @@ export default function LiveGameViewer() {
                   timestamp: new Date().toISOString(),
                 }]}
                 width={screenWidth * 0.85}
-                height={screenWidth * 0.7}
+                height={screenWidth * 0.75}
                 interactive={false}
-                firstHalfSide="top"
               />
             </View>
             
