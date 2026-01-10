@@ -638,6 +638,36 @@ const styles = StyleSheet.create({
     color: colors.text,
     opacity: 0.8,
   },
+  timeOptionsScroll: {
+    marginHorizontal: -spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  timeOptionsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  timeButton: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minWidth: 65,
+    alignItems: 'center',
+  },
+  timeButtonActive: {
+    backgroundColor: colors.primary + '20',
+    borderColor: colors.primary,
+  },
+  timeButtonText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  timeButtonTextActive: {
+    color: colors.text,
+  },
   dateRow: {
     marginBottom: spacing.md,
   },
