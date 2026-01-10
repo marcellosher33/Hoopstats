@@ -42,6 +42,19 @@ export default function LiveGameViewer() {
   const [isClockRunning, setIsClockRunning] = useState(false);
   const clockSyncRef = useRef<number | null>(null);
   
+  // Refs to track current state values for use in callbacks
+  const isClockRunningRef = useRef(false);
+  const localClockSecondsRef = useRef<number | null>(null);
+  
+  // Keep refs in sync with state
+  useEffect(() => {
+    isClockRunningRef.current = isClockRunning;
+  }, [isClockRunning]);
+  
+  useEffect(() => {
+    localClockSecondsRef.current = localClockSeconds;
+  }, [localClockSeconds]);
+  
   // Play-by-play state
   const [playByPlay, setPlayByPlay] = useState<PlayByPlayAction[]>([]);
   const lastProcessedStats = useRef<string>('');
