@@ -367,6 +367,22 @@ export default function LiveGameScreen() {
     };
   }, [teamMode, isClockRunning, selectedPlayer]);
 
+  // Periodic save of player minutes to backend (every 30 seconds when clock is running)
+  useEffect(() => {
+    if (!token || !id || !isClockRunning) return;
+    
+    const saveInterval = setInterval(async () => {
+      // Save current minutes to backend
+      try {
+        await updateGame(id, { player_minutes: playerMinutes }, token);
+      } catch (error) {
+        console.error('Failed to save player minutes:', error);
+      }
+    }, 30000); // Every 30 seconds
+    
+    return () => clearInterval(saveInterval);
+  }, [token, id, isClockRunning, playerMinutes]);
+
   const toggleActivePlayer = (playerId: string) => {
     setActivePlayerIds(prev => {
       const newSet = new Set(prev);
