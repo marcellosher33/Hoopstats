@@ -713,10 +713,30 @@ export default function LiveGameViewer() {
           ]}
         >
           <View style={styles.shotPopupChart}>
+            {/* Player name who made the shot */}
+            {lastShotLocation.playerName && (
+              <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName}</Text>
+            )}
             <View style={styles.shotPopupCourt}>
-              {/* Court outline */}
-              <View style={styles.courtOutline} />
-              {/* Shot marker */}
+              {/* Half court background */}
+              <View style={styles.courtFloor} />
+              
+              {/* Three-point line arc */}
+              <View style={styles.threePointArc} />
+              
+              {/* Key/Paint area */}
+              <View style={styles.keyArea} />
+              
+              {/* Free throw circle */}
+              <View style={styles.freeThrowCircle} />
+              
+              {/* Basket/Hoop */}
+              <View style={styles.hoopArea}>
+                <View style={styles.backboard} />
+                <View style={styles.hoop} />
+              </View>
+              
+              {/* Shot marker with animation pulse */}
               <View 
                 style={[
                   styles.shotMarker,
@@ -726,10 +746,13 @@ export default function LiveGameViewer() {
                   }
                 ]}
               >
+                <View style={styles.shotMarkerPulse} />
                 <View style={styles.shotMarkerInner} />
               </View>
             </View>
-            <Text style={styles.shotPopupText}>MADE SHOT!</Text>
+            <Text style={styles.shotPopupText}>
+              {lastShotLocation.playerName ? `${lastShotLocation.playerName} scores!` : 'MADE SHOT!'}
+            </Text>
           </View>
         </Animated.View>
       )}
