@@ -256,7 +256,7 @@ class Game(BaseModel):
     opponent_score: int = 0
     
     # Game state
-    status: str = "in_progress"  # in_progress, halftime, period_end, completed
+    game_status: str = "in_progress"  # in_progress, halftime, period_end, completed
     current_period: int = 1  # Current quarter (1-4) or half (1-2)
     active_player_ids: List[str] = []  # Players currently "in" the game (for team mode)
     court_side: str = "top"  # Which side is 1st half: "top" or "bottom"
