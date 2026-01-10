@@ -1896,6 +1896,72 @@ const styles = StyleSheet.create({
   notesText: {
     color: colors.text,
     fontSize: 14,
+    lineHeight: 22,
+  },
+  notesEditCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+  },
+  notesInput: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    color: colors.text,
+    fontSize: 14,
+    minHeight: 120,
+    textAlignVertical: 'top',
+  },
+  notesPrivacyNote: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: spacing.sm,
+  },
+  notesPrivacyText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+  },
+  notesActionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  notesCancelBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  notesCancelText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  notesSaveBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.md,
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  notesSaveText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  emptyNotesCard: {
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  emptyNotesText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    marginTop: spacing.sm,
+  },
+  emptyNotesHint: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: spacing.xs,
+    opacity: 0.7,
   },
   tagsRow: {
     flexDirection: 'row',
