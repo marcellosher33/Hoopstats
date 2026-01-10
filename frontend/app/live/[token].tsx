@@ -85,14 +85,16 @@ export default function LiveGameViewer() {
       const data = await response.json();
       
       // Get the server clock running state
-      const serverClockRunning = data.clock_running || data.is_clock_running || false;
-      const wasClockRunning = isClockRunning;
+      const serverClockRunning = data.clock_running === true;
+      const wasClockRunning = isClockRunningRef.current;
+      const currentLocalClock = localClockSecondsRef.current;
       
       // CLOCK SYNC LOGIC:
       // 1. First load (localClockSeconds is null) - always sync
       // 2. Clock just STOPPED (was running, now stopped) - sync to server time
-      // 3. Clock is running - NEVER sync, let local countdown run independently
-      if (localClockSeconds === null && data.game_clock_seconds !== undefined) {
+      // 3. Clock is paused and was paused - sync to server time
+      // 4. Clock is RUNNING - do NOT sync, let local countdown run independently
+      if (currentLocalClock === null && data.game_clock_seconds !== undefined) {
         // First load - initialize local clock from server
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
