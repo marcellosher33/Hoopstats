@@ -14,7 +14,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
-import { Game } from '../../src/types';
+import { Game, ShotAttempt } from '../../src/types';
+import { FullCourtShotChart } from '../../src/components/FullCourtShotChart';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const { width: screenWidth } = Dimensions.get('window');
