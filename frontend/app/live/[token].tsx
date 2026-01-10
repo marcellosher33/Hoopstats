@@ -794,6 +794,24 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
     marginLeft: spacing.sm,
   },
+  // Play-by-Play Feed
+  playByPlayContainer: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.md,
+    alignItems: 'center',
+  },
+  playByPlayText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  playByPlayTextOlder: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '400',
+    marginTop: 2,
+  },
   // Period Status Overlay
   periodStatusOverlay: {
     position: 'absolute',
