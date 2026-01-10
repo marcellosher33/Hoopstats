@@ -172,10 +172,15 @@ export default function LiveGameScreen() {
   }, [activePlayerIds]);
 
   // Save court side preference when it changes
+  const prevCourtSide = useRef(firstHalfCourtSide);
   useEffect(() => {
     if (!token || !id || !currentGame) return;
-    updateGame(id, { court_side: firstHalfCourtSide }, token);
-  }, [firstHalfCourtSide]);
+    // Only update if the value actually changed (not on initial load)
+    if (prevCourtSide.current !== firstHalfCourtSide) {
+      prevCourtSide.current = firstHalfCourtSide;
+      updateGame(id, { court_side: firstHalfCourtSide }, token);
+    }
+  }, [firstHalfCourtSide, token, id, currentGame?.id]);
 
   // Minutes tracking interval for team mode
   useEffect(() => {
