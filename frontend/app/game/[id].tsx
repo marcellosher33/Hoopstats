@@ -894,6 +894,14 @@ export default function LiveGameScreen() {
             >
               <Text style={styles.score}>{currentGame.opponent_score}</Text>
             </TouchableOpacity>
+            {/* Away Team Timeout Button */}
+            <TouchableOpacity 
+              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
+              onPress={() => callTimeout('away')}
+            >
+              <Ionicons name="hand-left" size={12} color={colors.text} />
+              <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
+            </TouchableOpacity>
             {/* Opponent Quick Score Buttons */}
             <View style={styles.opponentQuickScore}>
               <TouchableOpacity 
