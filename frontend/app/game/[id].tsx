@@ -79,6 +79,12 @@ export default function LiveGameScreen() {
   // Stats filter by period (null = all periods)
   const [statsFilterPeriod, setStatsFilterPeriod] = useState<number | null>(null);
   
+  // Timeout state
+  const [homeTimeouts, setHomeTimeouts] = useState(0);
+  const [awayTimeouts, setAwayTimeouts] = useState(0);
+  const [isTimeout, setIsTimeout] = useState(false);
+  const [timeoutTeam, setTimeoutTeam] = useState<'home' | 'away' | null>(null);
+  
   // Court side selection: 'top' means top of screen is 1st half, 'bottom' means bottom is 1st half
   const [firstHalfCourtSide, setFirstHalfCourtSide] = useState<'top' | 'bottom'>('top');
   const [showCourtSideModal, setShowCourtSideModal] = useState(false);
