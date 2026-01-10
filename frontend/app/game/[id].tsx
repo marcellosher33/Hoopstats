@@ -253,6 +253,38 @@ export default function LiveGameScreen() {
     }
   };
 
+  // Call timeout for a team - stops all clocks automatically
+  const callTimeout = (team: 'home' | 'away') => {
+    // Stop all clocks
+    setIsClockRunning(false);
+    
+    // Increment timeout count
+    if (team === 'home') {
+      setHomeTimeouts(prev => prev + 1);
+    } else {
+      setAwayTimeouts(prev => prev + 1);
+    }
+    
+    // Set timeout state for visual feedback
+    setIsTimeout(true);
+    setTimeoutTeam(team);
+    
+    // Show alert
+    Alert.alert(
+      'TIMEOUT',
+      `${team === 'home' ? currentGame?.home_team_name || 'Home' : currentGame?.opponent_name || 'Away'} timeout called.\n\nTimeouts used: ${team === 'home' ? homeTimeouts + 1 : awayTimeouts + 1}`,
+      [
+        { 
+          text: 'Resume Play', 
+          onPress: () => {
+            setIsTimeout(false);
+            setTimeoutTeam(null);
+          }
+        }
+      ]
+    );
+  };
+
   // Get period status text
   const getPeriodStatusText = (): string | null => {
     if (!currentGame) return null;
