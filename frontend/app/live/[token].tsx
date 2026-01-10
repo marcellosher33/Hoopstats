@@ -19,6 +19,14 @@ import { Game } from '../../src/types';
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const { width: screenWidth } = Dimensions.get('window');
 
+// Play-by-play action interface
+interface PlayByPlayAction {
+  id: string;
+  text: string;
+  timestamp: number;
+  type: 'score' | 'foul' | 'turnover' | 'rebound' | 'other';
+}
+
 export default function LiveGameViewer() {
   const { token } = useLocalSearchParams<{ token: string }>();
   const [game, setGame] = useState<Game | null>(null);
@@ -28,9 +36,18 @@ export default function LiveGameViewer() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const appState = useRef(AppState.currentState);
   
+  // Local clock state for smooth countdown
+  const [localClockSeconds, setLocalClockSeconds] = useState<number | null>(null);
+  const [isClockRunning, setIsClockRunning] = useState(false);
+  const clockSyncRef = useRef<number | null>(null);
+  
+  // Play-by-play state
+  const [playByPlay, setPlayByPlay] = useState<PlayByPlayAction[]>([]);
+  const lastProcessedStats = useRef<string>('');
+  
   // Shot chart popup state
   const [showShotPopup, setShowShotPopup] = useState(false);
-  const [lastShotLocation, setLastShotLocation] = useState<{x: number, y: number} | null>(null);
+  const [lastShotLocation, setLastShotLocation] = useState<{x: number, y: number, playerName?: string} | null>(null);
   const shotPopupOpacity = useRef(new Animated.Value(0)).current;
   const lastProcessedShot = useRef<string | null>(null);
 
