@@ -175,6 +175,7 @@ export default function LiveGameViewer() {
 
   const isLive = game.status === 'in_progress';
   const isCompleted = game.status === 'completed';
+  const periodStatus = getPeriodStatusText();
 
   return (
     <View style={styles.container}>
@@ -183,13 +184,20 @@ export default function LiveGameViewer() {
         colors={['#1a1a2e', '#16213e']}
         style={styles.header}
       >
-        {isLive && (
+        {/* Period Status Overlay */}
+        {periodStatus && (
+          <View style={styles.periodStatusOverlay}>
+            <Text style={styles.periodStatusText}>{periodStatus}</Text>
+          </View>
+        )}
+        
+        {isLive && !periodStatus && (
           <View style={styles.liveBadge}>
             <View style={styles.liveIndicator} />
             <Text style={styles.liveText}>LIVE</Text>
           </View>
         )}
-        {isCompleted && (
+        {isCompleted && !periodStatus && (
           <View style={styles.finalBadge}>
             <Ionicons name="checkmark-circle" size={14} color={colors.success} />
             <Text style={styles.finalText}>FINAL</Text>
@@ -203,10 +211,23 @@ export default function LiveGameViewer() {
           </View>
           
           <View style={styles.gameInfo}>
-            <Text style={styles.vsText}>VS</Text>
             <Text style={styles.periodText}>
               {game.period_type === 'halves' ? `H${game.current_period}` : `Q${game.current_period}`}
             </Text>
+            {/* Game Clock */}
+            {game.game_clock_seconds !== undefined && (
+              <View style={styles.gameClockContainer}>
+                <Text style={[
+                  styles.gameClock, 
+                  (game.game_clock_seconds || 0) <= 60 && styles.gameClockLow
+                ]}>
+                  {formatClock(game.game_clock_seconds || 0)}
+                </Text>
+                {game.clock_running && (
+                  <View style={styles.clockRunningIndicator} />
+                )}
+              </View>
+            )}
           </View>
           
           <View style={styles.teamSection}>
