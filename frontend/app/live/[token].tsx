@@ -338,16 +338,16 @@ export default function LiveGameViewer() {
             <Text style={styles.periodText}>
               {game.period_type === 'halves' ? `H${game.current_period}` : `Q${game.current_period}`}
             </Text>
-            {/* Game Clock */}
-            {game.game_clock_seconds !== undefined && (
+            {/* Game Clock - uses local countdown for smooth display */}
+            {localClockSeconds !== null && (
               <View style={styles.gameClockContainer}>
                 <Text style={[
                   styles.gameClock, 
-                  (game.game_clock_seconds || 0) <= 60 && styles.gameClockLow
+                  localClockSeconds <= 60 && styles.gameClockLow
                 ]}>
-                  {formatClock(game.game_clock_seconds || 0)}
+                  {formatClock(localClockSeconds)}
                 </Text>
-                {game.clock_running && (
+                {isClockRunning && (
                   <View style={styles.clockRunningIndicator} />
                 )}
               </View>
@@ -359,6 +359,27 @@ export default function LiveGameViewer() {
             <Text style={styles.score}>{game.opponent_score}</Text>
           </View>
         </View>
+        
+        {/* Play-by-Play Feed */}
+        {playByPlay.length > 0 && (
+          <View style={styles.playByPlayContainer}>
+            {playByPlay.slice(0, 2).map((action, index) => (
+              <Text 
+                key={action.id} 
+                style={[
+                  styles.playByPlayText,
+                  index > 0 && styles.playByPlayTextOlder
+                ]}
+              >
+                {action.type === 'score' && '🏀 '}
+                {action.type === 'foul' && '⚠️ '}
+                {action.type === 'turnover' && '❌ '}
+                {action.type === 'rebound' && '📊 '}
+                {action.text}
+              </Text>
+            ))}
+          </View>
+        )}
         
         <Text style={styles.lastUpdate}>
           Last updated: {lastUpdate.toLocaleTimeString()}
