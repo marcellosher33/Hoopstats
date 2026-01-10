@@ -760,6 +760,9 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
                 player_name=player["name"]
             ))
     
+    # Initialize game clock to the period time (in seconds)
+    initial_clock_seconds = game_data.period_time_minutes * 60
+    
     game = Game(
         user_id=user["id"],
         team_id=game_data.team_id,
@@ -770,10 +773,13 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
         game_type=game_data.game_type,
         venue=game_data.venue,
         period_type=game_data.period_type,
+        period_time_minutes=game_data.period_time_minutes,
+        game_clock_seconds=initial_clock_seconds,
+        clock_running=False,
         player_stats=player_stats
     )
     
-    await db.games.insert_one(game.dict())
+    await db.games.insert_one(game.model_dump())
     return game
 
 @api_router.get("/games")
