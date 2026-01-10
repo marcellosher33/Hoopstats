@@ -79,6 +79,11 @@ export default function GameSummaryScreen() {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all'); // 'all', 'h1', 'h2', or 'q1', 'q2', 'q3', 'q4'
   const [subscriptionTier, setSubscriptionTier] = useState<string>('free');
   const videoRef = useRef<Video>(null);
+  
+  // Notes editing state
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notesText, setNotesText] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
 
   const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
