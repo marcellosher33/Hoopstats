@@ -238,8 +238,9 @@ export default function LiveGameViewer() {
     });
   };
   
-  // Local clock countdown effect
+  // Local clock countdown effect - runs independently when clock is running
   useEffect(() => {
+    // Only run countdown if clock is running and we have a valid time
     if (!isClockRunning || localClockSeconds === null || localClockSeconds <= 0) {
       return;
     }
@@ -252,7 +253,7 @@ export default function LiveGameViewer() {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [isClockRunning, localClockSeconds]);
+  }, [isClockRunning]); // Only depend on isClockRunning, not localClockSeconds
   
   // Show shot popup animation
   const showShotAnimation = () => {
