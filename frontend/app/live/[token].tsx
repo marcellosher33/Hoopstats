@@ -132,6 +132,10 @@ export default function LiveGameViewer() {
       pts: ps.stats.points,
       fouls: ps.stats.fouls,
       to: ps.stats.turnovers,
+      stl: ps.stats.steals,
+      blk: ps.stats.blocks,
+      ast: ps.stats.assists,
+      fga: ps.stats.fg_attempted,
       reb: (ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)
     })));
     
@@ -143,6 +147,50 @@ export default function LiveGameViewer() {
       if (!oldPs) return;
       
       const playerName = newPs.player_name.split(' ')[0]; // First name only
+      
+      // Check for steals
+      if ((newPs.stats.steals || 0) > (oldPs.stats.steals || 0)) {
+        addPlayByPlay({
+          id: `stl_${newPs.player_id}_${Date.now()}`,
+          text: `Steal by ${playerName}!`,
+          timestamp: Date.now(),
+          type: 'steal'
+        });
+      }
+      
+      // Check for blocks
+      if ((newPs.stats.blocks || 0) > (oldPs.stats.blocks || 0)) {
+        addPlayByPlay({
+          id: `blk_${newPs.player_id}_${Date.now()}`,
+          text: `Block by ${playerName}!`,
+          timestamp: Date.now(),
+          type: 'block'
+        });
+      }
+      
+      // Check for assists
+      if ((newPs.stats.assists || 0) > (oldPs.stats.assists || 0)) {
+        addPlayByPlay({
+          id: `ast_${newPs.player_id}_${Date.now()}`,
+          text: `Assist by ${playerName}`,
+          timestamp: Date.now(),
+          type: 'assist'
+        });
+      }
+      
+      // Check for missed shots (FGA increased but FGM didn't)
+      const newFGA = (newPs.stats.fg_attempted || 0);
+      const oldFGA = (oldPs.stats.fg_attempted || 0);
+      const newFGM = (newPs.stats.fg_made || 0);
+      const oldFGM = (oldPs.stats.fg_made || 0);
+      if (newFGA > oldFGA && newFGM === oldFGM) {
+        addPlayByPlay({
+          id: `miss_${newPs.player_id}_${Date.now()}`,
+          text: `${playerName} misses`,
+          timestamp: Date.now(),
+          type: 'miss'
+        });
+      }
       
       // Check for fouls
       if ((newPs.stats.fouls || 0) > (oldPs.stats.fouls || 0)) {
@@ -164,7 +212,7 @@ export default function LiveGameViewer() {
         });
       }
       
-      // Check for rebounds (without shot info)
+      // Check for rebounds
       const newReb = (newPs.stats.offensive_rebounds || 0) + (newPs.stats.defensive_rebounds || 0);
       const oldReb = (oldPs.stats.offensive_rebounds || 0) + (oldPs.stats.defensive_rebounds || 0);
       if (newReb > oldReb) {
