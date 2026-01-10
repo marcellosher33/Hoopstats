@@ -41,6 +41,17 @@ const PERIOD_TYPE_OPTIONS: { value: PeriodType; label: string; description: stri
   { value: 'halves', label: '2 Halves', description: 'College, FIBA, Youth' },
 ];
 
+const PERIOD_TIME_OPTIONS = [
+  { value: 4, label: '4 min' },
+  { value: 5, label: '5 min' },
+  { value: 6, label: '6 min' },
+  { value: 8, label: '8 min' },
+  { value: 10, label: '10 min' },
+  { value: 12, label: '12 min' },
+  { value: 15, label: '15 min' },
+  { value: 20, label: '20 min' },
+];
+
 export default function NewGameScreen() {
   const router = useRouter();
   const { token } = useAuthStore();
