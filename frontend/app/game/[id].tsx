@@ -193,7 +193,13 @@ export default function LiveGameScreen() {
 
   // Minutes tracking interval for team mode
   useEffect(() => {
-    if (teamMode && activePlayerIds.size > 0) {
+    // Clear any existing interval first
+    if (minutesIntervalRef.current) {
+      clearInterval(minutesIntervalRef.current);
+      minutesIntervalRef.current = null;
+    }
+    
+    if (teamMode && activePlayerIds.size > 0 && isClockRunning) {
       minutesIntervalRef.current = setInterval(() => {
         setPlayerMinutes(prev => {
           const updated = { ...prev };
@@ -203,17 +209,15 @@ export default function LiveGameScreen() {
           return updated;
         });
       }, 1000);
-    } else if (minutesIntervalRef.current) {
-      clearInterval(minutesIntervalRef.current);
-      minutesIntervalRef.current = null;
     }
 
     return () => {
       if (minutesIntervalRef.current) {
         clearInterval(minutesIntervalRef.current);
+        minutesIntervalRef.current = null;
       }
     };
-  }, [teamMode, activePlayerIds]);
+  }, [teamMode, activePlayerIds.size, isClockRunning]);
 
   // Single player mode clock
   useEffect(() => {
