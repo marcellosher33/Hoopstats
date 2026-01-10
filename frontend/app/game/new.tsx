@@ -309,6 +309,34 @@ export default function NewGameScreen() {
             </View>
           </View>
 
+          {/* Period Time Selector */}
+          <View style={styles.dropdownSection}>
+            <Text style={styles.label}>Time Per {periodType === 'quarters' ? 'Quarter' : 'Half'}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.timeOptionsScroll}>
+              <View style={styles.timeOptionsRow}>
+                {PERIOD_TIME_OPTIONS.map((option) => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.timeButton,
+                      periodTimeMinutes === option.value && styles.timeButtonActive,
+                    ]}
+                    onPress={() => setPeriodTimeMinutes(option.value)}
+                  >
+                    <Text
+                      style={[
+                        styles.timeButtonText,
+                        periodTimeMinutes === option.value && styles.timeButtonTextActive,
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+
           {/* Venue (optional text input) */}
           <Input
             label="Venue (Optional)"
