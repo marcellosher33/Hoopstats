@@ -65,6 +65,7 @@ export default function NewGameScreen() {
   const [periodTimeMinutes, setPeriodTimeMinutes] = useState(8); // Default 8 minutes per quarter
   const [homeTeamName, setHomeTeamName] = useState('');
   const [venue, setVenue] = useState('');
+  const [gameNotes, setGameNotes] = useState(''); // Game goals/notes
   
   // Update default time when period type changes
   useEffect(() => {
