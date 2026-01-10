@@ -315,8 +315,8 @@ export default function LiveGameViewer() {
   useEffect(() => {
     fetchGame();
     
-    // Fast refresh every 2 seconds for real-time updates
-    const interval = setInterval(fetchGame, 2000);
+    // Refresh every 3 seconds for real-time updates (balanced between responsiveness and stability)
+    const interval = setInterval(fetchGame, 3000);
     
     // Handle app state changes (pause when backgrounded)
     const subscription = AppState.addEventListener('change', nextAppState => {
