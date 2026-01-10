@@ -151,9 +151,18 @@ export default function LiveGameScreen() {
 
   // Save active players to backend when they change
   const saveActivePlayersDebounced = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevActivePlayerIds = useRef<string[]>([]);
   
   useEffect(() => {
     if (!token || !id || !currentGame) return;
+    
+    const currentIds = Array.from(activePlayerIds).sort().join(',');
+    const prevIds = prevActivePlayerIds.current.sort().join(',');
+    
+    // Only update if the active players actually changed
+    if (currentIds === prevIds) return;
+    
+    prevActivePlayerIds.current = Array.from(activePlayerIds);
     
     // Debounce to avoid too many API calls
     if (saveActivePlayersDebounced.current) {
@@ -169,7 +178,7 @@ export default function LiveGameScreen() {
         clearTimeout(saveActivePlayersDebounced.current);
       }
     };
-  }, [activePlayerIds]);
+  }, [activePlayerIds, token, id, currentGame?.id]);
 
   // Save court side preference when it changes
   const prevCourtSide = useRef(firstHalfCourtSide);
