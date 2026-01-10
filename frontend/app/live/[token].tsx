@@ -423,6 +423,10 @@ export default function LiveGameViewer() {
                 {action.type === 'foul' && '⚠️ '}
                 {action.type === 'turnover' && '❌ '}
                 {action.type === 'rebound' && '📊 '}
+                {action.type === 'steal' && '🔥 '}
+                {action.type === 'block' && '🚫 '}
+                {action.type === 'assist' && '🎯 '}
+                {action.type === 'miss' && '❌ '}
                 {action.text}
               </Text>
             ))}
