@@ -300,6 +300,7 @@ class GameCreate(BaseModel):
     game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
     venue: Optional[str] = None  # Custom venue name
     period_type: str = "quarters"  # quarters or halves
+    period_time_minutes: int = 8  # Minutes per period
     player_ids: List[str] = []
 
 class StatUpdate(BaseModel):
