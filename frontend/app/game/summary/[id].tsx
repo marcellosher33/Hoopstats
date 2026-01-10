@@ -1261,15 +1261,71 @@ export default function GameSummaryScreen() {
         </View>
       </Modal>
 
-      {/* Game Notes */}
-      {currentGame.notes && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notes</Text>
-          <View style={styles.notesCard}>
-            <Text style={styles.notesText}>{currentGame.notes}</Text>
-          </View>
+      {/* Game Notes - Always visible, editable */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Private Notes</Text>
+          {!editingNotes ? (
+            <TouchableOpacity onPress={() => setEditingNotes(true)}>
+              <Ionicons name="pencil" size={20} color={colors.primary} />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.notesActionButtons}>
+              <TouchableOpacity 
+                onPress={handleCancelNotesEdit}
+                style={styles.notesCancelBtn}
+              >
+                <Text style={styles.notesCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={handleSaveNotes}
+                style={styles.notesSaveBtn}
+                disabled={savingNotes}
+              >
+                {savingNotes ? (
+                  <ActivityIndicator size="small" color={colors.text} />
+                ) : (
+                  <Text style={styles.notesSaveText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-      )}
+        
+        {editingNotes ? (
+          <View style={styles.notesEditCard}>
+            <TextInput
+              style={styles.notesInput}
+              value={notesText}
+              onChangeText={setNotesText}
+              placeholder="Add private notes about this game (strategy, observations, goals for next game...)"
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+            <View style={styles.notesPrivacyNote}>
+              <Ionicons name="lock-closed" size={12} color={colors.textSecondary} />
+              <Text style={styles.notesPrivacyText}>Only you can see these notes</Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.notesCard}>
+            {currentGame.notes ? (
+              <Text style={styles.notesText}>{currentGame.notes}</Text>
+            ) : (
+              <TouchableOpacity 
+                style={styles.emptyNotesCard}
+                onPress={() => setEditingNotes(true)}
+              >
+                <Ionicons name="document-text-outline" size={32} color={colors.textSecondary} />
+                <Text style={styles.emptyNotesText}>Tap to add private notes</Text>
+                <Text style={styles.emptyNotesHint}>Strategy, observations, goals for next game...</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
 
       {/* Tags */}
       {currentGame.tags.length > 0 && (
