@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game, ShotAttempt } from '../../src/types';
-import { FullCourtShotChart } from '../../src/components/FullCourtShotChart';
+import { ShotChart } from '../../src/components/ShotChart';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const { width: screenWidth } = Dimensions.get('window');
