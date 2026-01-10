@@ -502,9 +502,39 @@ export default function LiveGameViewer() {
         {/* Footer */}
         <View style={styles.footer}>
           <Ionicons name="basketball" size={20} color={colors.textSecondary} />
-          <Text style={styles.footerText}>Powered by CourtClock</Text>
+          <Text style={styles.footerText}>Powered by HoopStats</Text>
         </View>
       </ScrollView>
+
+      {/* Shot Chart Popup */}
+      {showShotPopup && lastShotLocation && (
+        <Animated.View 
+          style={[
+            styles.shotPopupOverlay,
+            { opacity: shotPopupOpacity }
+          ]}
+        >
+          <View style={styles.shotPopupChart}>
+            <View style={styles.shotPopupCourt}>
+              {/* Court outline */}
+              <View style={styles.courtOutline} />
+              {/* Shot marker */}
+              <View 
+                style={[
+                  styles.shotMarker,
+                  { 
+                    left: `${lastShotLocation.x}%`,
+                    top: `${lastShotLocation.y}%`,
+                  }
+                ]}
+              >
+                <View style={styles.shotMarkerInner} />
+              </View>
+            </View>
+            <Text style={styles.shotPopupText}>MADE SHOT!</Text>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 }
