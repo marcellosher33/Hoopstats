@@ -124,7 +124,7 @@ export default function LiveGameScreen() {
     fetchSubscription();
   }, [token]);
 
-  // Load active players and court side from game data when it loads
+  // Load active players, court side, and game clock from game data when it loads
   useEffect(() => {
     if (currentGame) {
       setOpponentScore(currentGame.opponent_score.toString());
@@ -140,6 +140,13 @@ export default function LiveGameScreen() {
         setFirstHalfCourtSide(currentGame.court_side as 'top' | 'bottom');
       }
       
+      // Initialize game clock from saved state
+      if (currentGame.game_clock_seconds !== undefined) {
+        setGameClockSeconds(currentGame.game_clock_seconds);
+      } else if (currentGame.period_time_minutes) {
+        setGameClockSeconds(currentGame.period_time_minutes * 60);
+      }
+      
       // Initialize minutes for all players
       const initialMinutes: Record<string, number> = {};
       currentGame.player_stats.forEach(ps => {
@@ -148,6 +155,115 @@ export default function LiveGameScreen() {
       setPlayerMinutes(prev => ({ ...initialMinutes, ...prev }));
     }
   }, [currentGame?.id]); // Only run when game ID changes to avoid resetting on every update
+
+  // Game clock countdown effect
+  useEffect(() => {
+    if (gameClockRef.current) {
+      clearInterval(gameClockRef.current);
+      gameClockRef.current = null;
+    }
+    
+    if (isClockRunning && gameClockSeconds > 0) {
+      gameClockRef.current = setInterval(() => {
+        setGameClockSeconds(prev => {
+          if (prev <= 1) {
+            // Clock reached 0 - stop the clock
+            setIsClockRunning(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      if (gameClockRef.current) {
+        clearInterval(gameClockRef.current);
+        gameClockRef.current = null;
+      }
+    };
+  }, [isClockRunning, gameClockSeconds > 0]);
+
+  // Save game clock to backend periodically when running
+  const saveClockDebounced = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!token || !id || !currentGame) return;
+    
+    if (saveClockDebounced.current) {
+      clearTimeout(saveClockDebounced.current);
+    }
+    
+    saveClockDebounced.current = setTimeout(() => {
+      updateGame(id, { 
+        game_clock_seconds: gameClockSeconds,
+        clock_running: isClockRunning 
+      }, token);
+    }, 2000); // Save every 2 seconds
+    
+    return () => {
+      if (saveClockDebounced.current) {
+        clearTimeout(saveClockDebounced.current);
+      }
+    };
+  }, [gameClockSeconds, isClockRunning]);
+
+  // Format seconds to MM:SS
+  const formatClock = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Toggle master clock (starts/stops both game clock and player minutes)
+  const toggleMasterClock = () => {
+    setIsClockRunning(prev => !prev);
+  };
+
+  // Open clock edit modal
+  const openClockEdit = () => {
+    const mins = Math.floor(gameClockSeconds / 60);
+    const secs = gameClockSeconds % 60;
+    setEditClockMinutes(mins.toString());
+    setEditClockSeconds(secs.toString());
+    setShowClockEditModal(true);
+  };
+
+  // Save edited clock time
+  const saveClockEdit = () => {
+    const mins = parseInt(editClockMinutes) || 0;
+    const secs = parseInt(editClockSeconds) || 0;
+    const totalSeconds = (mins * 60) + Math.min(secs, 59);
+    setGameClockSeconds(totalSeconds);
+    setShowClockEditModal(false);
+  };
+
+  // Reset clock to period time
+  const resetClockToPeriodTime = () => {
+    if (currentGame?.period_time_minutes) {
+      setGameClockSeconds(currentGame.period_time_minutes * 60);
+    }
+  };
+
+  // Get period status text
+  const getPeriodStatusText = (): string | null => {
+    if (!currentGame) return null;
+    
+    const isQuarters = currentGame.period_type === 'quarters';
+    const currentPeriod = currentGame.current_period || 1;
+    const totalPeriods = isQuarters ? 4 : 2;
+    
+    // Only show status if clock is at 0
+    if (gameClockSeconds > 0) return null;
+    
+    if (currentPeriod >= totalPeriods) {
+      return 'FINAL';
+    } else if (isQuarters) {
+      if (currentPeriod === 2) return 'HALFTIME';
+      return `END OF Q${currentPeriod}`;
+    } else {
+      return `END OF ${currentPeriod === 1 ? '1ST' : '2ND'} HALF`;
+    }
+  };
 
   // Save active players to backend when they change
   const saveActivePlayersDebounced = useRef<ReturnType<typeof setTimeout> | null>(null);
