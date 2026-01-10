@@ -61,8 +61,15 @@ export default function LiveGameScreen() {
   // New state for minutes tracking and active players
   const [playerMinutes, setPlayerMinutes] = useState<Record<string, number>>({});
   const [activePlayerIds, setActivePlayerIds] = useState<Set<string>>(new Set());
-  const [isClockRunning, setIsClockRunning] = useState(false); // Single player mode clock
+  const [isClockRunning, setIsClockRunning] = useState(false); // Master clock running state
   const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  
+  // Game Clock state
+  const [gameClockSeconds, setGameClockSeconds] = useState<number>(0);
+  const [showClockEditModal, setShowClockEditModal] = useState(false);
+  const [editClockMinutes, setEditClockMinutes] = useState('0');
+  const [editClockSeconds, setEditClockSeconds] = useState('0');
+  const gameClockRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Minutes editing
   const [showMinutesModal, setShowMinutesModal] = useState(false);
