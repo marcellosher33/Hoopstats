@@ -89,6 +89,15 @@ export default function LiveGameViewer() {
       const wasClockRunning = isClockRunningRef.current;
       const currentLocalClock = localClockSecondsRef.current;
       
+      // DEBUG: Log what we're receiving from server
+      console.log('[LiveView] Server data:', {
+        clock_running: data.clock_running,
+        game_clock_seconds: data.game_clock_seconds,
+        serverClockRunning,
+        wasClockRunning,
+        currentLocalClock
+      });
+      
       // CLOCK SYNC LOGIC:
       // 1. First load (localClockSeconds is null) - always sync
       // 2. Clock just STOPPED (was running, now stopped) - sync to server time
@@ -96,21 +105,27 @@ export default function LiveGameViewer() {
       // 4. Clock is RUNNING - do NOT sync, let local countdown run independently
       if (currentLocalClock === null && data.game_clock_seconds !== undefined) {
         // First load - initialize local clock from server
+        console.log('[LiveView] First load - syncing clock to:', data.game_clock_seconds);
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       } else if (!serverClockRunning && wasClockRunning && data.game_clock_seconds !== undefined) {
         // Clock just stopped - sync to server's authoritative time
+        console.log('[LiveView] Clock stopped - syncing to:', data.game_clock_seconds);
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       } else if (!serverClockRunning && !wasClockRunning && data.game_clock_seconds !== undefined) {
         // Clock is paused and was paused - sync to keep in sync during pauses
+        console.log('[LiveView] Clock paused - syncing to:', data.game_clock_seconds);
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
+      } else if (serverClockRunning) {
+        console.log('[LiveView] Clock running - NOT syncing, letting local countdown run');
       }
-      // When serverClockRunning is true, we do NOT update localClockSeconds
-      // The local interval handles the countdown independently
       
       // Update running state - this will trigger/stop the local countdown
+      if (serverClockRunning !== wasClockRunning) {
+        console.log('[LiveView] Clock running state CHANGED:', wasClockRunning, '->', serverClockRunning);
+      }
       setIsClockRunning(serverClockRunning);
       
       // Check for new made shot - show popup
