@@ -60,7 +60,11 @@ export default function LiveGameViewer() {
         if (response.status === 404) {
           setError('Game not found or sharing has been disabled');
         } else {
-          setError('Failed to load game');
+          // Only set error if we don't have game data yet (initial load)
+          // Don't show errors during refresh if we already have data
+          if (!game) {
+            setError('Failed to load game');
+          }
         }
         return;
       }
@@ -106,9 +110,14 @@ export default function LiveGameViewer() {
       
       setGame(data);
       setLastUpdate(new Date());
-      setError(null);
+      setError(null); // Clear any previous errors on success
     } catch (err) {
-      setError('Network error - check your connection');
+      // Only show network error if we don't have game data yet
+      // Silent fail during refresh to avoid flickering errors
+      if (!game) {
+        setError('Network error - check your connection');
+      }
+      console.log('Live view fetch error (will retry):', err);
     } finally {
       setLoading(false);
       setRefreshing(false);
