@@ -775,7 +775,7 @@ export default function LiveGameViewer() {
               <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName} scores!</Text>
             )}
             
-            {/* Use the half court ShotChart component - smaller size for better view */}
+            {/* Use the half court ShotChart component - compact size to not obstruct view */}
             <View style={styles.shotChartWrapper}>
               <ShotChart
                 shots={[{
@@ -786,8 +786,8 @@ export default function LiveGameViewer() {
                   is_three_pointer: false,
                   timestamp: new Date().toISOString(),
                 }]}
-                width={screenWidth * 0.45}
-                height={screenWidth * 0.4}
+                width={screenWidth * 0.25}
+                height={screenWidth * 0.22}
                 interactive={false}
               />
             </View>
