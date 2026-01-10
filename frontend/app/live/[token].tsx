@@ -77,7 +77,8 @@ export default function LiveGameViewer() {
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       }
-      setIsClockRunning(data.is_clock_running || false);
+      // Backend uses clock_running, not is_clock_running
+      setIsClockRunning(data.clock_running || data.is_clock_running || false);
       
       // Check for new made shot - show popup
       if (data.last_made_shot) {
