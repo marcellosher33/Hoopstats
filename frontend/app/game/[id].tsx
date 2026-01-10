@@ -1720,6 +1720,69 @@ export default function LiveGameScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* Clock Edit Modal */}
+      <Modal visible={showClockEditModal} animationType="fade" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.scoreModal}>
+            <Text style={styles.modalTitle}>Edit Game Clock</Text>
+            <Text style={styles.modalSubtitle}>Set time remaining in current period</Text>
+            <View style={styles.clockEditRow}>
+              <View style={styles.clockEditInput}>
+                <TextInput
+                  style={styles.clockEditField}
+                  value={editClockMinutes}
+                  onChangeText={setEditClockMinutes}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="00"
+                  placeholderTextColor={colors.textSecondary}
+                />
+                <Text style={styles.clockEditLabel}>min</Text>
+              </View>
+              <Text style={styles.clockEditSeparator}>:</Text>
+              <View style={styles.clockEditInput}>
+                <TextInput
+                  style={styles.clockEditField}
+                  value={editClockSeconds}
+                  onChangeText={setEditClockSeconds}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="00"
+                  placeholderTextColor={colors.textSecondary}
+                />
+                <Text style={styles.clockEditLabel}>sec</Text>
+              </View>
+            </View>
+            <TouchableOpacity 
+              style={styles.resetClockBtn}
+              onPress={() => {
+                resetClockToPeriodTime();
+                setShowClockEditModal(false);
+              }}
+            >
+              <Ionicons name="refresh" size={18} color={colors.primary} />
+              <Text style={styles.resetClockBtnText}>Reset to {currentGame?.period_time_minutes || 8}:00</Text>
+            </TouchableOpacity>
+            <View style={styles.modalButtons}>
+              <Button
+                title="Cancel"
+                onPress={() => setShowClockEditModal(false)}
+                variant="ghost"
+                style={{ flex: 1 }}
+              />
+              <Button
+                title="Save"
+                onPress={saveClockEdit}
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
