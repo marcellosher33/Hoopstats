@@ -133,6 +133,7 @@ export default function NewGameScreen() {
           game_type: gameType || undefined,
           venue: venue.trim() || undefined,
           period_type: periodType,
+          period_time_minutes: periodTimeMinutes,
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
         },
