@@ -7,6 +7,8 @@ import {
   RefreshControl,
   ActivityIndicator,
   AppState,
+  Animated,
+  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +17,7 @@ import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game } from '../../src/types';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function LiveGameViewer() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -24,6 +27,12 @@ export default function LiveGameViewer() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const appState = useRef(AppState.currentState);
+  
+  // Shot chart popup state
+  const [showShotPopup, setShowShotPopup] = useState(false);
+  const [lastShotLocation, setLastShotLocation] = useState<{x: number, y: number} | null>(null);
+  const shotPopupOpacity = useRef(new Animated.Value(0)).current;
+  const lastProcessedShot = useRef<string | null>(null);
 
   const fetchGame = useCallback(async () => {
     if (!token) return;
@@ -39,6 +48,17 @@ export default function LiveGameViewer() {
         return;
       }
       const data = await response.json();
+      
+      // Check for new made shot
+      if (data.last_made_shot) {
+        const shotKey = `${data.last_made_shot.player_id}_${data.last_made_shot.timestamp}`;
+        if (shotKey !== lastProcessedShot.current) {
+          lastProcessedShot.current = shotKey;
+          setLastShotLocation({ x: data.last_made_shot.x, y: data.last_made_shot.y });
+          showShotAnimation();
+        }
+      }
+      
       setGame(data);
       setLastUpdate(new Date());
       setError(null);
@@ -49,6 +69,66 @@ export default function LiveGameViewer() {
       setRefreshing(false);
     }
   }, [token]);
+  
+  // Show shot popup animation
+  const showShotAnimation = () => {
+    setShowShotPopup(true);
+    Animated.sequence([
+      Animated.timing(shotPopupOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.delay(1500),
+      Animated.timing(shotPopupOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setShowShotPopup(false);
+    });
+  };
+
+  // Format seconds to MM:SS
+  const formatClock = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Get period status text
+  const getPeriodStatusText = (): string | null => {
+    if (!game) return null;
+    
+    const isQuarters = game.period_type === 'quarters';
+    const currentPeriod = game.current_period || 1;
+    const totalPeriods = isQuarters ? 4 : 2;
+    const clockSeconds = game.game_clock_seconds || 0;
+    
+    // Only show status if clock is at 0 and game is not completed
+    if (game.status === 'completed') {
+      return 'FINAL';
+    }
+    
+    if (clockSeconds > 0) return null;
+    
+    if (currentPeriod >= totalPeriods) {
+      return 'FINAL';
+    } else if (isQuarters) {
+      if (currentPeriod === 2) return 'HALFTIME';
+      return `END OF Q${currentPeriod}`;
+    } else {
+      return currentPeriod === 1 ? 'END OF 1ST HALF' : 'FINAL';
+    }
+  };
+
+  // Format time for player minutes
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     fetchGame();
