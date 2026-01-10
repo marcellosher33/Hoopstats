@@ -64,7 +64,7 @@ export default function GameSummaryScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { token, user } = useAuthStore();
-  const { currentGame, fetchGame, generateAISummary, deleteGame, adjustStat } = useGameStore();
+  const { currentGame, fetchGame, generateAISummary, deleteGame, adjustStat, updateGame } = useGameStore();
   
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
