@@ -713,9 +713,17 @@ export default function LiveGameViewer() {
           <Ionicons name="basketball" size={20} color={colors.textSecondary} />
           <Text style={styles.footerText}>Powered by HoopStats</Text>
         </View>
+        
+        {/* Scroll down message for game summary when game is in progress */}
+        {game.status === 'in_progress' && game.player_stats && game.player_stats.length > 0 && (
+          <View style={styles.scrollHintContainer}>
+            <Ionicons name="chevron-down" size={24} color={colors.textSecondary} />
+            <Text style={styles.scrollHintText}>Scroll down for player stats</Text>
+          </View>
+        )}
       </ScrollView>
 
-      {/* Shot Chart Popup */}
+      {/* Shot Chart Popup - Using the same FullCourtShotChart as the main game */}
       {showShotPopup && lastShotLocation && (
         <Animated.View 
           style={[
@@ -723,47 +731,31 @@ export default function LiveGameViewer() {
             { opacity: shotPopupOpacity }
           ]}
         >
-          <View style={styles.shotPopupChart}>
+          <View style={styles.shotPopupContainer}>
             {/* Player name who made the shot */}
             {lastShotLocation.playerName && (
-              <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName}</Text>
+              <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName} scores!</Text>
             )}
-            <View style={styles.shotPopupCourt}>
-              {/* Half court background */}
-              <View style={styles.courtFloor} />
-              
-              {/* Three-point line arc */}
-              <View style={styles.threePointArc} />
-              
-              {/* Key/Paint area */}
-              <View style={styles.keyArea} />
-              
-              {/* Free throw circle */}
-              <View style={styles.freeThrowCircle} />
-              
-              {/* Basket/Hoop */}
-              <View style={styles.hoopArea}>
-                <View style={styles.backboard} />
-                <View style={styles.hoop} />
-              </View>
-              
-              {/* Shot marker with animation pulse */}
-              <View 
-                style={[
-                  styles.shotMarker,
-                  { 
-                    left: `${lastShotLocation.x}%`,
-                    top: `${lastShotLocation.y}%`,
-                  }
-                ]}
-              >
-                <View style={styles.shotMarkerPulse} />
-                <View style={styles.shotMarkerInner} />
-              </View>
+            
+            {/* Use the actual FullCourtShotChart component */}
+            <View style={styles.shotChartWrapper}>
+              <FullCourtShotChart
+                shots={[{
+                  id: 'live-shot',
+                  x: lastShotLocation.x / 100, // Convert percentage to 0-1 range
+                  y: lastShotLocation.y / 100,
+                  made: true,
+                  is_three_pointer: false,
+                  timestamp: new Date().toISOString(),
+                }]}
+                width={screenWidth * 0.85}
+                height={screenWidth * 0.7}
+                interactive={false}
+                firstHalfSide="top"
+              />
             </View>
-            <Text style={styles.shotPopupText}>
-              {lastShotLocation.playerName ? `${lastShotLocation.playerName} scores!` : 'MADE SHOT!'}
-            </Text>
+            
+            <Text style={styles.shotPopupText}>MADE SHOT!</Text>
           </View>
         </Animated.View>
       )}
