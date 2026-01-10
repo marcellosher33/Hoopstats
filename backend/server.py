@@ -325,6 +325,10 @@ class GameUpdate(BaseModel):
     team_id: Optional[str] = None
     home_team_name: Optional[str] = None
     player_minutes: Optional[Dict[str, int]] = None  # Player ID -> seconds played
+    # Game clock fields
+    game_clock_seconds: Optional[int] = None  # Current time remaining in period
+    clock_running: Optional[bool] = None  # Is the clock actively running
+    last_made_shot: Optional[Dict] = None  # For live sharing shot animation
 
 # Highlight Reel Models
 class HighlightReel(BaseModel):
