@@ -147,12 +147,14 @@ export default function LiveGameScreen() {
         setGameClockSeconds(currentGame.period_time_minutes * 60);
       }
       
-      // Initialize minutes for all players
+      // Initialize minutes for all players from saved backend data
+      // This ensures minutes are continuous across periods (halves, quarters, OT)
       const initialMinutes: Record<string, number> = {};
       currentGame.player_stats.forEach(ps => {
-        initialMinutes[ps.player_id] = playerMinutes[ps.player_id] || 0;
+        // Use saved minutes_played from backend, fallback to current local state, then 0
+        initialMinutes[ps.player_id] = ps.stats.minutes_played || playerMinutes[ps.player_id] || 0;
       });
-      setPlayerMinutes(prev => ({ ...initialMinutes, ...prev }));
+      setPlayerMinutes(initialMinutes);
     }
   }, [currentGame?.id]); // Only run when game ID changes to avoid resetting on every update
 
