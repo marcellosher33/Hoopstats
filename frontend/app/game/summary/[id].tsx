@@ -13,6 +13,8 @@ import {
   Platform,
   ActivityIndicator,
   Clipboard,
+  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Video, ResizeMode, AVPlaybackStatus } from 'expo-av';
 import { File, Paths } from 'expo-file-system';
