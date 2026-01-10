@@ -66,8 +66,9 @@ export default function LiveGameViewer() {
       }
       const data = await response.json();
       
-      // Sync clock state from server
+      // Sync clock state from server - ALWAYS use server time as source of truth
       if (data.game_clock_seconds !== undefined) {
+        // Always sync to server time to prevent drift
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       }
