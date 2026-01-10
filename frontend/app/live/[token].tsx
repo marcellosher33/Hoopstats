@@ -66,14 +66,41 @@ export default function LiveGameViewer() {
       }
       const data = await response.json();
       
-      // Check for new made shot
+      // Sync clock state from server
+      if (data.game_clock_seconds !== undefined) {
+        setLocalClockSeconds(data.game_clock_seconds);
+        clockSyncRef.current = data.game_clock_seconds;
+      }
+      setIsClockRunning(data.is_clock_running || false);
+      
+      // Check for new made shot - show popup
       if (data.last_made_shot) {
         const shotKey = `${data.last_made_shot.player_id}_${data.last_made_shot.timestamp}`;
         if (shotKey !== lastProcessedShot.current) {
           lastProcessedShot.current = shotKey;
-          setLastShotLocation({ x: data.last_made_shot.x, y: data.last_made_shot.y });
+          // Find player name
+          const playerName = data.player_stats?.find((ps: any) => ps.player_id === data.last_made_shot.player_id)?.player_name || 'Player';
+          setLastShotLocation({ 
+            x: data.last_made_shot.x, 
+            y: data.last_made_shot.y,
+            playerName
+          });
           showShotAnimation();
+          
+          // Add to play-by-play
+          const shotType = data.last_made_shot.is_three_pointer ? 'three' : 'two';
+          addPlayByPlay({
+            id: shotKey,
+            text: `${playerName} for ${shotType}!`,
+            timestamp: Date.now(),
+            type: 'score'
+          });
         }
+      }
+      
+      // Generate play-by-play from stat changes
+      if (game && data) {
+        generatePlayByPlay(game, data);
       }
       
       setGame(data);
@@ -85,7 +112,87 @@ export default function LiveGameViewer() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [token]);
+  }, [token, game]);
+  
+  // Add play-by-play action
+  const addPlayByPlay = (action: PlayByPlayAction) => {
+    setPlayByPlay(prev => {
+      // Only keep last 5 actions
+      const updated = [action, ...prev].slice(0, 5);
+      return updated;
+    });
+  };
+  
+  // Generate play-by-play from stat changes
+  const generatePlayByPlay = (oldGame: Game, newGame: Game) => {
+    if (!oldGame.player_stats || !newGame.player_stats) return;
+    
+    const currentStatsKey = JSON.stringify(newGame.player_stats.map(ps => ({
+      id: ps.player_id,
+      pts: ps.stats.points,
+      fouls: ps.stats.fouls,
+      to: ps.stats.turnovers,
+      reb: (ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)
+    })));
+    
+    if (currentStatsKey === lastProcessedStats.current) return;
+    lastProcessedStats.current = currentStatsKey;
+    
+    newGame.player_stats.forEach((newPs) => {
+      const oldPs = oldGame.player_stats.find(p => p.player_id === newPs.player_id);
+      if (!oldPs) return;
+      
+      const playerName = newPs.player_name.split(' ')[0]; // First name only
+      
+      // Check for fouls
+      if ((newPs.stats.fouls || 0) > (oldPs.stats.fouls || 0)) {
+        addPlayByPlay({
+          id: `foul_${newPs.player_id}_${Date.now()}`,
+          text: `Foul on ${playerName}`,
+          timestamp: Date.now(),
+          type: 'foul'
+        });
+      }
+      
+      // Check for turnovers
+      if ((newPs.stats.turnovers || 0) > (oldPs.stats.turnovers || 0)) {
+        addPlayByPlay({
+          id: `to_${newPs.player_id}_${Date.now()}`,
+          text: `Turnover by ${playerName}`,
+          timestamp: Date.now(),
+          type: 'turnover'
+        });
+      }
+      
+      // Check for rebounds (without shot info)
+      const newReb = (newPs.stats.offensive_rebounds || 0) + (newPs.stats.defensive_rebounds || 0);
+      const oldReb = (oldPs.stats.offensive_rebounds || 0) + (oldPs.stats.defensive_rebounds || 0);
+      if (newReb > oldReb) {
+        addPlayByPlay({
+          id: `reb_${newPs.player_id}_${Date.now()}`,
+          text: `Rebound by ${playerName}`,
+          timestamp: Date.now(),
+          type: 'rebound'
+        });
+      }
+    });
+  };
+  
+  // Local clock countdown effect
+  useEffect(() => {
+    if (!isClockRunning || localClockSeconds === null || localClockSeconds <= 0) {
+      return;
+    }
+    
+    const interval = setInterval(() => {
+      setLocalClockSeconds(prev => {
+        if (prev === null || prev <= 0) return prev;
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [isClockRunning, localClockSeconds]);
   
   // Show shot popup animation
   const showShotAnimation = () => {
