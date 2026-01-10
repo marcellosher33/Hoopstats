@@ -249,16 +249,22 @@ class Game(BaseModel):
     game_type: Optional[str] = None  # preseason, tournament, regular_season, playoffs
     venue: Optional[str] = None  # Custom venue name
     period_type: str = "quarters"  # quarters (4 periods) or halves (2 periods)
+    period_time_minutes: int = 8  # Minutes per period
     
     # Scores
     our_score: int = 0
     opponent_score: int = 0
     
     # Game state
-    status: str = "in_progress"  # in_progress, completed
+    status: str = "in_progress"  # in_progress, halftime, period_end, completed
     current_period: int = 1  # Current quarter (1-4) or half (1-2)
     active_player_ids: List[str] = []  # Players currently "in" the game (for team mode)
     court_side: str = "top"  # Which side is 1st half: "top" or "bottom"
+    
+    # Game Clock
+    game_clock_seconds: int = 0  # Current time remaining in period (in seconds)
+    clock_running: bool = False  # Is the clock actively running
+    clock_last_updated: Optional[datetime] = None  # When clock was last updated (for sync)
     
     # Sharing
     share_token: Optional[str] = None  # Unique token for public sharing
@@ -277,6 +283,9 @@ class Game(BaseModel):
     
     # AI Summary
     ai_summary: Optional[str] = None
+    
+    # Shot for live sharing animation
+    last_made_shot: Optional[Dict] = None  # {player_id, x, y, timestamp}
     
     # Timestamps
     created_at: datetime = Field(default_factory=datetime.utcnow)
