@@ -18,7 +18,7 @@ import { LineChart, BarChart } from 'react-native-gifted-charts';
 import Constants from 'expo-constants';
 
 const screenWidth = Dimensions.get('window').width;
-const API_URL = Constants.expoConfig?.extra?.backendUrl || 'https://gameclock-fix.preview.emergentagent.com/api';
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
 interface PlayerSeasonStats {
   player_id: string;
