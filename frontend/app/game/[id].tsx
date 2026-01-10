@@ -251,11 +251,25 @@ export default function LiveGameScreen() {
     const isQuarters = currentGame.period_type === 'quarters';
     const currentPeriod = currentGame.current_period || 1;
     const totalPeriods = isQuarters ? 4 : 2;
+    const isTied = currentGame.our_score === currentGame.opponent_score;
+    const isOT = currentPeriod > totalPeriods;
     
     // Only show status if clock is at 0
     if (gameClockSeconds > 0) return null;
     
+    // In overtime
+    if (isOT) {
+      if (isTied) {
+        return `END OF OT${currentPeriod - totalPeriods} - TIED`;
+      }
+      return 'FINAL';
+    }
+    
+    // End of regulation
     if (currentPeriod >= totalPeriods) {
+      if (isTied) {
+        return 'TIED - TAP OT TO CONTINUE';
+      }
       return 'FINAL';
     } else if (isQuarters) {
       if (currentPeriod === 2) return 'HALFTIME';
