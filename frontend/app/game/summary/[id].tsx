@@ -112,6 +112,36 @@ export default function GameSummaryScreen() {
     fetchSubscription();
   }, [token]);
 
+  // Sync notes text when game loads
+  useEffect(() => {
+    if (currentGame) {
+      setNotesText(currentGame.notes || '');
+    }
+  }, [currentGame?.id, currentGame?.notes]);
+
+  // Save notes to the game
+  const handleSaveNotes = async () => {
+    if (!token || !id) return;
+    
+    setSavingNotes(true);
+    try {
+      await updateGame(id, { notes: notesText.trim() || null }, token);
+      await fetchGame(id, token);
+      setEditingNotes(false);
+      Alert.alert('Saved', 'Notes saved successfully');
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to save notes');
+    } finally {
+      setSavingNotes(false);
+    }
+  };
+
+  // Cancel notes editing
+  const handleCancelNotesEdit = () => {
+    setNotesText(currentGame?.notes || '');
+    setEditingNotes(false);
+  };
+
   // Generate and share PDF report
   const handleExportPdf = async () => {
     if (!currentGame) return;
