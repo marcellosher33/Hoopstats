@@ -216,6 +216,22 @@ export default function LiveGameScreen() {
     };
   }, [gameClockSeconds, isClockRunning]);
 
+  // Save clock running state IMMEDIATELY when it changes (for live view sync)
+  const prevIsClockRunning = useRef(isClockRunning);
+  useEffect(() => {
+    if (!token || !id || !currentGame) return;
+    
+    // Only save immediately when clock running state actually changes
+    if (prevIsClockRunning.current !== isClockRunning) {
+      prevIsClockRunning.current = isClockRunning;
+      console.log('[Game] Clock running state changed to:', isClockRunning, '- saving immediately');
+      updateGame(id, { 
+        game_clock_seconds: gameClockSeconds,
+        clock_running: isClockRunning,
+      }, token);
+    }
+  }, [isClockRunning, token, id, currentGame, gameClockSeconds]);
+
   // Format seconds to MM:SS
   const formatClock = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
