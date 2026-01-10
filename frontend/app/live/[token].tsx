@@ -71,14 +71,23 @@ export default function LiveGameViewer() {
       }
       const data = await response.json();
       
-      // Sync clock state from server - ALWAYS use server time as source of truth
-      if (data.game_clock_seconds !== undefined) {
-        // Always sync to server time to prevent drift
+      // Get the server clock running state
+      const serverClockRunning = data.clock_running || data.is_clock_running || false;
+      
+      // Only sync clock time when clock is STOPPED (paused)
+      // When running, let the local clock count down independently
+      if (!serverClockRunning && data.game_clock_seconds !== undefined) {
+        // Clock is stopped - sync to server time
+        setLocalClockSeconds(data.game_clock_seconds);
+        clockSyncRef.current = data.game_clock_seconds;
+      } else if (serverClockRunning && localClockSeconds === null && data.game_clock_seconds !== undefined) {
+        // First load when clock is running - initialize local clock
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       }
-      // Backend uses clock_running, not is_clock_running
-      setIsClockRunning(data.clock_running || data.is_clock_running || false);
+      
+      // Update running state - this will trigger/stop the local countdown
+      setIsClockRunning(serverClockRunning);
       
       // Check for new made shot - show popup
       if (data.last_made_shot) {
