@@ -2066,6 +2066,27 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: 'bold',
   },
+  // Timeout Button Styles
+  timeoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.warning,
+    marginTop: 4,
+  },
+  timeoutBtnActive: {
+    backgroundColor: colors.warning,
+  },
+  timeoutBtnText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
   opponentQuickScore: {
     flexDirection: 'row',
     gap: 4,
