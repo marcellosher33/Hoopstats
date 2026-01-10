@@ -1303,9 +1303,26 @@ async def record_stat(game_id: str, stat: StatUpdate, user: dict = Depends(get_c
     # Update our_score based on points
     total_points = sum(ps.get("stats", {}).get("points", 0) for ps in player_stats)
     
+    # Prepare update data
+    update_data = {
+        "player_stats": player_stats, 
+        "our_score": total_points, 
+        "stat_history": stat_history
+    }
+    
+    # Update last_made_shot for live sharing shot popup (only for made shots with location)
+    if stat.stat_type in ["points_2", "points_3"] and stat.shot_location:
+        update_data["last_made_shot"] = {
+            "player_id": stat.player_id,
+            "x": stat.shot_location["x"],
+            "y": stat.shot_location["y"],
+            "is_three_pointer": stat.stat_type == "points_3",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    
     await db.games.update_one(
         {"id": game_id},
-        {"$set": {"player_stats": player_stats, "our_score": total_points, "stat_history": stat_history}}
+        {"$set": update_data}
     )
     
     updated_game = await db.games.find_one({"id": game_id})
