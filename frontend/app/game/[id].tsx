@@ -841,6 +841,14 @@ export default function LiveGameScreen() {
           <View style={styles.teamScore}>
             <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
             <Text style={styles.score}>{currentGame.our_score}</Text>
+            {/* Home Team Timeout Button */}
+            <TouchableOpacity 
+              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
+              onPress={() => callTimeout('home')}
+            >
+              <Ionicons name="hand-left" size={12} color={colors.text} />
+              <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.gameInfo}>
             <View style={styles.quarterBadge}>
