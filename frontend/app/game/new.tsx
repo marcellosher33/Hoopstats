@@ -146,6 +146,7 @@ export default function NewGameScreen() {
           period_time_minutes: periodTimeMinutes,
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
+          notes: gameNotes.trim() || undefined,
         },
         token!
       );
