@@ -241,19 +241,26 @@ export default function LiveGameViewer() {
   // Ref for clock interval
   const clockIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Local clock countdown effect - runs independently when clock is running
+  // Local clock countdown effect - runs when clock is running
   useEffect(() => {
-    // Clear any existing interval
+    // Clear any existing interval first
     if (clockIntervalRef.current) {
       clearInterval(clockIntervalRef.current);
       clockIntervalRef.current = null;
     }
     
-    // Only start countdown if clock is running and we have valid time
-    if (isClockRunning && localClockSeconds !== null && localClockSeconds > 0) {
+    // Start countdown if clock is running
+    if (isClockRunning) {
       clockIntervalRef.current = setInterval(() => {
         setLocalClockSeconds(prev => {
-          if (prev === null || prev <= 0) return prev;
+          if (prev === null || prev <= 0) {
+            // Stop the interval when time runs out
+            if (clockIntervalRef.current) {
+              clearInterval(clockIntervalRef.current);
+              clockIntervalRef.current = null;
+            }
+            return prev;
+          }
           return prev - 1;
         });
       }, 1000);
@@ -265,7 +272,7 @@ export default function LiveGameViewer() {
         clockIntervalRef.current = null;
       }
     };
-  }, [isClockRunning]); // Only depend on isClockRunning
+  }, [isClockRunning]);
   
   // Show shot popup animation
   const showShotAnimation = () => {
