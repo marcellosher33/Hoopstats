@@ -62,9 +62,18 @@ export default function NewGameScreen() {
   const [location, setLocation] = useState<LocationType>(null);
   const [gameType, setGameType] = useState<GameType>(null);
   const [periodType, setPeriodType] = useState<PeriodType>('quarters');
-  const [periodTimeMinutes, setPeriodTimeMinutes] = useState(8); // Default 8 minutes per period
+  const [periodTimeMinutes, setPeriodTimeMinutes] = useState(8); // Default 8 minutes per quarter
   const [homeTeamName, setHomeTeamName] = useState('');
   const [venue, setVenue] = useState('');
+  
+  // Update default time when period type changes
+  useEffect(() => {
+    if (periodType === 'halves') {
+      setPeriodTimeMinutes(20); // 20 min halves default
+    } else {
+      setPeriodTimeMinutes(8); // 8 min quarters default
+    }
+  }, [periodType]);
   const [gameDate, setGameDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
