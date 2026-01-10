@@ -15,7 +15,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../src/stores/authStore';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { LineChart, BarChart } from 'react-native-gifted-charts';
-import Constants from 'expo-constants';
 
 const screenWidth = Dimensions.get('window').width;
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
