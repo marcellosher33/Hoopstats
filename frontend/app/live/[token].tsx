@@ -24,7 +24,7 @@ interface PlayByPlayAction {
   id: string;
   text: string;
   timestamp: number;
-  type: 'score' | 'foul' | 'turnover' | 'rebound' | 'other';
+  type: 'score' | 'foul' | 'turnover' | 'rebound' | 'steal' | 'block' | 'assist' | 'miss' | 'other';
 }
 
 export default function LiveGameViewer() {
