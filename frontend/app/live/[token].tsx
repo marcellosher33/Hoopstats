@@ -73,18 +73,27 @@ export default function LiveGameViewer() {
       
       // Get the server clock running state
       const serverClockRunning = data.clock_running || data.is_clock_running || false;
+      const wasClockRunning = isClockRunning;
       
-      // Only sync clock time when clock is STOPPED (paused)
-      // When running, let the local clock count down independently
-      if (!serverClockRunning && data.game_clock_seconds !== undefined) {
-        // Clock is stopped - sync to server time
+      // CLOCK SYNC LOGIC:
+      // 1. First load (localClockSeconds is null) - always sync
+      // 2. Clock just STOPPED (was running, now stopped) - sync to server time
+      // 3. Clock is running - NEVER sync, let local countdown run independently
+      if (localClockSeconds === null && data.game_clock_seconds !== undefined) {
+        // First load - initialize local clock from server
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
-      } else if (serverClockRunning && localClockSeconds === null && data.game_clock_seconds !== undefined) {
-        // First load when clock is running - initialize local clock
+      } else if (!serverClockRunning && wasClockRunning && data.game_clock_seconds !== undefined) {
+        // Clock just stopped - sync to server's authoritative time
+        setLocalClockSeconds(data.game_clock_seconds);
+        clockSyncRef.current = data.game_clock_seconds;
+      } else if (!serverClockRunning && !wasClockRunning && data.game_clock_seconds !== undefined) {
+        // Clock is paused and was paused - sync to keep in sync during pauses
         setLocalClockSeconds(data.game_clock_seconds);
         clockSyncRef.current = data.game_clock_seconds;
       }
+      // When serverClockRunning is true, we do NOT update localClockSeconds
+      // The local interval handles the countdown independently
       
       // Update running state - this will trigger/stop the local countdown
       setIsClockRunning(serverClockRunning);
