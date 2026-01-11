@@ -202,6 +202,32 @@ export default function LiveGameViewer() {
       lastHomeTimeouts.current = currentHomeTimeouts;
       lastAwayTimeouts.current = currentAwayTimeouts;
       
+      // Detect opponent score changes
+      const currentOpponentScore = data.opponent_score || 0;
+      if (lastOpponentScore.current !== null && currentOpponentScore > lastOpponentScore.current) {
+        const scoreDiff = currentOpponentScore - lastOpponentScore.current;
+        const opponentName = data.opponent_name || 'Opponent';
+        let scoreText = '';
+        
+        if (scoreDiff === 1) {
+          scoreText = `${opponentName} makes free throw`;
+        } else if (scoreDiff === 2) {
+          scoreText = `${opponentName} scores 2`;
+        } else if (scoreDiff === 3) {
+          scoreText = `${opponentName} hits a 3!`;
+        } else {
+          scoreText = `${opponentName} scores ${scoreDiff}`;
+        }
+        
+        addPlayByPlay({
+          id: `opp_score_${Date.now()}`,
+          text: scoreText,
+          timestamp: Date.now(),
+          type: 'score'
+        });
+      }
+      lastOpponentScore.current = currentOpponentScore;
+      
       // Generate play-by-play from stat changes
       if (game && data) {
         generatePlayByPlay(game, data);
