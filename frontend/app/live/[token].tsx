@@ -157,45 +157,35 @@ export default function LiveGameViewer() {
         }
       }
       
-      // Detect timeout changes
-      if (data.last_timeout_team) {
-        const currentHomeTimeouts = data.home_timeouts || 0;
-        const currentAwayTimeouts = data.away_timeouts || 0;
-        
-        // Check if home timeout count increased
-        if (lastHomeTimeouts.current !== null && currentHomeTimeouts > lastHomeTimeouts.current) {
-          const teamName = data.home_team_name || 'Home';
-          addPlayByPlay({
-            id: `timeout_home_${Date.now()}`,
-            text: `${teamName} timeout`,
-            timestamp: Date.now(),
-            type: 'timeout'
-          });
-        }
-        
-        // Check if away timeout count increased
-        if (lastAwayTimeouts.current !== null && currentAwayTimeouts > lastAwayTimeouts.current) {
-          const teamName = data.opponent_name || 'Away';
-          addPlayByPlay({
-            id: `timeout_away_${Date.now()}`,
-            text: `${teamName} timeout`,
-            timestamp: Date.now(),
-            type: 'timeout'
-          });
-        }
-        
-        // Update refs
-        lastHomeTimeouts.current = currentHomeTimeouts;
-        lastAwayTimeouts.current = currentAwayTimeouts;
-      } else {
-        // Initialize timeout refs on first load
-        if (lastHomeTimeouts.current === null) {
-          lastHomeTimeouts.current = data.home_timeouts || 0;
-        }
-        if (lastAwayTimeouts.current === null) {
-          lastAwayTimeouts.current = data.away_timeouts || 0;
-        }
+      // Detect timeout changes - always check timeout counts
+      const currentHomeTimeouts = data.home_timeouts || 0;
+      const currentAwayTimeouts = data.away_timeouts || 0;
+      
+      // Check if home timeout count increased
+      if (lastHomeTimeouts.current !== null && currentHomeTimeouts > lastHomeTimeouts.current) {
+        const teamName = data.home_team_name || 'Home';
+        addPlayByPlay({
+          id: `timeout_home_${Date.now()}`,
+          text: `${teamName} takes a timeout`,
+          timestamp: Date.now(),
+          type: 'timeout'
+        });
       }
+      
+      // Check if away timeout count increased
+      if (lastAwayTimeouts.current !== null && currentAwayTimeouts > lastAwayTimeouts.current) {
+        const teamName = data.opponent_name || 'Away';
+        addPlayByPlay({
+          id: `timeout_away_${Date.now()}`,
+          text: `${teamName} takes a timeout`,
+          timestamp: Date.now(),
+          type: 'timeout'
+        });
+      }
+      
+      // Always update timeout refs
+      lastHomeTimeouts.current = currentHomeTimeouts;
+      lastAwayTimeouts.current = currentAwayTimeouts;
       
       // Generate play-by-play from stat changes
       if (game && data) {
