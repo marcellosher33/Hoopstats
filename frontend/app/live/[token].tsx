@@ -868,8 +868,8 @@ export default function LiveGameViewer() {
                   is_three_pointer: false,
                   timestamp: new Date().toISOString(),
                 }]}
-                width={screenWidth * 0.35}
-                height={screenWidth * 0.55}
+                width={screenWidth * 0.315}
+                height={screenWidth * 0.495}
                 interactive={false}
               />
             </View>
