@@ -817,14 +817,14 @@ export default function LiveGameViewer() {
               <ShotChart
                 shots={[{
                   id: 'live-shot',
-                  x: lastShotLocation.x / 100, // Convert percentage to 0-1 range
-                  y: lastShotLocation.y / 100,
+                  x: lastShotLocation.x, // Already in 0-1 range
+                  y: lastShotLocation.y,
                   made: true,
                   is_three_pointer: false,
                   timestamp: new Date().toISOString(),
                 }]}
-                width={screenWidth * 0.25}
-                height={screenWidth * 0.22}
+                width={screenWidth * 0.4}
+                height={screenWidth * 0.35}
                 interactive={false}
               />
             </View>
