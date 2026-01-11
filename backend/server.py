@@ -266,6 +266,12 @@ class Game(BaseModel):
     clock_running: bool = False  # Is the clock actively running
     clock_last_updated: Optional[datetime] = None  # When clock was last updated (for sync)
     
+    # Timeouts
+    home_timeouts: int = 0  # Number of timeouts used by home team
+    away_timeouts: int = 0  # Number of timeouts used by away team
+    last_timeout_team: Optional[str] = None  # 'home' or 'away' - most recent timeout
+    last_timeout_time: Optional[datetime] = None  # When last timeout was called
+    
     # Sharing
     share_token: Optional[str] = None  # Unique token for public sharing
     is_public: bool = False  # Whether the game is publicly viewable
