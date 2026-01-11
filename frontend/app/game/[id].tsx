@@ -275,20 +275,33 @@ export default function LiveGameScreen() {
     setIsClockRunning(false);
     
     // Increment timeout count
+    const newHomeTimeouts = team === 'home' ? homeTimeouts + 1 : homeTimeouts;
+    const newAwayTimeouts = team === 'away' ? awayTimeouts + 1 : awayTimeouts;
+    
     if (team === 'home') {
-      setHomeTimeouts(prev => prev + 1);
+      setHomeTimeouts(newHomeTimeouts);
     } else {
-      setAwayTimeouts(prev => prev + 1);
+      setAwayTimeouts(newAwayTimeouts);
     }
     
     // Set timeout state for visual feedback
     setIsTimeout(true);
     setTimeoutTeam(team);
     
+    // Save timeout to backend for live view sync
+    if (token && id) {
+      updateGame(id, {
+        home_timeouts: newHomeTimeouts,
+        away_timeouts: newAwayTimeouts,
+        last_timeout_team: team,
+        clock_running: false,
+      }, token);
+    }
+    
     // Show alert
     Alert.alert(
       'TIMEOUT',
-      `${team === 'home' ? currentGame?.home_team_name || 'Home' : currentGame?.opponent_name || 'Away'} timeout called.\n\nTimeouts used: ${team === 'home' ? homeTimeouts + 1 : awayTimeouts + 1}`,
+      `${team === 'home' ? currentGame?.home_team_name || 'Home' : currentGame?.opponent_name || 'Away'} timeout called.\n\nTimeouts used: ${team === 'home' ? newHomeTimeouts : newAwayTimeouts}`,
       [
         { 
           text: 'Resume Play', 
