@@ -335,6 +335,10 @@ class GameUpdate(BaseModel):
     game_clock_seconds: Optional[int] = None  # Current time remaining in period
     clock_running: Optional[bool] = None  # Is the clock actively running
     last_made_shot: Optional[Dict] = None  # For live sharing shot animation
+    # Timeout fields
+    home_timeouts: Optional[int] = None  # Number of timeouts used by home team
+    away_timeouts: Optional[int] = None  # Number of timeouts used by away team
+    last_timeout_team: Optional[str] = None  # 'home' or 'away' - most recent timeout
 
 # Highlight Reel Models
 class HighlightReel(BaseModel):
