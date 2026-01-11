@@ -841,14 +841,6 @@ export default function LiveGameViewer() {
           <Ionicons name="basketball" size={20} color={colors.textSecondary} />
           <Text style={styles.footerText}>Powered by HoopStats</Text>
         </View>
-        
-        {/* Scroll down message for game summary when game is in progress */}
-        {game.status === 'in_progress' && game.player_stats && game.player_stats.length > 0 && (
-          <View style={styles.scrollHintContainer}>
-            <Ionicons name="chevron-down" size={24} color={colors.textSecondary} />
-            <Text style={styles.scrollHintText}>Scroll down for player stats</Text>
-          </View>
-        )}
       </ScrollView>
 
       {/* Shot Chart Popup - Using the same FullCourtShotChart as the main game */}
