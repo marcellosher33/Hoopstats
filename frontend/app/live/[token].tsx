@@ -64,6 +64,10 @@ export default function LiveGameViewer() {
   const [lastShotLocation, setLastShotLocation] = useState<{x: number, y: number, playerName?: string} | null>(null);
   const shotPopupOpacity = useRef(new Animated.Value(0)).current;
   const lastProcessedShot = useRef<string | null>(null);
+  
+  // Timeout tracking for play-by-play
+  const lastHomeTimeouts = useRef<number | null>(null);
+  const lastAwayTimeouts = useRef<number | null>(null);
 
   const fetchGame = useCallback(async () => {
     if (!token) return;
