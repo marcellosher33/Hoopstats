@@ -290,12 +290,17 @@ export default function LiveGameScreen() {
     
     // Save timeout to backend for live view sync
     if (token && id) {
+      console.log('[Game] Saving timeout to backend:', { home_timeouts: newHomeTimeouts, away_timeouts: newAwayTimeouts, last_timeout_team: team });
       updateGame(id, {
         home_timeouts: newHomeTimeouts,
         away_timeouts: newAwayTimeouts,
         last_timeout_team: team,
         clock_running: false,
-      }, token);
+      }, token).then(() => {
+        console.log('[Game] Timeout saved successfully');
+      }).catch((err) => {
+        console.error('[Game] Failed to save timeout:', err);
+      });
     }
     
     // Show alert
