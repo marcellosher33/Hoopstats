@@ -68,6 +68,9 @@ export default function LiveGameViewer() {
   // Timeout tracking for play-by-play
   const lastHomeTimeouts = useRef<number | null>(null);
   const lastAwayTimeouts = useRef<number | null>(null);
+  
+  // Opponent score tracking for play-by-play
+  const lastOpponentScore = useRef<number | null>(null);
 
   const fetchGame = useCallback(async () => {
     if (!token) return;
