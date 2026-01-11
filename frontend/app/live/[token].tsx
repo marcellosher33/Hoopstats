@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game, ShotAttempt } from '../../src/types';
-import { ShotChart } from '../../src/components/ShotChart';
+import { FullCourtShotChart } from '../../src/components/FullCourtShotChart';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const { width: screenWidth } = Dimensions.get('window');
@@ -25,7 +25,7 @@ interface PlayByPlayAction {
   id: string;
   text: string;
   timestamp: number;
-  type: 'score' | 'foul' | 'turnover' | 'rebound' | 'steal' | 'block' | 'assist' | 'miss' | 'other';
+  type: 'score' | 'foul' | 'turnover' | 'rebound' | 'steal' | 'block' | 'assist' | 'miss' | 'timeout' | 'other';
 }
 
 export default function LiveGameViewer() {
