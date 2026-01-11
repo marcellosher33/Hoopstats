@@ -558,6 +558,7 @@ export default function LiveGameViewer() {
                 {action.type === 'block' && '🚫 '}
                 {action.type === 'assist' && '🎯 '}
                 {action.type === 'miss' && '❌ '}
+                {action.type === 'timeout' && '⏱️ '}
                 {action.text}
               </Text>
             ))}
