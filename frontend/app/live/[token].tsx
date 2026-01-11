@@ -992,6 +992,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
     marginLeft: spacing.sm,
   },
+  // Summary hint for completed games
+  summaryHintContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  summaryHintText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginLeft: spacing.xs,
+  },
   // Play-by-Play Feed
   playByPlayContainer: {
     marginTop: spacing.sm,
