@@ -114,6 +114,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   updateGame: async (gameId: string, data: any, token: string) => {
+    console.log('[GameStore] Updating game:', gameId, 'with data:', data);
     const response = await fetch(`${API_URL}/api/games/${gameId}`, {
       method: 'PUT',
       headers: {
@@ -123,12 +124,21 @@ export const useGameStore = create<GameState>((set, get) => ({
       body: JSON.stringify(data),
     });
     
+    console.log('[GameStore] Update response status:', response.status);
+    
     if (response.ok) {
       const updatedGame = await response.json();
+      console.log('[GameStore] Game updated, timeout fields:', {
+        home_timeouts: updatedGame.home_timeouts,
+        away_timeouts: updatedGame.away_timeouts
+      });
       set((state) => ({
         games: state.games.map((g) => (g.id === gameId ? updatedGame : g)),
         currentGame: state.currentGame?.id === gameId ? updatedGame : state.currentGame,
       }));
+    } else {
+      const error = await response.text();
+      console.error('[GameStore] Update failed:', error);
     }
   },
 
