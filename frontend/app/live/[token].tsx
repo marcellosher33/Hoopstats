@@ -857,9 +857,9 @@ export default function LiveGameViewer() {
               <Text style={styles.shotPopupPlayerName}>{lastShotLocation.playerName} scores!</Text>
             )}
             
-            {/* Use the half court ShotChart component - compact size to not obstruct view */}
+            {/* Use FullCourtShotChart to match the main game's coordinate system */}
             <View style={styles.shotChartWrapper}>
-              <ShotChart
+              <FullCourtShotChart
                 shots={[{
                   id: 'live-shot',
                   x: lastShotLocation.x, // Already in 0-1 range
@@ -868,8 +868,8 @@ export default function LiveGameViewer() {
                   is_three_pointer: false,
                   timestamp: new Date().toISOString(),
                 }]}
-                width={screenWidth * 0.4}
-                height={screenWidth * 0.35}
+                width={screenWidth * 0.35}
+                height={screenWidth * 0.55}
                 interactive={false}
               />
             </View>
