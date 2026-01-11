@@ -539,6 +539,14 @@ export default function LiveGameViewer() {
           </View>
         </View>
         
+        {/* Scroll down hint - only shows when game is completed AND has AI summary */}
+        {game.status === 'completed' && game.ai_summary && (
+          <View style={styles.summaryHintContainer}>
+            <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
+            <Text style={styles.summaryHintText}>Scroll down for game summary</Text>
+          </View>
+        )}
+        
         {/* Play-by-Play Feed */}
         {playByPlay.length > 0 && (
           <View style={styles.playByPlayContainer}>
