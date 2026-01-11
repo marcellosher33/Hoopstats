@@ -161,9 +161,20 @@ export default function LiveGameViewer() {
       const currentHomeTimeouts = data.home_timeouts || 0;
       const currentAwayTimeouts = data.away_timeouts || 0;
       
+      // Debug logging
+      console.log('[LiveView] Timeout data:', { 
+        currentHomeTimeouts, 
+        currentAwayTimeouts, 
+        lastHomeTimeouts: lastHomeTimeouts.current,
+        lastAwayTimeouts: lastAwayTimeouts.current,
+        raw_home: data.home_timeouts,
+        raw_away: data.away_timeouts
+      });
+      
       // Check if home timeout count increased
       if (lastHomeTimeouts.current !== null && currentHomeTimeouts > lastHomeTimeouts.current) {
         const teamName = data.home_team_name || 'Home';
+        console.log('[LiveView] Home timeout detected! Adding to play-by-play');
         addPlayByPlay({
           id: `timeout_home_${Date.now()}`,
           text: `${teamName} takes a timeout`,
@@ -175,6 +186,7 @@ export default function LiveGameViewer() {
       // Check if away timeout count increased
       if (lastAwayTimeouts.current !== null && currentAwayTimeouts > lastAwayTimeouts.current) {
         const teamName = data.opponent_name || 'Away';
+        console.log('[LiveView] Away timeout detected! Adding to play-by-play');
         addPlayByPlay({
           id: `timeout_away_${Date.now()}`,
           text: `${teamName} takes a timeout`,
