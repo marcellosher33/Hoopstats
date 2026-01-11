@@ -860,19 +860,6 @@ export default function LiveGameViewer() {
           </View>
         )}
 
-        {/* AI Summary (shown when game is completed) */}
-        {game.status === 'completed' && game.ai_summary && (
-          <View style={styles.summarySection}>
-            <View style={styles.summaryHeader}>
-              <Ionicons name="sparkles" size={20} color={colors.primary} />
-              <Text style={styles.summaryTitle}>Game Summary</Text>
-            </View>
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryText}>{game.ai_summary}</Text>
-            </View>
-          </View>
-        )}
-
         {/* Final Score Card (shown when game is completed) */}
         {game.status === 'completed' && (
           <View style={styles.finalScoreSection}>
