@@ -242,6 +242,8 @@ export default function LiveGameViewer() {
       blk: ps.stats.blocks,
       ast: ps.stats.assists,
       fga: ps.stats.fg_attempted,
+      fta: ps.stats.ft_attempted,
+      ftm: ps.stats.ft_made,
       reb: (ps.stats.offensive_rebounds || 0) + (ps.stats.defensive_rebounds || 0)
     })));
     
@@ -253,6 +255,30 @@ export default function LiveGameViewer() {
       if (!oldPs) return;
       
       const playerName = newPs.player_name.split(' ')[0]; // First name only
+      
+      // Check for free throw makes
+      const newFTM = newPs.stats.ft_made || 0;
+      const oldFTM = oldPs.stats.ft_made || 0;
+      if (newFTM > oldFTM) {
+        addPlayByPlay({
+          id: `ftm_${newPs.player_id}_${Date.now()}`,
+          text: `${playerName} makes free throw`,
+          timestamp: Date.now(),
+          type: 'score'
+        });
+      }
+      
+      // Check for free throw misses (FTA increased but FTM didn't)
+      const newFTA = newPs.stats.ft_attempted || 0;
+      const oldFTA = oldPs.stats.ft_attempted || 0;
+      if (newFTA > oldFTA && newFTM === oldFTM) {
+        addPlayByPlay({
+          id: `ftmiss_${newPs.player_id}_${Date.now()}`,
+          text: `${playerName} misses free throw`,
+          timestamp: Date.now(),
+          type: 'miss'
+        });
+      }
       
       // Check for steals
       if ((newPs.stats.steals || 0) > (oldPs.stats.steals || 0)) {
