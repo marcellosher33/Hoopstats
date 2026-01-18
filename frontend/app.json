@@ -68,12 +68,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "owner": "hoopstats",
-    "extra": {
-      "eas": {
-        "projectId": "ea8b4aa1-6a7e-41a6-ad79-141b749a305f"
-      }
     }
   }
 }
