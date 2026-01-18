@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+echo "=== START SCRIPT RUNNING ==="
 python -V
 pip -V
 pip install -r requirements.txt
-uvicorn server:app --host 0.0.0.0 --port "${PORT}"
+echo "=== STARTING UVICORN ==="
+uvicorn server:app --host 0.0.0.0 --port "${PORT:-8001}" --log-level debug
