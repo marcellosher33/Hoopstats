@@ -17,7 +17,6 @@ import bcrypt
 import jwt
 import stripe
 from openai import OpenAI
-from emergentintegrations.llm.chat import LlmChat, UserMessage
 import base64
 import json
 import aiofiles
