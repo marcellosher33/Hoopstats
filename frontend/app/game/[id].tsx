@@ -175,8 +175,69 @@ export default function LiveGameScreen() {
       gameClockRef.current = setInterval(() => {
         setGameClockSeconds(prev => {
           if (prev <= 1) {
-            // Clock reached 0 - stop the clock
+            // Clock reached 0 - stop the clock and auto-advance to next period
             setIsClockRunning(false);
+            
+            // Auto-advance to next period after a short delay
+            setTimeout(() => {
+              if (currentGame) {
+                const periodType = currentGame.period_type || 'quarters';
+                const currentPeriod = currentGame.current_period || 1;
+                const maxPeriods = periodType === 'halves' ? 2 : 4;
+                
+                if (currentPeriod < maxPeriods) {
+                  // Advance to next regular period
+                  const nextPeriod = currentPeriod + 1;
+                  const periodLength = currentGame.period_length || (periodType === 'halves' ? 20 : 12);
+                  const newClockSeconds = periodLength * 60;
+                  
+                  // Update game with next period
+                  if (token && id) {
+                    updateGame(id, {
+                      current_period: nextPeriod,
+                      game_clock_seconds: newClockSeconds,
+                      clock_running: false,
+                    }, token);
+                  }
+                  
+                  // Update local state
+                  setGameClockSeconds(newClockSeconds);
+                  
+                  Alert.alert(
+                    periodType === 'halves' ? `Half ${currentPeriod} Complete` : `Quarter ${currentPeriod} Complete`,
+                    periodType === 'halves' ? `Starting Half ${nextPeriod}` : `Starting Quarter ${nextPeriod}`,
+                    [{ text: 'OK' }]
+                  );
+                } else {
+                  // End of regulation - ask about overtime
+                  Alert.alert(
+                    'End of Regulation',
+                    'Would you like to start Overtime?',
+                    [
+                      { text: 'End Game', style: 'cancel' },
+                      { 
+                        text: 'Start OT', 
+                        onPress: () => {
+                          const otPeriod = currentPeriod + 1;
+                          const otClockSeconds = 5 * 60; // 5 minutes for OT
+                          
+                          if (token && id) {
+                            updateGame(id, {
+                              current_period: otPeriod,
+                              game_clock_seconds: otClockSeconds,
+                              clock_running: false,
+                            }, token);
+                          }
+                          
+                          setGameClockSeconds(otClockSeconds);
+                        }
+                      }
+                    ]
+                  );
+                }
+              }
+            }, 500);
+            
             return 0;
           }
           return prev - 1;
@@ -190,7 +251,7 @@ export default function LiveGameScreen() {
         gameClockRef.current = null;
       }
     };
-  }, [isClockRunning, gameClockSeconds > 0]);
+  }, [isClockRunning, gameClockSeconds > 0, currentGame, token, id]);
 
   // Save game clock to backend periodically when running
   const saveClockDebounced = useRef<ReturnType<typeof setTimeout> | null>(null);
