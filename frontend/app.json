@@ -68,6 +68,7 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "owner": "hoopstats"
   }
 }
