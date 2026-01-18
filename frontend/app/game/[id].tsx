@@ -3010,12 +3010,17 @@ const styles = StyleSheet.create({
   },
   teamModePlayerMiniStats: {
     flexDirection: 'row',
-    gap: spacing.md,
+    flexWrap: 'wrap',
+    gap: spacing.xs,
   },
   teamModePlayerPoints: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.primary,
     fontWeight: '600',
+  },
+  teamModePlayerStatItem: {
+    fontSize: 10,
+    color: colors.textSecondary,
   },
   teamModePlayerMinutes: {
     fontSize: 12,
@@ -3023,7 +3028,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   teamModePlayerMinutesEditable: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.primary,
     fontVariant: ['tabular-nums'],
     textDecorationLine: 'underline',
