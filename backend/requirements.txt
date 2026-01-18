@@ -13,7 +13,6 @@ PyJWT==2.10.1
 
 stripe==14.1.0
 openai==1.99.9
-emergentintegrations==0.1.0
 
 pydantic==2.12.5
 email-validator==2.3.0
