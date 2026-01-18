@@ -1097,10 +1097,10 @@ export default function GameSummaryScreen() {
             {filteredShots.length > 0 && (
               <View style={styles.playerShotChartContainer}>
                 <Text style={styles.playerShotChartTitle}>Shot Chart ({filteredShots.length} shots)</Text>
-                <ShotChart 
+                <FullCourtShotChart 
                   shots={filteredShots} 
                   width={screenWidth - 80} 
-                  height={(screenWidth - 80) * 0.75} 
+                  height={(screenWidth - 80) * 1.5} 
                 />
                 <View style={styles.shotLegendSmall}>
                   <View style={styles.legendItem}>
@@ -1128,7 +1128,7 @@ export default function GameSummaryScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Shot Chart</Text>
           <View style={styles.shotChartContainer}>
-            <ShotChart shots={allShots} width={320} height={300} />
+            <FullCourtShotChart shots={allShots} width={screenWidth - 40} height={(screenWidth - 40) * 1.5} />
             <View style={styles.shotLegend}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: colors.shotMade }]} />
