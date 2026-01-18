@@ -2,7 +2,12 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../types';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+const API_URL =
+  (process.env.EXPO_PUBLIC_BACKEND_URL ||
+   process.env.EXPO_PUBLIC_API_URL ||
+   'https://hoopstats-production-c815.up.railway.app'
+  ).replace(/\/$/, '');
+
 
 interface AuthState {
   user: User | null;
