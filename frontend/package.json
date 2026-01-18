@@ -23,6 +23,8 @@
     "@stripe/stripe-react-native": "^0.57.2",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
+    "eslint": "^9.25.0",
+    "eslint-config-expo": "^10.0.0",
     "expo": "^54.0.31",
     "expo-auth-session": "^7.0.10",
     "expo-av": "^16.0.8",
@@ -60,9 +62,7 @@
     "react-native-svg": "^15.15.1",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
-    "zustand": "^5.0.9",
-    "eslint-config-expo": "^10.0.0",
-    "eslint": "^9.25.0"
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
