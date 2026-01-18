@@ -26,7 +26,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../../src/stores/authStore';
 import { useGameStore } from '../../../src/stores/gameStore';
 import { Button } from '../../../src/components/Button';
-import { ShotChart } from '../../../src/components/ShotChart';
+import { FullCourtShotChart } from '../../../src/components/FullCourtShotChart';
 import { colors, spacing, borderRadius } from '../../../src/utils/theme';
 import { GameMedia } from '../../../src/types';
 
