@@ -1941,6 +1941,11 @@ const TeamPlayerRow: React.FC<TeamPlayerRowProps> = ({
             <Text style={styles.teamModePlayerName}>{player.player_name}</Text>
             <View style={styles.teamModePlayerMiniStats}>
               <Text style={styles.teamModePlayerPoints}>{player.stats.points || 0} pts</Text>
+              <Text style={styles.teamModePlayerStatItem}>{(player.stats.offensive_rebounds || 0) + (player.stats.defensive_rebounds || 0)} reb</Text>
+              <Text style={styles.teamModePlayerStatItem}>{player.stats.assists || 0} ast</Text>
+              <Text style={styles.teamModePlayerStatItem}>{player.stats.steals || 0} stl</Text>
+              <Text style={styles.teamModePlayerStatItem}>{player.stats.blocks || 0} blk</Text>
+              <Text style={styles.teamModePlayerStatItem}>{player.stats.turnovers || 0} to</Text>
               <TouchableOpacity onPress={onMinutesPress}>
                 <Text style={styles.teamModePlayerMinutesEditable}>{formatTime(minutes)}</Text>
               </TouchableOpacity>
