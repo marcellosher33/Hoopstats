@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "HoopStats",
-    "slug": "stattrack-app",
+    "slug": "hoopstats",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -72,7 +72,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "ea8b4aa1-6a7e-41a6-ad79-141b749a305f"
+        "projectId": "eef7dcfe-8f39-499d-b111-e666c1cc2669"
       }
     }
   }
