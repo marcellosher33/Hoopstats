@@ -786,24 +786,6 @@ export default function ProfileScreen() {
       {/* Settings */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Settings</Text>
-        
-        <TouchableOpacity 
-          style={styles.settingRow}
-          onPress={() => Alert.alert('Notifications', 'Notification settings coming soon. You\'ll be able to configure game reminders, stat alerts, and more.')}
-        >
-          <Ionicons name="notifications" size={24} color={colors.text} />
-          <Text style={styles.settingText}>Notifications</Text>
-          <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.settingRow}
-          onPress={() => Alert.alert('Export Data', 'Data export feature coming soon. You\'ll be able to export your game stats to CSV or PDF.')}
-        >
-          <Ionicons name="cloud-download" size={24} color={colors.text} />
-          <Text style={styles.settingText}>Export Data</Text>
-          <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
-        </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.settingRow}
