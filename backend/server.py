@@ -105,6 +105,14 @@ app = FastAPI(title="Basketball Stat Tracker API")
 api_router = APIRouter(prefix="/api")
 
 security = HTTPBearer()
+@api_router.get("/health/db")
+async def health_db():
+    try:
+        # "ping" requires Mongo to be reachable
+        await db.command("ping")
+        return {"status": "ok", "db": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DB connection failed: {str(e)}")
 
 # ==================== MODELS ====================
 
