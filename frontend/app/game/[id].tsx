@@ -3143,7 +3143,101 @@ const styles = StyleSheet.create({
   modeBtnTextActive: {
     color: colors.text,
   },
-  // Pro Mode Label
+  // Pro Mode Header (simplified, no scoreboard)
+  proModeHeader: {
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  proModeHeaderContent: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  proModeTitle: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  proModeSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 4,
+  },
+  proModeClockSection: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  proModeClockBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(30, 30, 50, 0.8)',
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.md,
+    borderWidth: 2,
+    borderColor: 'rgba(100, 100, 100, 0.3)',
+  },
+  proModeClockBtnActive: {
+    borderColor: colors.success,
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+  },
+  proModeClockDisplay: {
+    alignItems: 'center',
+  },
+  proModeClockTime: {
+    color: colors.text,
+    fontSize: 36,
+    fontWeight: 'bold',
+    fontVariant: ['tabular-nums'],
+  },
+  proModeClockLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+  proModeClockIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(100, 100, 100, 0.3)',
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    minWidth: 60,
+  },
+  proModeClockIndicatorActive: {
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  proModeClockStatus: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  proModeActions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  proModeEndBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.error,
+  },
+  proModeEndBtnText: {
+    color: colors.error,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  // Pro Mode Label (legacy - keep for backwards compatibility)
   proModeLabel: {
     flexDirection: 'row',
     alignItems: 'center',
