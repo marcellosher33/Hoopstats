@@ -940,14 +940,59 @@ export default function LiveGameScreen() {
           <View style={styles.teamScore}>
             <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
             <Text style={styles.score}>{currentGame.our_score}</Text>
-            {/* Home Team Timeout Button */}
-            <TouchableOpacity 
-              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
-              onPress={() => callTimeout('home')}
-            >
-              <Ionicons name="hand-left" size={12} color={colors.text} />
-              <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
-            </TouchableOpacity>
+            {/* Quick Score Buttons for Our Team */}
+            <View style={styles.quickScoreRow}>
+              <TouchableOpacity 
+                style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
+                onPress={() => {
+                  const newScore = Math.max(0, (currentGame.our_score || 0) - 1);
+                  setOurScore(newScore.toString());
+                  updateGame({ our_score: newScore }, token!);
+                }}
+              >
+                <Text style={styles.quickScoreBtnText}>-1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus1]}
+                onPress={() => {
+                  const newScore = (currentGame.our_score || 0) + 1;
+                  setOurScore(newScore.toString());
+                  updateGame({ our_score: newScore }, token!);
+                }}
+              >
+                <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus2]}
+                onPress={() => {
+                  const newScore = (currentGame.our_score || 0) + 2;
+                  setOurScore(newScore.toString());
+                  updateGame({ our_score: newScore }, token!);
+                }}
+              >
+                <Text style={styles.quickScoreBtnTextLight}>+2</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus3]}
+                onPress={() => {
+                  const newScore = (currentGame.our_score || 0) + 3;
+                  setOurScore(newScore.toString());
+                  updateGame({ our_score: newScore }, token!);
+                }}
+              >
+                <Text style={styles.quickScoreBtnTextDark}>+3</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Home Team Timeout Button - Hide in Pro Mode */}
+            {!isProModeGame && (
+              <TouchableOpacity 
+                style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
+                onPress={() => callTimeout('home')}
+              >
+                <Ionicons name="hand-left" size={12} color={colors.text} />
+                <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.gameInfo}>
             <View style={styles.quarterBadge}>
