@@ -1262,10 +1262,12 @@ export default function GameSummaryScreen() {
         </View>
       </Modal>
 
-      {/* Game Notes - Always visible, editable */}
+      {/* Game Notes - Shows pre-game goals and allows post-game notes */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Private Notes</Text>
+          <Text style={styles.sectionTitle}>
+            {currentGame.notes ? 'Game Goals & Notes' : 'Private Notes'}
+          </Text>
           {!editingNotes ? (
             <TouchableOpacity onPress={() => setEditingNotes(true)}>
               <Ionicons name="pencil" size={20} color={colors.primary} />
@@ -1313,7 +1315,13 @@ export default function GameSummaryScreen() {
         ) : (
           <View style={styles.notesCard}>
             {currentGame.notes ? (
-              <Text style={styles.notesText}>{currentGame.notes}</Text>
+              <View>
+                <View style={styles.preGameGoalsHeader}>
+                  <Ionicons name="flag" size={16} color={colors.primary} />
+                  <Text style={styles.preGameGoalsLabel}>Pre-Game Goals / Notes</Text>
+                </View>
+                <Text style={styles.notesText}>{currentGame.notes}</Text>
+              </View>
             ) : (
               <TouchableOpacity 
                 style={styles.emptyNotesCard}
