@@ -1551,37 +1551,15 @@ export default function LiveGameScreen() {
                         </Text>
                         <Text style={styles.playerStatLabel}>FG%</Text>
                       </View>
-                      {/* Player Minutes with independent toggle for pro mode */}
-                      <TouchableOpacity 
-                        style={styles.playerStatItem}
-                        onPress={() => {
-                          if (isProModeGame) {
-                            setIsPlayerMinutesRunning(!isPlayerMinutesRunning);
-                          }
-                        }}
-                        disabled={!isProModeGame}
-                      >
-                        <View style={styles.minutesDisplay}>
+                      {/* Player Minutes - Only show in team mode games, pro mode has the big clock at top */}
+                      {!isProModeGame && (
+                        <View style={styles.playerStatItem}>
                           <Text style={styles.playerStatValue}>
                             {formatTime(playerMinutes[selectedPlayer] || 0)}
                           </Text>
-                          {isProModeGame && (
-                            <View style={[
-                              styles.minutesClockIndicator,
-                              isPlayerMinutesRunning && styles.minutesClockRunning
-                            ]}>
-                              <Ionicons 
-                                name={isPlayerMinutesRunning ? "pause" : "play"} 
-                                size={10} 
-                                color={isPlayerMinutesRunning ? colors.warning : colors.success} 
-                              />
-                            </View>
-                          )}
+                          <Text style={styles.playerStatLabel}>MIN</Text>
                         </View>
-                        <Text style={styles.playerStatLabel}>
-                          {isProModeGame ? (isPlayerMinutesRunning ? 'MIN ▶' : 'MIN ⏸') : 'MIN'}
-                        </Text>
-                      </TouchableOpacity>
+                      )}
                     </View>
                     {statsFilterPeriod !== null && (
                       <Text style={styles.filterNote}>
@@ -1597,7 +1575,7 @@ export default function LiveGameScreen() {
                 <Text style={styles.selectPlayerText}>Select a player above</Text>
                 <Text style={styles.selectPlayerSubtext}>to start recording stats</Text>
               </View>
-            )}
+            )}}
           </ScrollView>
         </>
       )}
