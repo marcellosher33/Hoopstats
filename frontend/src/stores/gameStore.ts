@@ -303,20 +303,14 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   fetchPlayers: async (token: string, teamId?: string) => {
-    console.log('[GameStore] fetchPlayers called, teamId:', teamId);
     const url = teamId ? `${API_URL}/api/players?team_id=${teamId}` : `${API_URL}/api/players`;
-    console.log('[GameStore] Fetching from:', url);
     const response = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
     
-    console.log('[GameStore] Response status:', response.status);
     if (response.ok) {
       const players = await response.json();
-      console.log('[GameStore] Players fetched:', players.length, players);
       set({ players });
-    } else {
-      console.error('[GameStore] Failed to fetch players:', response.status);
     }
   },
 
