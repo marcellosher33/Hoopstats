@@ -1220,14 +1220,6 @@ export default function LiveGameScreen() {
         </View>
       )}
 
-      {/* Pro Mode Game Label */}
-      {isProModeGame && (
-        <View style={styles.proModeLabel}>
-          <Ionicons name="person" size={14} color={colors.primary} />
-          <Text style={styles.proModeLabelText}>Single Player Mode</Text>
-        </View>
-      )}
-
       {teamMode ? (
         /* Team Mode - In/Out Players View */
         <ScrollView style={styles.teamModeContainer} contentContainerStyle={styles.teamModeContent}>
