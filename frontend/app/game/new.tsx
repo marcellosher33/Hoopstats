@@ -82,16 +82,25 @@ export default function NewGameScreen() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('[NewGame] Token:', token ? 'present' : 'missing');
     if (token) {
+      console.log('[NewGame] Fetching players and teams...');
       fetchPlayers(token);
       fetchTeams(token);
     }
   }, [token]);
 
+  // Debug: Log players when they change
+  useEffect(() => {
+    console.log('[NewGame] Players from store:', players.length, players);
+  }, [players]);
+
   // Filter players based on selected team
   const availablePlayers = selectedTeam 
     ? players.filter(p => p.team_id === selectedTeam.id)
     : players;
+  
+  console.log('[NewGame] Available players:', availablePlayers.length);
 
   // When team is selected, auto-select all team players and set team name
   const handleTeamSelect = (team: Team | null) => {
