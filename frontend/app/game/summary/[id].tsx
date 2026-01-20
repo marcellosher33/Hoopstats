@@ -85,7 +85,8 @@ export default function GameSummaryScreen() {
   const [notesText, setNotesText] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
-  const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+  // API URL with fallback
+  const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8001';
 
   useEffect(() => {
     if (token && id) {
