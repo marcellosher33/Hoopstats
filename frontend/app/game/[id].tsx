@@ -1074,39 +1074,49 @@ export default function LiveGameScreen() {
         </TouchableOpacity>
       </LinearGradient>
 
-      {/* Mode Toggle */}
-      <View style={styles.modeToggle}>
-        <TouchableOpacity
-          style={[styles.modeBtn, !teamMode && styles.modeBtnActive]}
-          onPress={() => setTeamMode(false)}
-        >
-          <Ionicons name="person" size={16} color={!teamMode ? colors.text : colors.textSecondary} />
-          <Text style={[styles.modeBtnText, !teamMode && styles.modeBtnTextActive]}>Single Player</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modeBtn, teamMode && styles.modeBtnActive, subscriptionTier !== 'team' && styles.modeBtnDisabled]}
-          onPress={() => {
-            if (subscriptionTier !== 'team') {
-              Alert.alert(
-                'Team Subscription Required',
-                'Team Mode is only available with a Team subscription. Upgrade to unlock this feature.',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Upgrade', onPress: () => router.push('/subscription') }
-                ]
-              );
-              return;
-            }
-            setTeamMode(true);
-          }}
-        >
-          <Ionicons name="people" size={16} color={teamMode ? colors.text : colors.textSecondary} />
-          <Text style={[styles.modeBtnText, teamMode && styles.modeBtnTextActive]}>Team Mode</Text>
-          {subscriptionTier !== 'team' && (
-            <Ionicons name="lock-closed" size={12} color={colors.textSecondary} style={{ marginLeft: 4 }} />
-          )}
-        </TouchableOpacity>
-      </View>
+      {/* Mode Toggle - Only show for team mode games */}
+      {!isProModeGame && (
+        <View style={styles.modeToggle}>
+          <TouchableOpacity
+            style={[styles.modeBtn, !teamMode && styles.modeBtnActive]}
+            onPress={() => setTeamMode(false)}
+          >
+            <Ionicons name="person" size={16} color={!teamMode ? colors.text : colors.textSecondary} />
+            <Text style={[styles.modeBtnText, !teamMode && styles.modeBtnTextActive]}>Single Player</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modeBtn, teamMode && styles.modeBtnActive, subscriptionTier !== 'team' && styles.modeBtnDisabled]}
+            onPress={() => {
+              if (subscriptionTier !== 'team') {
+                Alert.alert(
+                  'Team Subscription Required',
+                  'Team Mode is only available with a Team subscription. Upgrade to unlock this feature.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Upgrade', onPress: () => router.push('/subscription') }
+                  ]
+                );
+                return;
+              }
+              setTeamMode(true);
+            }}
+          >
+            <Ionicons name="people" size={16} color={teamMode ? colors.text : colors.textSecondary} />
+            <Text style={[styles.modeBtnText, teamMode && styles.modeBtnTextActive]}>Team Mode</Text>
+            {subscriptionTier !== 'team' && (
+              <Ionicons name="lock-closed" size={12} color={colors.textSecondary} style={{ marginLeft: 4 }} />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Pro Mode Game Label */}
+      {isProModeGame && (
+        <View style={styles.proModeLabel}>
+          <Ionicons name="person" size={14} color={colors.primary} />
+          <Text style={styles.proModeLabelText}>Single Player Mode</Text>
+        </View>
+      )}
 
       {teamMode ? (
         /* Team Mode - In/Out Players View */
