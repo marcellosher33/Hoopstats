@@ -1504,12 +1504,37 @@ export default function LiveGameScreen() {
                         </Text>
                         <Text style={styles.playerStatLabel}>FG%</Text>
                       </View>
-                      <View style={styles.playerStatItem}>
-                        <Text style={styles.playerStatValue}>
-                          {formatTime(playerMinutes[selectedPlayer] || 0)}
+                      {/* Player Minutes with independent toggle for pro mode */}
+                      <TouchableOpacity 
+                        style={styles.playerStatItem}
+                        onPress={() => {
+                          if (isProModeGame) {
+                            setIsPlayerMinutesRunning(!isPlayerMinutesRunning);
+                          }
+                        }}
+                        disabled={!isProModeGame}
+                      >
+                        <View style={styles.minutesDisplay}>
+                          <Text style={styles.playerStatValue}>
+                            {formatTime(playerMinutes[selectedPlayer] || 0)}
+                          </Text>
+                          {isProModeGame && (
+                            <View style={[
+                              styles.minutesClockIndicator,
+                              isPlayerMinutesRunning && styles.minutesClockRunning
+                            ]}>
+                              <Ionicons 
+                                name={isPlayerMinutesRunning ? "pause" : "play"} 
+                                size={10} 
+                                color={isPlayerMinutesRunning ? colors.warning : colors.success} 
+                              />
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.playerStatLabel}>
+                          {isProModeGame ? (isPlayerMinutesRunning ? 'MIN ▶' : 'MIN ⏸') : 'MIN'}
                         </Text>
-                        <Text style={styles.playerStatLabel}>MIN</Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                     {statsFilterPeriod !== null && (
                       <Text style={styles.filterNote}>
