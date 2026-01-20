@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Game, Player, Team, StatType } from '../types';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+// Get API URL - use localhost:8001 as fallback for local development
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface GameState {
   games: Game[];
