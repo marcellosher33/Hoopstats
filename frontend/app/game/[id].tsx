@@ -931,68 +931,125 @@ export default function LiveGameScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Game Header - Scoreboard */}
-      <LinearGradient
-        colors={['#1A1A2E', '#16213E']}
-        style={styles.header}
-      >
-        {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
-        {getPeriodStatusText() && (
-          <View style={styles.periodStatusOverlay} pointerEvents="none">
-            <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
-            <Text style={styles.periodStatusHint}>Tap clock to edit time</Text>
+      {/* Pro Mode Header - Simple player tracking, no scoreboard */}
+      {isProModeGame ? (
+        <LinearGradient
+          colors={['#1A1A2E', '#16213E']}
+          style={styles.proModeHeader}
+        >
+          <View style={styles.proModeHeaderContent}>
+            <Text style={styles.proModeTitle}>Single Player Mode</Text>
+            <Text style={styles.proModeSubtitle}>
+              {currentGame.home_team_name} vs {currentGame.opponent_name}
+            </Text>
           </View>
-        )}
-        
-        <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
-          <View style={styles.teamScore}>
-            <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
-            <Text style={styles.score}>{currentGame.our_score}</Text>
-            {/* Quick Score Buttons for Our Team */}
-            <View style={styles.quickScoreRow}>
+          
+          {/* Player Minutes Clock - The main clock in pro mode */}
+          {selectedPlayer && (
+            <View style={styles.proModeClockSection}>
               <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
-                onPress={async () => {
-                  if (!token || !id || !currentGame) return;
-                  const newScore = Math.max(0, (currentGame.our_score || 0) - 1);
-                  await updateGame(id, { our_score: newScore }, token);
-                }}
+                style={[
+                  styles.proModeClockBtn,
+                  isPlayerMinutesRunning && styles.proModeClockBtnActive
+                ]}
+                onPress={() => setIsPlayerMinutesRunning(!isPlayerMinutesRunning)}
               >
-                <Text style={styles.quickScoreBtnText}>-1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus1]}
-                onPress={async () => {
-                  if (!token || !id || !currentGame) return;
-                  const newScore = (currentGame.our_score || 0) + 1;
-                  await updateGame(id, { our_score: newScore }, token);
-                }}
-              >
-                <Text style={styles.quickScoreBtnTextLight}>+1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus2]}
-                onPress={async () => {
-                  if (!token || !id || !currentGame) return;
-                  const newScore = (currentGame.our_score || 0) + 2;
-                  await updateGame(id, { our_score: newScore }, token);
-                }}
-              >
-                <Text style={styles.quickScoreBtnTextLight}>+2</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnPlus3]}
-                onPress={async () => {
-                  if (!token || !id || !currentGame) return;
-                  const newScore = (currentGame.our_score || 0) + 3;
-                  await updateGame(id, { our_score: newScore }, token);
-                }}
-              >
-                <Text style={styles.quickScoreBtnTextDark}>+3</Text>
+                <View style={styles.proModeClockDisplay}>
+                  <Text style={styles.proModeClockTime}>
+                    {formatTime(playerMinutes[selectedPlayer] || 0)}
+                  </Text>
+                  <Text style={styles.proModeClockLabel}>MINUTES</Text>
+                </View>
+                <View style={[
+                  styles.proModeClockIndicator,
+                  isPlayerMinutesRunning && styles.proModeClockIndicatorActive
+                ]}>
+                  <Ionicons 
+                    name={isPlayerMinutesRunning ? "pause" : "play"} 
+                    size={20} 
+                    color={isPlayerMinutesRunning ? colors.warning : colors.success} 
+                  />
+                  <Text style={styles.proModeClockStatus}>
+                    {isPlayerMinutesRunning ? 'IN' : 'OUT'}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
-            {/* Home Team Timeout Button - Hide in Pro Mode */}
-            {!isProModeGame && (
+          )}
+          
+          {/* End Game Button */}
+          <View style={styles.proModeActions}>
+            <TouchableOpacity
+              style={styles.proModeEndBtn}
+              onPress={handleEndGame}
+            >
+              <Ionicons name="flag" size={16} color={colors.error} />
+              <Text style={styles.proModeEndBtnText}>End Game</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      ) : (
+        /* Team Mode Header - Full Scoreboard */
+        <LinearGradient
+          colors={['#1A1A2E', '#16213E']}
+          style={styles.header}
+        >
+          {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
+          {getPeriodStatusText() && (
+            <View style={styles.periodStatusOverlay} pointerEvents="none">
+              <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
+              <Text style={styles.periodStatusHint}>Tap clock to edit time</Text>
+            </View>
+          )}
+          
+          <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
+            <View style={styles.teamScore}>
+              <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
+              <Text style={styles.score}>{currentGame.our_score}</Text>
+              {/* Quick Score Buttons for Our Team */}
+              <View style={styles.quickScoreRow}>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = Math.max(0, (currentGame.our_score || 0) - 1);
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnText}>-1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus1]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 1;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus2]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 2;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus3]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 3;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextDark}>+3</Text>
+                </TouchableOpacity>
+              </View>
+              {/* Home Team Timeout Button */}
               <TouchableOpacity 
                 style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
                 onPress={() => callTimeout('home')}
@@ -1000,81 +1057,79 @@ export default function LiveGameScreen() {
                 <Ionicons name="hand-left" size={12} color={colors.text} />
                 <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
               </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.gameInfo}>
-            <View style={styles.quarterBadge}>
-              <Text style={styles.quarterText}>
-                {currentGame.period_type === 'halves' 
-                  ? `H${currentGame.current_period || 1}` 
-                  : `Q${currentGame.current_period || 1}`}
-              </Text>
             </View>
-            
-            {/* Game Clock Display */}
-            <TouchableOpacity onPress={openClockEdit} style={styles.gameClockContainer}>
-              <Text style={[styles.gameClock, gameClockSeconds <= 60 && styles.gameClockLow]}>
-                {formatClock(gameClockSeconds)}
-              </Text>
-            </TouchableOpacity>
-            
-            {/* Master Time In/Out Button */}
-            <TouchableOpacity 
-              style={[styles.masterClockBtn, isClockRunning && styles.masterClockBtnActive]}
-              onPress={toggleMasterClock}
-            >
-              <Ionicons 
-                name={isClockRunning ? "pause" : "play"} 
-                size={16} 
-                color={isClockRunning ? colors.text : colors.success} 
-              />
-              <Text style={[styles.masterClockBtnText, isClockRunning && styles.masterClockBtnTextActive]}>
-                {isClockRunning ? 'STOP' : 'START'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.editScoreHint}>
-              <Ionicons name="create-outline" size={14} color={colors.textSecondary} />
-              <Text style={styles.editHintText}>Tap scores to edit</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.teamScore}>
-            <Text style={styles.teamLabel}>{currentGame.opponent_name.toUpperCase()}</Text>
-            <TouchableOpacity 
-              onLongPress={() => setShowOpponentScoreAdjust(true)}
-              delayLongPress={500}
-            >
-              <Text style={styles.score}>{currentGame.opponent_score}</Text>
-            </TouchableOpacity>
-            {/* Quick Score Buttons for Opponent */}
-            <View style={styles.quickScoreRow}>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
-                onPress={() => handleOpponentScore(-1)}
-              >
-                <Text style={styles.quickScoreBtnText}>-1</Text>
+            <View style={styles.gameInfo}>
+              <View style={styles.quarterBadge}>
+                <Text style={styles.quarterText}>
+                  {currentGame.period_type === 'halves' 
+                    ? `H${currentGame.current_period || 1}` 
+                    : `Q${currentGame.current_period || 1}`}
+                </Text>
+              </View>
+              
+              {/* Game Clock Display */}
+              <TouchableOpacity onPress={openClockEdit} style={styles.gameClockContainer}>
+                <Text style={[styles.gameClock, gameClockSeconds <= 60 && styles.gameClockLow]}>
+                  {formatClock(gameClockSeconds)}
+                </Text>
               </TouchableOpacity>
+              
+              {/* Master Time In/Out Button */}
               <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
-                onPress={() => handleOpponentScore(1)}
+                style={[styles.masterClockBtn, isClockRunning && styles.masterClockBtnActive]}
+                onPress={toggleMasterClock}
               >
-                <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+                <Ionicons 
+                  name={isClockRunning ? "pause" : "play"} 
+                  size={16} 
+                  color={isClockRunning ? colors.text : colors.success} 
+                />
+                <Text style={[styles.masterClockBtnText, isClockRunning && styles.masterClockBtnTextActive]}>
+                  {isClockRunning ? 'STOP' : 'START'}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
-                onPress={() => handleOpponentScore(2)}
-              >
-                <Text style={styles.quickScoreBtnTextLight}>+2</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
-                onPress={() => handleOpponentScore(3)}
-              >
-                <Text style={styles.quickScoreBtnTextLight}>+3</Text>
+              
+              <TouchableOpacity style={styles.editScoreHint}>
+                <Ionicons name="create-outline" size={14} color={colors.textSecondary} />
+                <Text style={styles.editHintText}>Tap scores to edit</Text>
               </TouchableOpacity>
             </View>
-            {/* Away Team Timeout Button - Hide in Pro Mode */}
-            {!isProModeGame && (
+            <View style={styles.teamScore}>
+              <Text style={styles.teamLabel}>{currentGame.opponent_name.toUpperCase()}</Text>
+              <TouchableOpacity 
+                onLongPress={() => setShowOpponentScoreAdjust(true)}
+                delayLongPress={500}
+              >
+                <Text style={styles.score}>{currentGame.opponent_score}</Text>
+              </TouchableOpacity>
+              {/* Quick Score Buttons for Opponent */}
+              <View style={styles.quickScoreRow}>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
+                  onPress={() => handleOpponentScore(-1)}
+                >
+                  <Text style={styles.quickScoreBtnText}>-1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(1)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(2)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(3)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+3</Text>
+                </TouchableOpacity>
+              </View>
+              {/* Away Team Timeout Button */}
               <TouchableOpacity 
                 style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
                 onPress={() => callTimeout('away')}
@@ -1082,20 +1137,19 @@ export default function LiveGameScreen() {
                 <Ionicons name="hand-left" size={12} color={colors.text} />
                 <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
               </TouchableOpacity>
-            )}
-          </View>
-        </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
 
-        {/* Period Controls */}
-        <View style={styles.quarterControls}>
-          {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
-            <TouchableOpacity
-              key={p}
-              style={[
-                styles.quarterBtn,
-                (currentGame.current_period || 1) === p && styles.quarterBtnActive,
-              ]}
-              onPress={() => handleQuarterChange(p)}
+          {/* Period Controls */}
+          <View style={styles.quarterControls}>
+            {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
+              <TouchableOpacity
+                key={p}
+                style={[
+                  styles.quarterBtn,
+                  (currentGame.current_period || 1) === p && styles.quarterBtnActive,
+                ]}
+                onPress={() => handleQuarterChange(p)}
             >
               <Text style={[
                 styles.quarterBtnText,
