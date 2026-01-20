@@ -56,8 +56,19 @@ const PERIOD_TIME_OPTIONS = [
 
 export default function NewGameScreen() {
   const router = useRouter();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const { players, teams, fetchPlayers, fetchTeams, createGame } = useGameStore();
+
+  // Get subscription tier - defaults to 'free' if not set
+  const subscriptionTier = user?.subscription_tier || 'free';
+  
+  // Determine game mode based on subscription
+  // free = no game creation (redirect to upgrade)
+  // pro = single player mode only (1 player max)
+  // team = full team mode (multiple players)
+  const canCreateGame = subscriptionTier !== 'free';
+  const maxPlayers = subscriptionTier === 'team' ? Infinity : 1; // pro = 1 player only
+  const isTeamModeAllowed = subscriptionTier === 'team';
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [opponentName, setOpponentName] = useState('');
@@ -95,7 +106,12 @@ export default function NewGameScreen() {
     : players;
 
   // When team is selected, auto-select all team players and set team name
+  // Only allowed for team tier
   const handleTeamSelect = (team: Team | null) => {
+    if (!isTeamModeAllowed) {
+      Alert.alert('Team Mode Locked', 'Upgrade to Team tier to use team features.');
+      return;
+    }
     setSelectedTeam(team);
     if (team) {
       setHomeTeamName(team.name);
@@ -111,14 +127,43 @@ export default function NewGameScreen() {
   };
 
   const togglePlayer = (playerId: string) => {
-    setSelectedPlayers(prev =>
-      prev.includes(playerId)
-        ? prev.filter(id => id !== playerId)
-        : [...prev, playerId]
-    );
+    setSelectedPlayers(prev => {
+      if (prev.includes(playerId)) {
+        return prev.filter(id => id !== playerId);
+      } else {
+        // Check if we can add more players based on subscription
+        if (prev.length >= maxPlayers) {
+          if (subscriptionTier === 'pro') {
+            Alert.alert(
+              'Pro Mode - Single Player',
+              'Pro subscription allows tracking one player per game. Upgrade to Team tier to track multiple players.',
+              [
+                { text: 'OK', style: 'cancel' },
+                { text: 'Upgrade', onPress: () => router.push('/subscription') }
+              ]
+            );
+          }
+          return prev;
+        }
+        return [...prev, playerId];
+      }
+    });
   };
 
   const handleCreateGame = async () => {
+    // Check subscription allows game creation
+    if (!canCreateGame) {
+      Alert.alert(
+        'Subscription Required',
+        'Upgrade to Pro or Team tier to create games.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Upgrade', onPress: () => router.push('/subscription') }
+        ]
+      );
+      return;
+    }
+
     if (!homeTeamName.trim()) {
       Alert.alert('Error', 'Please enter your team name');
       return;
