@@ -773,6 +773,20 @@ async def remove_player_from_team(team_id: str, player_id: str, user: dict = Dep
 
 @api_router.post("/games")
 async def create_game(game_data: GameCreate, user: dict = Depends(get_current_user)):
+    # Validate game mode based on subscription
+    subscription_tier = user.get("subscription_tier", "free")
+    
+    # Free users cannot create games
+    if subscription_tier == "free":
+        raise HTTPException(status_code=403, detail="Upgrade to Pro or Team tier to create games")
+    
+    # Pro users can only have 1 player
+    if subscription_tier == "pro" and len(game_data.player_ids) > 1:
+        raise HTTPException(status_code=403, detail="Pro subscription allows tracking one player per game. Upgrade to Team tier for multiple players.")
+    
+    # Force game_mode based on subscription
+    game_mode = "team" if subscription_tier == "team" else "pro"
+    
     # Get players for this game
     player_stats = []
     for player_id in game_data.player_ids:
@@ -799,7 +813,9 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
         period_time_minutes=game_data.period_time_minutes,
         game_clock_seconds=initial_clock_seconds,
         clock_running=False,
-        player_stats=player_stats
+        player_stats=player_stats,
+        game_mode=game_mode,
+        notes=game_data.notes
     )
     
     await db.games.insert_one(game.model_dump())
