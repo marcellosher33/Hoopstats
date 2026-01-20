@@ -259,6 +259,9 @@ class Game(BaseModel):
     period_type: str = "quarters"  # quarters (4 periods) or halves (2 periods)
     period_time_minutes: int = 8  # Minutes per period
     
+    # Game Mode
+    game_mode: str = "team"  # 'pro' = single player mode, 'team' = full team mode
+    
     # Scores
     our_score: int = 0
     opponent_score: int = 0
