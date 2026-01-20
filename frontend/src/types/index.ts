@@ -99,6 +99,7 @@ export interface Game {
   game_type?: 'preseason' | 'tournament' | 'regular_season' | 'playoffs';
   venue?: string;
   period_type: 'quarters' | 'halves';
+  game_mode: 'pro' | 'team';  // 'pro' = single player, 'team' = full team
   our_score: number;
   opponent_score: number;
   status: 'in_progress' | 'completed';
@@ -113,6 +114,8 @@ export interface Game {
   ai_summary?: string;
   created_at: string;
   completed_at?: string;
+  share_token?: string;  // For live sharing
+  is_public?: boolean;
 }
 
 export interface HighlightReel {
