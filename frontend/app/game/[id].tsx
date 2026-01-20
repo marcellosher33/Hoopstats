@@ -2248,26 +2248,47 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
   },
-  opponentQuickScore: {
+  // Quick Score Buttons (under team scores)
+  quickScoreRow: {
     flexDirection: 'row',
     gap: 4,
-    marginTop: 4,
+    marginTop: 6,
   },
-  opponentScoreBtn: {
-    backgroundColor: 'rgba(239, 68, 68, 0.3)',
-    paddingHorizontal: 10,
+  quickScoreBtn: {
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.error,
+    borderRadius: borderRadius.sm,
+    minWidth: 32,
+    alignItems: 'center',
   },
-  opponentScoreBtnMinus: {
-    backgroundColor: 'rgba(100, 100, 100, 0.3)',
-    borderColor: colors.textSecondary,
+  quickScoreBtnMinus: {
+    backgroundColor: 'rgba(100, 100, 100, 0.4)',
   },
-  opponentScoreBtnText: {
-    color: colors.error,
-    fontSize: 12,
+  quickScoreBtnPlus1: {
+    backgroundColor: colors.success,
+  },
+  quickScoreBtnPlus2: {
+    backgroundColor: colors.primary,
+  },
+  quickScoreBtnPlus3: {
+    backgroundColor: colors.warning,
+  },
+  quickScoreBtnOpp: {
+    backgroundColor: colors.error,
+  },
+  quickScoreBtnText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  quickScoreBtnTextLight: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  quickScoreBtnTextDark: {
+    color: colors.background,
+    fontSize: 11,
     fontWeight: 'bold',
   },
   // Game Clock Styles
