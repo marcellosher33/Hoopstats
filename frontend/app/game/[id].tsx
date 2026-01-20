@@ -1182,6 +1182,7 @@ export default function LiveGameScreen() {
           </Text>
         </TouchableOpacity>
       </LinearGradient>
+      )}
 
       {/* Mode Toggle - Only show for team mode games */}
       {!isProModeGame && (
