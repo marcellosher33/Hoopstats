@@ -316,6 +316,8 @@ class GameCreate(BaseModel):
     period_type: str = "quarters"  # quarters or halves
     period_time_minutes: int = 8  # Minutes per period
     player_ids: List[str] = []
+    notes: Optional[str] = None  # Pre-game goals/notes
+    game_mode: str = "team"  # 'pro' = single player, 'team' = full team mode
 
 class StatUpdate(BaseModel):
     player_id: str
