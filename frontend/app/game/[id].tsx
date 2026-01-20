@@ -832,6 +832,15 @@ export default function LiveGameScreen() {
 
   const handleEndGame = async () => {
     if (!token || !id || !currentGame) return;
+    
+    // For Pro Mode, show final score modal first
+    if (isProModeGame) {
+      setFinalOurScore((currentGame.our_score || 0).toString());
+      setFinalOpponentScore((currentGame.opponent_score || 0).toString());
+      setShowFinalScoreModal(true);
+      return;
+    }
+    
     // Use the actual current game scores and include player minutes
     await updateGame(id, { 
       status: 'completed', 
@@ -840,6 +849,22 @@ export default function LiveGameScreen() {
       player_minutes: playerMinutes, // Save all player minutes
     }, token);
     setShowEndGameModal(false);
+    router.replace(`/game/summary/${id}`);
+  };
+
+  const handleConfirmFinalScore = async () => {
+    if (!token || !id || !currentGame) return;
+    
+    const ourFinal = parseInt(finalOurScore) || 0;
+    const oppFinal = parseInt(finalOpponentScore) || 0;
+    
+    await updateGame(id, { 
+      status: 'completed', 
+      our_score: ourFinal,
+      opponent_score: oppFinal,
+      player_minutes: playerMinutes,
+    }, token);
+    setShowFinalScoreModal(false);
     router.replace(`/game/summary/${id}`);
   };
 
