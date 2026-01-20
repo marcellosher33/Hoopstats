@@ -2974,6 +2974,62 @@ const styles = StyleSheet.create({
   modeBtnTextActive: {
     color: colors.text,
   },
+  // Pro Mode Label
+  proModeLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    marginHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+  },
+  proModeLabelText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  // Pro Mode Team Scoring
+  proModeTeamScoring: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.md,
+  },
+  proModeScoreSection: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  proModeScoreLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  proModeScoreButtons: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+  },
+  proModeScoreBtn: {
+    backgroundColor: colors.surfaceLight,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+    minWidth: 36,
+    alignItems: 'center',
+  },
+  proModeScoreBtnText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '700',
+  },
   // Team Mode Styles
   teamModeContainer: {
     flex: 1,
