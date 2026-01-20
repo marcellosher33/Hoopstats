@@ -97,6 +97,11 @@ export default function LiveGameScreen() {
   // Show opponent score adjustment modal
   const [showOpponentScoreAdjust, setShowOpponentScoreAdjust] = useState(false);
   
+  // Final Score Modal for Pro Mode
+  const [showFinalScoreModal, setShowFinalScoreModal] = useState(false);
+  const [finalOurScore, setFinalOurScore] = useState('0');
+  const [finalOpponentScore, setFinalOpponentScore] = useState('0');
+  
   // Share and Undo History
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareToken, setShareToken] = useState<string | null>(null);
