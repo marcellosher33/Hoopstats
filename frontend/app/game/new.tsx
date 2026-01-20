@@ -448,7 +448,7 @@ export default function NewGameScreen() {
           ) : (
             <View style={styles.playerGrid}>
               {availablePlayers.map((player) => (
-                <TouchableOpacity
+                <Pressable
                   key={player.id}
                   style={[
                     styles.playerCard,
@@ -477,7 +477,7 @@ export default function NewGameScreen() {
                       <Ionicons name="checkmark-circle" size={24} color={colors.success} />
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}
