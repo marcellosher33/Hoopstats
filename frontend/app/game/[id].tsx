@@ -2774,6 +2774,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 2,
   },
+  minutesDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  minutesClockIndicator: {
+    backgroundColor: 'rgba(100, 100, 100, 0.4)',
+    borderRadius: 8,
+    padding: 2,
+  },
+  minutesClockRunning: {
+    backgroundColor: 'rgba(34, 197, 94, 0.3)',
+  },
   actionBar: {
     flexDirection: 'row',
     padding: spacing.md,
