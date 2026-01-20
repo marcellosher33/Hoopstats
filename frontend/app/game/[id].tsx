@@ -490,21 +490,28 @@ export default function LiveGameScreen() {
     };
   }, [teamMode, activePlayerIds.size, isClockRunning]);
 
-  // Single player mode clock
+  // Single player mode clock - INDEPENDENT of game clock in pro mode
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (!teamMode && isClockRunning && selectedPlayer) {
+    
+    // In pro mode (isProModeGame), player minutes runs independently
+    // In team mode with single player view, it follows the game clock
+    const shouldRunMinutes = isProModeGame 
+      ? isPlayerMinutesRunning && selectedPlayer
+      : !teamMode && isClockRunning && selectedPlayer;
+    
+    if (shouldRunMinutes) {
       interval = setInterval(() => {
         setPlayerMinutes(prev => ({
           ...prev,
-          [selectedPlayer]: (prev[selectedPlayer] || 0) + 1
+          [selectedPlayer!]: (prev[selectedPlayer!] || 0) + 1
         }));
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [teamMode, isClockRunning, selectedPlayer]);
+  }, [teamMode, isClockRunning, selectedPlayer, isProModeGame, isPlayerMinutesRunning]);
 
   const toggleActivePlayer = (playerId: string) => {
     setActivePlayerIds(prev => {
