@@ -58,6 +58,10 @@ export default function LiveGameScreen() {
   const [adjustStatType, setAdjustStatType] = useState<string | null>(null);
   const [adjustStatLabel, setAdjustStatLabel] = useState<string>('');
   
+  // Pro mode flag - determined by game's game_mode field
+  // In pro mode: single player only, simplified team scoring (+1,+2,+3,-1)
+  const isProModeGame = currentGame?.game_mode === 'pro' || currentGame?.game_mode === undefined;
+  
   // New state for minutes tracking and active players
   const [playerMinutes, setPlayerMinutes] = useState<Record<string, number>>({});
   const [activePlayerIds, setActivePlayerIds] = useState<Set<string>>(new Set());
