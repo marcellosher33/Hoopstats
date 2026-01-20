@@ -1907,6 +1907,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
   },
+  preGameGoalsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceLight,
+  },
+  preGameGoalsLabel: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   notesEditCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
