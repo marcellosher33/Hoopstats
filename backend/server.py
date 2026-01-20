@@ -776,15 +776,15 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
     # Validate game mode based on subscription
     subscription_tier = user.get("subscription_tier", "free")
     
-    # Free users cannot create games
-    if subscription_tier == "free":
-        raise HTTPException(status_code=403, detail="Upgrade to Pro or Team tier to create games")
+    # Free and Pro users can only have 1 player (single player mode)
+    # Team users can have multiple players
+    if subscription_tier != "team" and len(game_data.player_ids) > 1:
+        raise HTTPException(
+            status_code=403, 
+            detail="Upgrade to Team tier to track multiple players per game."
+        )
     
-    # Pro users can only have 1 player
-    if subscription_tier == "pro" and len(game_data.player_ids) > 1:
-        raise HTTPException(status_code=403, detail="Pro subscription allows tracking one player per game. Upgrade to Team tier for multiple players.")
-    
-    # Force game_mode based on subscription
+    # Determine game mode: 'team' only for team tier, 'pro' for free/pro
     game_mode = "team" if subscription_tier == "team" else "pro"
     
     # Get players for this game
