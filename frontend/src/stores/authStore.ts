@@ -55,13 +55,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
 
   login: async (email: string, password: string) => {
+    console.log('[AuthStore] Login attempt - API_URL:', API_URL);
+    console.log('[AuthStore] Full URL:', `${API_URL}/api/auth/login`);
+    
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
+    console.log('[AuthStore] Response status:', response.status);
     const data = await parseResponse(response);
+    console.log('[AuthStore] Login successful, user:', data.user?.email);
 
     await AsyncStorage.setItem('token', data.token);
     await AsyncStorage.setItem('user', JSON.stringify(data.user));
