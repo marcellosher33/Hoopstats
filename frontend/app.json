@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hoopstats.app",
-      "buildNumber": "8",
+      "buildNumber": "9",
       "infoPlist": {
         "NSCameraUsageDescription": "HoopStats needs camera access to take photos during games.",
         "NSPhotoLibraryUsageDescription": "HoopStats needs photo library access to save game photos.",
