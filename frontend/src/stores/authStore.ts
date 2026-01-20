@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../types';
 
+// Use empty string for relative URLs when no backend URL is specified
+// This allows the Kubernetes proxy to route /api/* to port 8001
 const API_URL = (
   process.env.EXPO_PUBLIC_BACKEND_URL ||
   process.env.EXPO_PUBLIC_API_URL ||
-  'https://hoopstats-production-c815.up.railway.app'
+  ''
 ).replace(/\/$/, '');
 
 async function parseResponse(response: Response) {
