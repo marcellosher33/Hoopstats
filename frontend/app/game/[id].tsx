@@ -1038,41 +1038,43 @@ export default function LiveGameScreen() {
             >
               <Text style={styles.score}>{currentGame.opponent_score}</Text>
             </TouchableOpacity>
-            {/* Away Team Timeout Button */}
-            <TouchableOpacity 
-              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
-              onPress={() => callTimeout('away')}
-            >
-              <Ionicons name="hand-left" size={12} color={colors.text} />
-              <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
-            </TouchableOpacity>
-            {/* Opponent Quick Score Buttons */}
-            <View style={styles.opponentQuickScore}>
+            {/* Quick Score Buttons for Opponent */}
+            <View style={styles.quickScoreRow}>
               <TouchableOpacity 
-                style={[styles.opponentScoreBtn, styles.opponentScoreBtnMinus]}
+                style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
                 onPress={() => handleOpponentScore(-1)}
               >
-                <Text style={styles.opponentScoreBtnText}>-1</Text>
+                <Text style={styles.quickScoreBtnText}>-1</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.opponentScoreBtn}
+                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
                 onPress={() => handleOpponentScore(1)}
               >
-                <Text style={styles.opponentScoreBtnText}>+1</Text>
+                <Text style={styles.quickScoreBtnTextLight}>+1</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.opponentScoreBtn}
+                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
                 onPress={() => handleOpponentScore(2)}
               >
-                <Text style={styles.opponentScoreBtnText}>+2</Text>
+                <Text style={styles.quickScoreBtnTextLight}>+2</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.opponentScoreBtn}
+                style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
                 onPress={() => handleOpponentScore(3)}
               >
-                <Text style={styles.opponentScoreBtnText}>+3</Text>
+                <Text style={styles.quickScoreBtnTextLight}>+3</Text>
               </TouchableOpacity>
             </View>
+            {/* Away Team Timeout Button - Hide in Pro Mode */}
+            {!isProModeGame && (
+              <TouchableOpacity 
+                style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
+                onPress={() => callTimeout('away')}
+              >
+                <Ionicons name="hand-left" size={12} color={colors.text} />
+                <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
 
