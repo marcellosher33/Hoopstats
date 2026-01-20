@@ -66,6 +66,7 @@ export default function LiveGameScreen() {
   const [playerMinutes, setPlayerMinutes] = useState<Record<string, number>>({});
   const [activePlayerIds, setActivePlayerIds] = useState<Set<string>>(new Set());
   const [isClockRunning, setIsClockRunning] = useState(false); // Master clock running state
+  const [isPlayerMinutesRunning, setIsPlayerMinutesRunning] = useState(false); // Independent player minutes clock for pro mode
   const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Game Clock state
