@@ -111,15 +111,11 @@ export default function NewGameScreen() {
   };
 
   const togglePlayer = (playerId: string) => {
-    console.log('[NewGame] togglePlayer called with:', playerId);
-    console.log('[NewGame] Current selectedPlayers:', selectedPlayers);
-    setSelectedPlayers(prev => {
-      const newSelection = prev.includes(playerId)
+    setSelectedPlayers(prev =>
+      prev.includes(playerId)
         ? prev.filter(id => id !== playerId)
-        : [...prev, playerId];
-      console.log('[NewGame] New selection:', newSelection);
-      return newSelection;
-    });
+        : [...prev, playerId]
+    );
   };
 
   const handleCreateGame = async () => {
