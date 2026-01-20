@@ -1124,8 +1124,8 @@ export default function GameSummaryScreen() {
         })}
       </View>
 
-      {/* Shot Chart */}
-      {allShots.length > 0 && (
+      {/* Shot Chart - Only show if team mode (single player mode shows chart in player section) */}
+      {allShots.length > 0 && currentGame?.game_mode !== 'pro' && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Shot Chart</Text>
           <View style={styles.shotChartContainer}>
