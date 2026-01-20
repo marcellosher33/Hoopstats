@@ -181,6 +181,9 @@ export default function NewGameScreen() {
 
     setLoading(true);
     try {
+      // Determine game mode based on subscription tier
+      const gameMode = subscriptionTier === 'team' ? 'team' : 'pro';
+      
       const game = await createGame(
         {
           home_team_name: homeTeamName.trim(),
@@ -194,6 +197,7 @@ export default function NewGameScreen() {
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
           notes: gameNotes.trim() || undefined,
+          game_mode: gameMode, // 'pro' = single player, 'team' = full team
         },
         token!
       );
