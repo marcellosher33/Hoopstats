@@ -1693,15 +1693,21 @@ Please provide:
 """
     
     try:
-        # Use emergent integrations library with correct API
-        session_id = f"game-summary-{game_id}"
-        llm = LlmChat(
-            api_key=EMERGENT_LLM_KEY, 
-            session_id=session_id, 
-            system_message="You are a sports journalist specializing in basketball game summaries."
+        # Use OpenAI SDK directly for Railway compatibility
+        if not openai_client:
+            raise HTTPException(status_code=500, detail="AI service not configured")
+        
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a sports journalist specializing in basketball game summaries."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=1000,
+            temperature=0.7
         )
-        message = UserMessage(text=prompt)
-        summary = await llm.send_message(message)
+        
+        summary = response.choices[0].message.content
         
         # Save summary to game
         await db.games.update_one(
