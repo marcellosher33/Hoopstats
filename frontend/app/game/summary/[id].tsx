@@ -85,7 +85,8 @@ export default function GameSummaryScreen() {
   const [notesText, setNotesText] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
-  const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+  // API URL with fallback
+  const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8001';
 
   useEffect(() => {
     if (token && id) {
@@ -1123,8 +1124,8 @@ export default function GameSummaryScreen() {
         })}
       </View>
 
-      {/* Shot Chart */}
-      {allShots.length > 0 && (
+      {/* Shot Chart - Only show if team mode (single player mode shows chart in player section) */}
+      {allShots.length > 0 && currentGame?.game_mode !== 'pro' && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Shot Chart</Text>
           <View style={styles.shotChartContainer}>
@@ -1261,10 +1262,12 @@ export default function GameSummaryScreen() {
         </View>
       </Modal>
 
-      {/* Game Notes - Always visible, editable */}
+      {/* Game Notes - Shows pre-game goals and allows post-game notes */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Private Notes</Text>
+          <Text style={styles.sectionTitle}>
+            {currentGame.notes ? 'Game Goals & Notes' : 'Private Notes'}
+          </Text>
           {!editingNotes ? (
             <TouchableOpacity onPress={() => setEditingNotes(true)}>
               <Ionicons name="pencil" size={20} color={colors.primary} />
@@ -1312,7 +1315,13 @@ export default function GameSummaryScreen() {
         ) : (
           <View style={styles.notesCard}>
             {currentGame.notes ? (
-              <Text style={styles.notesText}>{currentGame.notes}</Text>
+              <View>
+                <View style={styles.preGameGoalsHeader}>
+                  <Ionicons name="flag" size={16} color={colors.primary} />
+                  <Text style={styles.preGameGoalsLabel}>Pre-Game Goals / Notes</Text>
+                </View>
+                <Text style={styles.notesText}>{currentGame.notes}</Text>
+              </View>
             ) : (
               <TouchableOpacity 
                 style={styles.emptyNotesCard}
@@ -1897,6 +1906,22 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 14,
     lineHeight: 22,
+  },
+  preGameGoalsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceLight,
+  },
+  preGameGoalsLabel: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   notesEditCard: {
     backgroundColor: colors.surface,

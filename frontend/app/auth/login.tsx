@@ -35,13 +35,20 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
-    if (!validate()) return;
+    console.log('[Login] Starting login attempt with email:', email);
+    if (!validate()) {
+      console.log('[Login] Validation failed');
+      return;
+    }
     
     setLoading(true);
     try {
+      console.log('[Login] Calling login function...');
       await login(email, password);
+      console.log('[Login] Login successful, navigating...');
       router.replace('/(tabs)');
     } catch (error: any) {
+      console.error('[Login] Login failed:', error);
       Alert.alert('Login Failed', error.message || 'Please check your credentials');
     } finally {
       setLoading(false);

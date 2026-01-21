@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Pressable,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -55,8 +56,20 @@ const PERIOD_TIME_OPTIONS = [
 
 export default function NewGameScreen() {
   const router = useRouter();
-  const { token } = useAuthStore();
+  const { token, user } = useAuthStore();
   const { players, teams, fetchPlayers, fetchTeams, createGame } = useGameStore();
+
+  // Get subscription tier - defaults to 'free' if not set
+  const subscriptionTier = user?.subscription_tier || 'free';
+  
+  // Subscription tier features:
+  // FREE: Single player, stats tracking, last 2 games, photo capture
+  //       NO: AI summaries, PDF export, live sharing, team mode
+  // PRO:  Single player, all free features PLUS AI summaries, PDF export, live sharing
+  // TEAM: Multiple players, all pro features PLUS team mode
+  
+  const maxPlayers = subscriptionTier === 'team' ? Infinity : 1; // free & pro = 1 player only
+  const isTeamModeAllowed = subscriptionTier === 'team';
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [opponentName, setOpponentName] = useState('');
@@ -94,7 +107,12 @@ export default function NewGameScreen() {
     : players;
 
   // When team is selected, auto-select all team players and set team name
+  // Only allowed for team tier
   const handleTeamSelect = (team: Team | null) => {
+    if (!isTeamModeAllowed) {
+      Alert.alert('Team Mode Locked', 'Upgrade to Team tier to use team features and track multiple players.');
+      return;
+    }
     setSelectedTeam(team);
     if (team) {
       setHomeTeamName(team.name);
@@ -110,11 +128,27 @@ export default function NewGameScreen() {
   };
 
   const togglePlayer = (playerId: string) => {
-    setSelectedPlayers(prev =>
-      prev.includes(playerId)
-        ? prev.filter(id => id !== playerId)
-        : [...prev, playerId]
-    );
+    setSelectedPlayers(prev => {
+      if (prev.includes(playerId)) {
+        return prev.filter(id => id !== playerId);
+      } else {
+        // Check if we can add more players based on subscription
+        if (prev.length >= maxPlayers) {
+          Alert.alert(
+            'Single Player Mode',
+            subscriptionTier === 'free' 
+              ? 'Free plan allows tracking one player per game. Upgrade to Team tier for multiple players.'
+              : 'Pro plan allows tracking one player per game. Upgrade to Team tier for multiple players.',
+            [
+              { text: 'OK', style: 'cancel' },
+              { text: 'Upgrade', onPress: () => router.push('/subscription') }
+            ]
+          );
+          return prev;
+        }
+        return [...prev, playerId];
+      }
+    });
   };
 
   const handleCreateGame = async () => {
@@ -135,6 +169,9 @@ export default function NewGameScreen() {
 
     setLoading(true);
     try {
+      // Determine game mode based on subscription tier
+      const gameMode = subscriptionTier === 'team' ? 'team' : 'pro';
+      
       const game = await createGame(
         {
           home_team_name: homeTeamName.trim(),
@@ -148,6 +185,7 @@ export default function NewGameScreen() {
           game_date: gameDate.toISOString(),
           player_ids: selectedPlayers,
           notes: gameNotes.trim() || undefined,
+          game_mode: gameMode, // 'pro' = single player, 'team' = full team
         },
         token!
       );
@@ -434,7 +472,7 @@ export default function NewGameScreen() {
           ) : (
             <View style={styles.playerGrid}>
               {availablePlayers.map((player) => (
-                <TouchableOpacity
+                <Pressable
                   key={player.id}
                   style={[
                     styles.playerCard,
@@ -463,7 +501,7 @@ export default function NewGameScreen() {
                       <Ionicons name="checkmark-circle" size={24} color={colors.success} />
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}

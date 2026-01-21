@@ -4,40 +4,28 @@
     "appVersionSource": "local"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "simulator": true
-      }
-    },
     "preview": {
-      "distribution": "internal",
-      "ios": {
-        "simulator": false,
-        "resourceClass": "m-medium"
-      },
-      "android": {
-        "buildType": "apk"
-      }
+      "distribution": "internal"
     },
     "production": {
+      "distribution": "store",
       "ios": {
-        "autoIncrement": true,
         "resourceClass": "m-medium"
       },
-      "android": {
-        "autoIncrement": true,
-        "buildType": "app-bundle"
+      "env": {
+        "EXPO_PUBLIC_BACKEND_URL": "https://hoopstats-production-c815.up.railway.app",
+        "EXPO_PUBLIC_API_URL": "https://hoopstats-production-c815.up.railway.app",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51SqllRLDsZBNohmmNyIJWqSkSXgnLOMPowZI7VSaW7gCsqQ5MpATcFOKx4enKQc6mC5okQNWcJLOHk2MXisaUdzL00VtRd0MT6",
+        "EXPO_PUBLIC_SUPPORT_EMAIL": "support@hoopstatsapp.com"
       }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "YOUR_APPLE_ID@email.com",
-        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "YOUR_APPLE_TEAM_ID"
+        "appleId": "marcellosher33@yahoo.com",
+        "ascAppId": "6757993370",
+        "appleTeamId": "C4A7X3CQ52"
       }
     }
   }

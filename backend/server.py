@@ -104,6 +104,14 @@ app = FastAPI(title="Basketball Stat Tracker API")
 api_router = APIRouter(prefix="/api")
 
 security = HTTPBearer()
+@api_router.get("/health/db")
+async def health_db():
+    try:
+        # "ping" requires Mongo to be reachable
+        await db.command("ping")
+        return {"status": "ok", "db": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"DB connection failed: {str(e)}")
 
 # ==================== MODELS ====================
 
@@ -250,6 +258,9 @@ class Game(BaseModel):
     period_type: str = "quarters"  # quarters (4 periods) or halves (2 periods)
     period_time_minutes: int = 8  # Minutes per period
     
+    # Game Mode
+    game_mode: str = "team"  # 'pro' = single player mode, 'team' = full team mode
+    
     # Scores
     our_score: int = 0
     opponent_score: int = 0
@@ -307,6 +318,8 @@ class GameCreate(BaseModel):
     period_type: str = "quarters"  # quarters or halves
     period_time_minutes: int = 8  # Minutes per period
     player_ids: List[str] = []
+    notes: Optional[str] = None  # Pre-game goals/notes
+    game_mode: str = "team"  # 'pro' = single player, 'team' = full team mode
 
 class StatUpdate(BaseModel):
     player_id: str
@@ -759,6 +772,20 @@ async def remove_player_from_team(team_id: str, player_id: str, user: dict = Dep
 
 @api_router.post("/games")
 async def create_game(game_data: GameCreate, user: dict = Depends(get_current_user)):
+    # Validate game mode based on subscription
+    subscription_tier = user.get("subscription_tier", "free")
+    
+    # Free and Pro users can only have 1 player (single player mode)
+    # Team users can have multiple players
+    if subscription_tier != "team" and len(game_data.player_ids) > 1:
+        raise HTTPException(
+            status_code=403, 
+            detail="Upgrade to Team tier to track multiple players per game."
+        )
+    
+    # Determine game mode: 'team' only for team tier, 'pro' for free/pro
+    game_mode = "team" if subscription_tier == "team" else "pro"
+    
     # Get players for this game
     player_stats = []
     for player_id in game_data.player_ids:
@@ -785,7 +812,9 @@ async def create_game(game_data: GameCreate, user: dict = Depends(get_current_us
         period_time_minutes=game_data.period_time_minutes,
         game_clock_seconds=initial_clock_seconds,
         clock_running=False,
-        player_stats=player_stats
+        player_stats=player_stats,
+        game_mode=game_mode,
+        notes=game_data.notes
     )
     
     await db.games.insert_one(game.model_dump())

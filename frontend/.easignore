@@ -1,0 +1,7 @@
+# Ignore development files
+.expo/
+.metro-cache/
+dist/
+*.log
+.env.local
+.env.development

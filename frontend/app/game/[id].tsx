@@ -58,10 +58,15 @@ export default function LiveGameScreen() {
   const [adjustStatType, setAdjustStatType] = useState<string | null>(null);
   const [adjustStatLabel, setAdjustStatLabel] = useState<string>('');
   
+  // Pro mode flag - determined by game's game_mode field
+  // In pro mode: single player only, simplified team scoring (+1,+2,+3,-1)
+  const isProModeGame = currentGame?.game_mode === 'pro' || currentGame?.game_mode === undefined;
+  
   // New state for minutes tracking and active players
   const [playerMinutes, setPlayerMinutes] = useState<Record<string, number>>({});
   const [activePlayerIds, setActivePlayerIds] = useState<Set<string>>(new Set());
   const [isClockRunning, setIsClockRunning] = useState(false); // Master clock running state
+  const [isPlayerMinutesRunning, setIsPlayerMinutesRunning] = useState(false); // Independent player minutes clock for pro mode
   const minutesIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Game Clock state
@@ -91,6 +96,11 @@ export default function LiveGameScreen() {
   
   // Show opponent score adjustment modal
   const [showOpponentScoreAdjust, setShowOpponentScoreAdjust] = useState(false);
+  
+  // Final Score Modal for Pro Mode
+  const [showFinalScoreModal, setShowFinalScoreModal] = useState(false);
+  const [finalOurScore, setFinalOurScore] = useState('0');
+  const [finalOpponentScore, setFinalOpponentScore] = useState('0');
   
   // Share and Undo History
   const [showShareModal, setShowShareModal] = useState(false);
@@ -485,21 +495,28 @@ export default function LiveGameScreen() {
     };
   }, [teamMode, activePlayerIds.size, isClockRunning]);
 
-  // Single player mode clock
+  // Single player mode clock - INDEPENDENT of game clock in pro mode
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (!teamMode && isClockRunning && selectedPlayer) {
+    
+    // In pro mode (isProModeGame), player minutes runs independently
+    // In team mode with single player view, it follows the game clock
+    const shouldRunMinutes = isProModeGame 
+      ? isPlayerMinutesRunning && selectedPlayer
+      : !teamMode && isClockRunning && selectedPlayer;
+    
+    if (shouldRunMinutes) {
       interval = setInterval(() => {
         setPlayerMinutes(prev => ({
           ...prev,
-          [selectedPlayer]: (prev[selectedPlayer] || 0) + 1
+          [selectedPlayer!]: (prev[selectedPlayer!] || 0) + 1
         }));
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [teamMode, isClockRunning, selectedPlayer]);
+  }, [teamMode, isClockRunning, selectedPlayer, isProModeGame, isPlayerMinutesRunning]);
 
   const toggleActivePlayer = (playerId: string) => {
     setActivePlayerIds(prev => {
@@ -815,6 +832,15 @@ export default function LiveGameScreen() {
 
   const handleEndGame = async () => {
     if (!token || !id || !currentGame) return;
+    
+    // For Pro Mode, show final score modal first
+    if (isProModeGame) {
+      setFinalOurScore((currentGame.our_score || 0).toString());
+      setFinalOpponentScore((currentGame.opponent_score || 0).toString());
+      setShowFinalScoreModal(true);
+      return;
+    }
+    
     // Use the actual current game scores and include player minutes
     await updateGame(id, { 
       status: 'completed', 
@@ -823,6 +849,22 @@ export default function LiveGameScreen() {
       player_minutes: playerMinutes, // Save all player minutes
     }, token);
     setShowEndGameModal(false);
+    router.replace(`/game/summary/${id}`);
+  };
+
+  const handleConfirmFinalScore = async () => {
+    if (!token || !id || !currentGame) return;
+    
+    const ourFinal = parseInt(finalOurScore) || 0;
+    const oppFinal = parseInt(finalOpponentScore) || 0;
+    
+    await updateGame(id, { 
+      status: 'completed', 
+      our_score: ourFinal,
+      opponent_score: oppFinal,
+      player_minutes: playerMinutes,
+    }, token);
+    setShowFinalScoreModal(false);
     router.replace(`/game/summary/${id}`);
   };
 
@@ -919,124 +961,225 @@ export default function LiveGameScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Game Header - Scoreboard */}
-      <LinearGradient
-        colors={['#1A1A2E', '#16213E']}
-        style={styles.header}
-      >
-        {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
-        {getPeriodStatusText() && (
-          <View style={styles.periodStatusOverlay} pointerEvents="none">
-            <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
-            <Text style={styles.periodStatusHint}>Tap clock to edit time</Text>
+      {/* Pro Mode Header - Simple player tracking, no scoreboard */}
+      {isProModeGame ? (
+        <LinearGradient
+          colors={['#1A1A2E', '#16213E']}
+          style={styles.proModeHeader}
+        >
+          <View style={styles.proModeHeaderContent}>
+            <Text style={styles.proModeTitle}>Single Player Mode</Text>
+            <Text style={styles.proModeSubtitle}>
+              {currentGame.home_team_name} vs {currentGame.opponent_name}
+            </Text>
           </View>
-        )}
-        
-        <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
-          <View style={styles.teamScore}>
-            <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
-            <Text style={styles.score}>{currentGame.our_score}</Text>
-            {/* Home Team Timeout Button */}
-            <TouchableOpacity 
-              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
-              onPress={() => callTimeout('home')}
-            >
-              <Ionicons name="hand-left" size={12} color={colors.text} />
-              <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.gameInfo}>
-            <View style={styles.quarterBadge}>
-              <Text style={styles.quarterText}>
-                {currentGame.period_type === 'halves' 
-                  ? `H${currentGame.current_period || 1}` 
-                  : `Q${currentGame.current_period || 1}`}
-              </Text>
-            </View>
-            
-            {/* Game Clock Display */}
-            <TouchableOpacity onPress={openClockEdit} style={styles.gameClockContainer}>
-              <Text style={[styles.gameClock, gameClockSeconds <= 60 && styles.gameClockLow]}>
-                {formatClock(gameClockSeconds)}
-              </Text>
-            </TouchableOpacity>
-            
-            {/* Master Time In/Out Button */}
-            <TouchableOpacity 
-              style={[styles.masterClockBtn, isClockRunning && styles.masterClockBtnActive]}
-              onPress={toggleMasterClock}
-            >
-              <Ionicons 
-                name={isClockRunning ? "pause" : "play"} 
-                size={16} 
-                color={isClockRunning ? colors.text : colors.success} 
-              />
-              <Text style={[styles.masterClockBtnText, isClockRunning && styles.masterClockBtnTextActive]}>
-                {isClockRunning ? 'STOP' : 'START'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.editScoreHint}>
-              <Ionicons name="create-outline" size={14} color={colors.textSecondary} />
-              <Text style={styles.editHintText}>Tap scores to edit</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.teamScore}>
-            <Text style={styles.teamLabel}>{currentGame.opponent_name.toUpperCase()}</Text>
-            <TouchableOpacity 
-              onLongPress={() => setShowOpponentScoreAdjust(true)}
-              delayLongPress={500}
-            >
-              <Text style={styles.score}>{currentGame.opponent_score}</Text>
-            </TouchableOpacity>
-            {/* Away Team Timeout Button */}
-            <TouchableOpacity 
-              style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
-              onPress={() => callTimeout('away')}
-            >
-              <Ionicons name="hand-left" size={12} color={colors.text} />
-              <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
-            </TouchableOpacity>
-            {/* Opponent Quick Score Buttons */}
-            <View style={styles.opponentQuickScore}>
+          
+          {/* Player Minutes Clock - The main clock in pro mode */}
+          {selectedPlayer && (
+            <View style={styles.proModeClockSection}>
               <TouchableOpacity 
-                style={[styles.opponentScoreBtn, styles.opponentScoreBtnMinus]}
-                onPress={() => handleOpponentScore(-1)}
+                style={[
+                  styles.proModeClockBtn,
+                  isPlayerMinutesRunning && styles.proModeClockBtnActive
+                ]}
+                onPress={() => setIsPlayerMinutesRunning(!isPlayerMinutesRunning)}
               >
-                <Text style={styles.opponentScoreBtnText}>-1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.opponentScoreBtn}
-                onPress={() => handleOpponentScore(1)}
-              >
-                <Text style={styles.opponentScoreBtnText}>+1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.opponentScoreBtn}
-                onPress={() => handleOpponentScore(2)}
-              >
-                <Text style={styles.opponentScoreBtnText}>+2</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.opponentScoreBtn}
-                onPress={() => handleOpponentScore(3)}
-              >
-                <Text style={styles.opponentScoreBtnText}>+3</Text>
+                <View style={styles.proModeClockDisplay}>
+                  <Text style={styles.proModeClockTime}>
+                    {formatTime(playerMinutes[selectedPlayer] || 0)}
+                  </Text>
+                  <Text style={styles.proModeClockLabel}>MINUTES</Text>
+                </View>
+                <View style={[
+                  styles.proModeClockIndicator,
+                  isPlayerMinutesRunning && styles.proModeClockIndicatorActive
+                ]}>
+                  <Ionicons 
+                    name={isPlayerMinutesRunning ? "pause" : "play"} 
+                    size={20} 
+                    color={isPlayerMinutesRunning ? colors.warning : colors.success} 
+                  />
+                  <Text style={styles.proModeClockStatus}>
+                    {isPlayerMinutesRunning ? 'IN' : 'OUT'}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableOpacity>
-
-        {/* Period Controls */}
-        <View style={styles.quarterControls}>
-          {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
+          )}
+          
+          {/* End Game Button */}
+          <View style={styles.proModeActions}>
             <TouchableOpacity
-              key={p}
-              style={[
-                styles.quarterBtn,
-                (currentGame.current_period || 1) === p && styles.quarterBtnActive,
-              ]}
-              onPress={() => handleQuarterChange(p)}
+              style={styles.proModeEndBtn}
+              onPress={handleEndGame}
+            >
+              <Ionicons name="flag" size={16} color={colors.error} />
+              <Text style={styles.proModeEndBtnText}>End Game</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      ) : (
+        /* Team Mode Header - Full Scoreboard */
+        <LinearGradient
+          colors={['#1A1A2E', '#16213E']}
+          style={styles.header}
+        >
+          {/* Period Status Overlay (FINAL, END OF Q1, etc.) */}
+          {getPeriodStatusText() && (
+            <View style={styles.periodStatusOverlay} pointerEvents="none">
+              <Text style={styles.periodStatusText}>{getPeriodStatusText()}</Text>
+              <Text style={styles.periodStatusHint}>Tap clock to edit time</Text>
+            </View>
+          )}
+          
+          <TouchableOpacity style={styles.scoreBoard} onPress={() => setShowScoreModal(true)}>
+            <View style={styles.teamScore}>
+              <Text style={styles.teamLabel}>{currentGame.home_team_name?.toUpperCase() || 'YOUR TEAM'}</Text>
+              <Text style={styles.score}>{currentGame.our_score}</Text>
+              {/* Quick Score Buttons for Our Team */}
+              <View style={styles.quickScoreRow}>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = Math.max(0, (currentGame.our_score || 0) - 1);
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnText}>-1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus1]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 1;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus2]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 2;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnPlus3]}
+                  onPress={async () => {
+                    if (!token || !id || !currentGame) return;
+                    const newScore = (currentGame.our_score || 0) + 3;
+                    await updateGame(id, { our_score: newScore }, token);
+                  }}
+                >
+                  <Text style={styles.quickScoreBtnTextDark}>+3</Text>
+                </TouchableOpacity>
+              </View>
+              {/* Home Team Timeout Button */}
+              <TouchableOpacity 
+                style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'home' && styles.timeoutBtnActive]}
+                onPress={() => callTimeout('home')}
+              >
+                <Ionicons name="hand-left" size={12} color={colors.text} />
+                <Text style={styles.timeoutBtnText}>TO ({homeTimeouts})</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.gameInfo}>
+              <View style={styles.quarterBadge}>
+                <Text style={styles.quarterText}>
+                  {currentGame.period_type === 'halves' 
+                    ? `H${currentGame.current_period || 1}` 
+                    : `Q${currentGame.current_period || 1}`}
+                </Text>
+              </View>
+              
+              {/* Game Clock Display */}
+              <TouchableOpacity onPress={openClockEdit} style={styles.gameClockContainer}>
+                <Text style={[styles.gameClock, gameClockSeconds <= 60 && styles.gameClockLow]}>
+                  {formatClock(gameClockSeconds)}
+                </Text>
+              </TouchableOpacity>
+              
+              {/* Master Time In/Out Button */}
+              <TouchableOpacity 
+                style={[styles.masterClockBtn, isClockRunning && styles.masterClockBtnActive]}
+                onPress={toggleMasterClock}
+              >
+                <Ionicons 
+                  name={isClockRunning ? "pause" : "play"} 
+                  size={16} 
+                  color={isClockRunning ? colors.text : colors.success} 
+                />
+                <Text style={[styles.masterClockBtnText, isClockRunning && styles.masterClockBtnTextActive]}>
+                  {isClockRunning ? 'STOP' : 'START'}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.editScoreHint}>
+                <Ionicons name="create-outline" size={14} color={colors.textSecondary} />
+                <Text style={styles.editHintText}>Tap scores to edit</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.teamScore}>
+              <Text style={styles.teamLabel}>{currentGame.opponent_name.toUpperCase()}</Text>
+              <TouchableOpacity 
+                onLongPress={() => setShowOpponentScoreAdjust(true)}
+                delayLongPress={500}
+              >
+                <Text style={styles.score}>{currentGame.opponent_score}</Text>
+              </TouchableOpacity>
+              {/* Quick Score Buttons for Opponent */}
+              <View style={styles.quickScoreRow}>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnMinus]}
+                  onPress={() => handleOpponentScore(-1)}
+                >
+                  <Text style={styles.quickScoreBtnText}>-1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(1)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+1</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(2)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+2</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.quickScoreBtn, styles.quickScoreBtnOpp]}
+                  onPress={() => handleOpponentScore(3)}
+                >
+                  <Text style={styles.quickScoreBtnTextLight}>+3</Text>
+                </TouchableOpacity>
+              </View>
+              {/* Away Team Timeout Button */}
+              <TouchableOpacity 
+                style={[styles.timeoutBtn, isTimeout && timeoutTeam === 'away' && styles.timeoutBtnActive]}
+                onPress={() => callTimeout('away')}
+              >
+                <Ionicons name="hand-left" size={12} color={colors.text} />
+                <Text style={styles.timeoutBtnText}>TO ({awayTimeouts})</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+
+          {/* Period Controls */}
+          <View style={styles.quarterControls}>
+            {(currentGame.period_type === 'halves' ? [1, 2] : [1, 2, 3, 4]).map(p => (
+              <TouchableOpacity
+                key={p}
+                style={[
+                  styles.quarterBtn,
+                  (currentGame.current_period || 1) === p && styles.quarterBtnActive,
+                ]}
+                onPress={() => handleQuarterChange(p)}
             >
               <Text style={[
                 styles.quarterBtnText,
@@ -1069,40 +1212,43 @@ export default function LiveGameScreen() {
           </Text>
         </TouchableOpacity>
       </LinearGradient>
+      )}
 
-      {/* Mode Toggle */}
-      <View style={styles.modeToggle}>
-        <TouchableOpacity
-          style={[styles.modeBtn, !teamMode && styles.modeBtnActive]}
-          onPress={() => setTeamMode(false)}
-        >
-          <Ionicons name="person" size={16} color={!teamMode ? colors.text : colors.textSecondary} />
-          <Text style={[styles.modeBtnText, !teamMode && styles.modeBtnTextActive]}>Single Player</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modeBtn, teamMode && styles.modeBtnActive, subscriptionTier !== 'team' && styles.modeBtnDisabled]}
-          onPress={() => {
-            if (subscriptionTier !== 'team') {
-              Alert.alert(
-                'Team Subscription Required',
-                'Team Mode is only available with a Team subscription. Upgrade to unlock this feature.',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Upgrade', onPress: () => router.push('/subscription') }
-                ]
-              );
-              return;
-            }
-            setTeamMode(true);
-          }}
-        >
-          <Ionicons name="people" size={16} color={teamMode ? colors.text : colors.textSecondary} />
-          <Text style={[styles.modeBtnText, teamMode && styles.modeBtnTextActive]}>Team Mode</Text>
-          {subscriptionTier !== 'team' && (
-            <Ionicons name="lock-closed" size={12} color={colors.textSecondary} style={{ marginLeft: 4 }} />
-          )}
-        </TouchableOpacity>
-      </View>
+      {/* Mode Toggle - Only show for team mode games */}
+      {!isProModeGame && (
+        <View style={styles.modeToggle}>
+          <TouchableOpacity
+            style={[styles.modeBtn, !teamMode && styles.modeBtnActive]}
+            onPress={() => setTeamMode(false)}
+          >
+            <Ionicons name="person" size={16} color={!teamMode ? colors.text : colors.textSecondary} />
+            <Text style={[styles.modeBtnText, !teamMode && styles.modeBtnTextActive]}>Single Player</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modeBtn, teamMode && styles.modeBtnActive, subscriptionTier !== 'team' && styles.modeBtnDisabled]}
+            onPress={() => {
+              if (subscriptionTier !== 'team') {
+                Alert.alert(
+                  'Team Subscription Required',
+                  'Team Mode is only available with a Team subscription. Upgrade to unlock this feature.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Upgrade', onPress: () => router.push('/subscription') }
+                  ]
+                );
+                return;
+              }
+              setTeamMode(true);
+            }}
+          >
+            <Ionicons name="people" size={16} color={teamMode ? colors.text : colors.textSecondary} />
+            <Text style={[styles.modeBtnText, teamMode && styles.modeBtnTextActive]}>Team Mode</Text>
+            {subscriptionTier !== 'team' && (
+              <Ionicons name="lock-closed" size={12} color={colors.textSecondary} style={{ marginLeft: 4 }} />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
 
       {teamMode ? (
         /* Team Mode - In/Out Players View */
@@ -1435,12 +1581,15 @@ export default function LiveGameScreen() {
                         </Text>
                         <Text style={styles.playerStatLabel}>FG%</Text>
                       </View>
-                      <View style={styles.playerStatItem}>
-                        <Text style={styles.playerStatValue}>
-                          {formatTime(playerMinutes[selectedPlayer] || 0)}
-                        </Text>
-                        <Text style={styles.playerStatLabel}>MIN</Text>
-                      </View>
+                      {/* Player Minutes - Only show in team mode games, pro mode has the big clock at top */}
+                      {!isProModeGame && (
+                        <View style={styles.playerStatItem}>
+                          <Text style={styles.playerStatValue}>
+                            {formatTime(playerMinutes[selectedPlayer] || 0)}
+                          </Text>
+                          <Text style={styles.playerStatLabel}>MIN</Text>
+                        </View>
+                      )}
                     </View>
                     {statsFilterPeriod !== null && (
                       <Text style={styles.filterNote}>
@@ -1456,7 +1605,7 @@ export default function LiveGameScreen() {
                 <Text style={styles.selectPlayerText}>Select a player above</Text>
                 <Text style={styles.selectPlayerSubtext}>to start recording stats</Text>
               </View>
-            )}
+            )}}
           </ScrollView>
         </>
       )}
@@ -1796,6 +1945,64 @@ export default function LiveGameScreen() {
             </TouchableOpacity>
           </View>
         </View>
+      </Modal>
+
+      {/* Final Score Modal - For Pro Mode End Game */}
+      <Modal visible={showFinalScoreModal} animationType="fade" transparent>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.finalScoreModal}>
+            <Text style={styles.modalTitle}>Enter Final Score</Text>
+            <Text style={styles.modalSubtitle}>Game Complete</Text>
+            
+            <View style={styles.finalScoreInputs}>
+              <View style={styles.finalScoreTeam}>
+                <Text style={styles.finalScoreLabel}>{currentGame?.home_team_name || 'Your Team'}</Text>
+                <TextInput
+                  style={styles.finalScoreInput}
+                  value={finalOurScore}
+                  onChangeText={setFinalOurScore}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                  placeholderTextColor={colors.textSecondary}
+                  selectTextOnFocus
+                />
+              </View>
+              
+              <Text style={styles.finalScoreVs}>vs</Text>
+              
+              <View style={styles.finalScoreTeam}>
+                <Text style={styles.finalScoreLabel}>{currentGame?.opponent_name || 'Opponent'}</Text>
+                <TextInput
+                  style={styles.finalScoreInput}
+                  value={finalOpponentScore}
+                  onChangeText={setFinalOpponentScore}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                  placeholderTextColor={colors.textSecondary}
+                  selectTextOnFocus
+                />
+              </View>
+            </View>
+            
+            <View style={styles.finalScoreButtons}>
+              <TouchableOpacity
+                style={styles.finalScoreCancelBtn}
+                onPress={() => setShowFinalScoreModal(false)}
+              >
+                <Text style={styles.finalScoreCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.finalScoreConfirmBtn}
+                onPress={handleConfirmFinalScore}
+              >
+                <Text style={styles.finalScoreConfirmText}>Save & End Game</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Court Side Selection Modal */}
@@ -2187,26 +2394,47 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
   },
-  opponentQuickScore: {
+  // Quick Score Buttons (under team scores)
+  quickScoreRow: {
     flexDirection: 'row',
     gap: 4,
-    marginTop: 4,
+    marginTop: 6,
   },
-  opponentScoreBtn: {
-    backgroundColor: 'rgba(239, 68, 68, 0.3)',
-    paddingHorizontal: 10,
+  quickScoreBtn: {
+    paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.error,
+    borderRadius: borderRadius.sm,
+    minWidth: 32,
+    alignItems: 'center',
   },
-  opponentScoreBtnMinus: {
-    backgroundColor: 'rgba(100, 100, 100, 0.3)',
-    borderColor: colors.textSecondary,
+  quickScoreBtnMinus: {
+    backgroundColor: 'rgba(100, 100, 100, 0.4)',
   },
-  opponentScoreBtnText: {
-    color: colors.error,
-    fontSize: 12,
+  quickScoreBtnPlus1: {
+    backgroundColor: colors.success,
+  },
+  quickScoreBtnPlus2: {
+    backgroundColor: colors.primary,
+  },
+  quickScoreBtnPlus3: {
+    backgroundColor: colors.warning,
+  },
+  quickScoreBtnOpp: {
+    backgroundColor: colors.error,
+  },
+  quickScoreBtnText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  quickScoreBtnTextLight: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  quickScoreBtnTextDark: {
+    color: colors.background,
+    fontSize: 11,
     fontWeight: 'bold',
   },
   // Game Clock Styles
@@ -2316,6 +2544,78 @@ const styles = StyleSheet.create({
   resetClockBtnText: {
     color: colors.primary,
     fontSize: 14,
+  },
+  // Final Score Modal
+  finalScoreModal: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  finalScoreInputs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.md,
+    marginVertical: spacing.lg,
+    width: '100%',
+  },
+  finalScoreTeam: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  finalScoreLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  finalScoreInput: {
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: colors.text,
+    textAlign: 'center',
+    minWidth: 100,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  finalScoreVs: {
+    color: colors.textSecondary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  finalScoreButtons: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.md,
+  },
+  finalScoreCancelBtn: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceLight,
+  },
+  finalScoreCancelText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  finalScoreConfirmBtn: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.success,
+  },
+  finalScoreConfirmText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
   },
   courtSideModal: {
     backgroundColor: colors.surface,
@@ -2659,6 +2959,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 2,
   },
+  minutesDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  minutesClockIndicator: {
+    backgroundColor: 'rgba(100, 100, 100, 0.4)',
+    borderRadius: 8,
+    padding: 2,
+  },
+  minutesClockRunning: {
+    backgroundColor: 'rgba(34, 197, 94, 0.3)',
+  },
   actionBar: {
     flexDirection: 'row',
     padding: spacing.md,
@@ -2959,6 +3272,156 @@ const styles = StyleSheet.create({
   },
   modeBtnTextActive: {
     color: colors.text,
+  },
+  // Pro Mode Header (simplified, no scoreboard)
+  proModeHeader: {
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.md,
+  },
+  proModeHeaderContent: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  proModeTitle: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  proModeSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 4,
+  },
+  proModeClockSection: {
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  proModeClockBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(30, 30, 50, 0.8)',
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.md,
+    borderWidth: 2,
+    borderColor: 'rgba(100, 100, 100, 0.3)',
+  },
+  proModeClockBtnActive: {
+    borderColor: colors.success,
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+  },
+  proModeClockDisplay: {
+    alignItems: 'center',
+  },
+  proModeClockTime: {
+    color: colors.text,
+    fontSize: 36,
+    fontWeight: 'bold',
+    fontVariant: ['tabular-nums'],
+  },
+  proModeClockLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+  proModeClockIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(100, 100, 100, 0.3)',
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    minWidth: 60,
+  },
+  proModeClockIndicatorActive: {
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  proModeClockStatus: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  proModeActions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  proModeEndBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.error,
+  },
+  proModeEndBtnText: {
+    color: colors.error,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  // Pro Mode Label (legacy - keep for backwards compatibility)
+  proModeLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+    marginHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    backgroundColor: colors.surfaceLight,
+    borderRadius: borderRadius.md,
+  },
+  proModeLabelText: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  // Pro Mode Team Scoring
+  proModeTeamScoring: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.md,
+  },
+  proModeScoreSection: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    alignItems: 'center',
+  },
+  proModeScoreLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  proModeScoreButtons: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+  },
+  proModeScoreBtn: {
+    backgroundColor: colors.surfaceLight,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+    minWidth: 36,
+    alignItems: 'center',
+  },
+  proModeScoreBtnText: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '700',
   },
   // Team Mode Styles
   teamModeContainer: {
