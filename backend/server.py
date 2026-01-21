@@ -82,15 +82,26 @@ stripe.api_key = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_placeholder')
 
 # OpenAI/Emergent LLM setup
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')  # Direct OpenAI key for production
 openai_client = None
-if EMERGENT_LLM_KEY:
-    # Try multiple base URLs for compatibility
+
+# Try to set up OpenAI client - prefer direct OPENAI_API_KEY, fallback to Emergent with proxy
+if OPENAI_API_KEY:
     try:
-        openai_client = OpenAI(
-            api_key=EMERGENT_LLM_KEY
-        )
+        openai_client = OpenAI(api_key=OPENAI_API_KEY)
+        logger.info("OpenAI client initialized with OPENAI_API_KEY")
     except Exception as e:
-        logger.warning(f"Failed to initialize OpenAI client: {e}")
+        logger.warning(f"Failed to initialize OpenAI client with OPENAI_API_KEY: {e}")
+elif EMERGENT_LLM_KEY:
+    try:
+        # Emergent LLM key uses their proxy
+        openai_client = OpenAI(
+            api_key=EMERGENT_LLM_KEY,
+            base_url="https://emergentagi.com/api/v1"  # Emergent's OpenAI-compatible endpoint
+        )
+        logger.info("OpenAI client initialized with Emergent LLM key")
+    except Exception as e:
+        logger.warning(f"Failed to initialize OpenAI client with Emergent key: {e}")
 
 # JWT settings
 JWT_SECRET = os.environ.get('JWT_SECRET', 'basketball-tracker-secret-key-2025')
