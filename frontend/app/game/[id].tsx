@@ -904,7 +904,7 @@ export default function LiveGameScreen() {
       }
       
       const data = await response.json();
-      const shareUrl = `${API_URL}/api/live/${data.share_token}`;
+      const shareUrl = `${API_URL}/api/live-view/${data.share_token}`;
       
       // Show share options
       Alert.alert(
