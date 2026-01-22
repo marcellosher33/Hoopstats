@@ -3363,6 +3363,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
+  proModePeriodSelector: {
+    flexDirection: 'row',
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+  },
+  proModePeriodBtn: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  proModePeriodBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  proModePeriodBtnText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  proModePeriodBtnTextActive: {
+    color: colors.background,
+  },
   proModeClockSection: {
     alignItems: 'center',
     marginBottom: spacing.md,
