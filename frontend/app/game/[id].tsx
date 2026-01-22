@@ -976,14 +976,80 @@ export default function LiveGameScreen() {
             <Text style={styles.proModeSubtitle}>
               {currentGame.home_team_name} vs {currentGame.opponent_name}
             </Text>
-            {/* Period Display */}
-            <View style={styles.proModePeriodBadge}>
-              <Text style={styles.proModePeriodText}>
-                {currentGame.period_type === 'halves' 
-                  ? `${currentGame.current_period === 1 ? '1st' : '2nd'} Half`
-                  : `Q${currentGame.current_period}`
-                }
-              </Text>
+            {/* Period Selector */}
+            <View style={styles.proModePeriodSelector}>
+              {currentGame.period_type === 'halves' ? (
+                // Halves mode
+                <>
+                  {[1, 2].map(p => (
+                    <TouchableOpacity
+                      key={p}
+                      style={[
+                        styles.proModePeriodBtn,
+                        (currentGame.current_period || 1) === p && styles.proModePeriodBtnActive
+                      ]}
+                      onPress={async () => {
+                        await updateGame(id, { current_period: p }, token);
+                      }}
+                    >
+                      <Text style={[
+                        styles.proModePeriodBtnText,
+                        (currentGame.current_period || 1) === p && styles.proModePeriodBtnTextActive
+                      ]}>H{p}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  <TouchableOpacity
+                    style={[
+                      styles.proModePeriodBtn,
+                      (currentGame.current_period || 1) > 2 && styles.proModePeriodBtnActive
+                    ]}
+                    onPress={async () => {
+                      const otPeriod = Math.max(3, (currentGame.current_period || 1) + 1);
+                      await updateGame(id, { current_period: currentGame.current_period > 2 ? currentGame.current_period + 1 : 3 }, token);
+                    }}
+                  >
+                    <Text style={[
+                      styles.proModePeriodBtnText,
+                      (currentGame.current_period || 1) > 2 && styles.proModePeriodBtnTextActive
+                    ]}>OT{(currentGame.current_period || 1) > 2 ? currentGame.current_period - 2 : ''}</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                // Quarters mode
+                <>
+                  {[1, 2, 3, 4].map(p => (
+                    <TouchableOpacity
+                      key={p}
+                      style={[
+                        styles.proModePeriodBtn,
+                        (currentGame.current_period || 1) === p && styles.proModePeriodBtnActive
+                      ]}
+                      onPress={async () => {
+                        await updateGame(id, { current_period: p }, token);
+                      }}
+                    >
+                      <Text style={[
+                        styles.proModePeriodBtnText,
+                        (currentGame.current_period || 1) === p && styles.proModePeriodBtnTextActive
+                      ]}>Q{p}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  <TouchableOpacity
+                    style={[
+                      styles.proModePeriodBtn,
+                      (currentGame.current_period || 1) > 4 && styles.proModePeriodBtnActive
+                    ]}
+                    onPress={async () => {
+                      await updateGame(id, { current_period: currentGame.current_period > 4 ? currentGame.current_period + 1 : 5 }, token);
+                    }}
+                  >
+                    <Text style={[
+                      styles.proModePeriodBtnText,
+                      (currentGame.current_period || 1) > 4 && styles.proModePeriodBtnTextActive
+                    ]}>OT{(currentGame.current_period || 1) > 4 ? currentGame.current_period - 4 : ''}</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </View>
           
