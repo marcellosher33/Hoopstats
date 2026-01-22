@@ -285,7 +285,7 @@ export default function LiveGameScreen() {
         clearTimeout(saveClockDebounced.current);
       }
     };
-  }, [gameClockSeconds, isClockRunning]);
+  }, [gameClockSeconds, isClockRunning, playerMinutes, token, id, currentGame]);
 
   // Save clock running state IMMEDIATELY when it changes (for live view sync)
   const prevIsClockRunning = useRef(isClockRunning);
