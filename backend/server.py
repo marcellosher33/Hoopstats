@@ -982,6 +982,8 @@ async def view_public_game(share_token: str):
     status = game_data.get('status', 'in_progress')
     period = game_data.get('current_period', 1)
     period_type = game_data.get('period_type', 'quarters')
+    game_mode = game_data.get('game_mode', 'team')  # 'pro' for single player mode
+    is_pro_mode = game_mode == 'pro'
     
     period_label = f"Q{period}" if period_type == 'quarters' else f"Half {period}"
     status_label = "FINAL" if status == 'completed' else f"LIVE - {period_label}"
@@ -997,6 +999,41 @@ async def view_public_game(share_token: str):
             <span class="stat">{stats.get('rebounds', 0)} REB</span>
             <span class="stat">{stats.get('assists', 0)} AST</span>
         </div>
+        """
+    
+    # Scoreboard HTML - hide for pro mode during game, show for completed games
+    if is_pro_mode and status != 'completed':
+        scoreboard_html = f"""
+            <div class="scoreboard">
+                <div class="mode-badge">Single Player Mode</div>
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-name">{home_team}</div>
+                        <div class="tracking-player">Tracking Stats</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">{opponent}</div>
+                    </div>
+                </div>
+                <div class="score-note">Final score entered at end of game</div>
+            </div>
+        """
+    else:
+        scoreboard_html = f"""
+            <div class="scoreboard">
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-name">{home_team}</div>
+                        <div class="score">{our_score}</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">{opponent}</div>
+                        <div class="score">{opp_score}</div>
+                    </div>
+                </div>
+            </div>
         """
     
     html = f"""
