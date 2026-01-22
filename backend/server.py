@@ -949,6 +949,173 @@ async def get_public_game(share_token: str):
     game_data.pop("user_id", None)
     return game_data
 
+from fastapi.responses import HTMLResponse
+
+@api_router.get("/live-view/{share_token}", response_class=HTMLResponse)
+async def view_public_game(share_token: str):
+    """Public endpoint - returns HTML page for viewing live game."""
+    game = await db.games.find_one({"share_token": share_token, "is_public": True})
+    if not game:
+        return HTMLResponse(content="""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Game Not Found - HoopStats</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a1a; color: #fff; margin: 0; padding: 40px; text-align: center; }
+                h1 { color: #ff6b6b; }
+            </style>
+        </head>
+        <body>
+            <h1>Game Not Found</h1>
+            <p>This game is no longer being shared or the link has expired.</p>
+        </body>
+        </html>
+        """, status_code=404)
+    
+    game_data = serialize_doc(game)
+    home_team = game_data.get('home_team_name', 'Home')
+    opponent = game_data.get('opponent_name', 'Away')
+    our_score = game_data.get('our_score', 0)
+    opp_score = game_data.get('opponent_score', 0)
+    status = game_data.get('status', 'in_progress')
+    period = game_data.get('current_period', 1)
+    period_type = game_data.get('period_type', 'quarters')
+    
+    period_label = f"Q{period}" if period_type == 'quarters' else f"Half {period}"
+    status_label = "FINAL" if status == 'completed' else f"LIVE - {period_label}"
+    
+    # Build player stats HTML
+    player_stats_html = ""
+    for ps in game_data.get('player_stats', []):
+        stats = ps.get('stats', {})
+        player_stats_html += f"""
+        <div class="player-row">
+            <span class="player-name">{ps.get('player_name', 'Unknown')}</span>
+            <span class="stat">{stats.get('points', 0)} PTS</span>
+            <span class="stat">{stats.get('rebounds', 0)} REB</span>
+            <span class="stat">{stats.get('assists', 0)} AST</span>
+        </div>
+        """
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{home_team} vs {opponent} - HoopStats Live</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="refresh" content="30">
+        <style>
+            * {{ box-sizing: border-box; }}
+            body {{ 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%); 
+                color: #fff; 
+                margin: 0; 
+                padding: 20px; 
+                min-height: 100vh;
+            }}
+            .container {{ max-width: 600px; margin: 0 auto; }}
+            .header {{ text-align: center; margin-bottom: 30px; }}
+            .logo {{ font-size: 24px; font-weight: bold; color: #6366f1; margin-bottom: 10px; }}
+            .status {{ 
+                display: inline-block;
+                background: {'#22c55e' if status == 'in_progress' else '#6366f1'}; 
+                color: white;
+                padding: 6px 16px; 
+                border-radius: 20px; 
+                font-size: 14px;
+                font-weight: 600;
+                animation: {'pulse 2s infinite' if status == 'in_progress' else 'none'};
+            }}
+            @keyframes pulse {{
+                0%, 100% {{ opacity: 1; }}
+                50% {{ opacity: 0.7; }}
+            }}
+            .scoreboard {{
+                background: rgba(255,255,255,0.05);
+                border-radius: 20px;
+                padding: 30px;
+                text-align: center;
+                margin-bottom: 20px;
+            }}
+            .teams {{ display: flex; justify-content: space-between; align-items: center; }}
+            .team {{ flex: 1; }}
+            .team-name {{ font-size: 18px; color: #a0a0a0; margin-bottom: 10px; }}
+            .score {{ font-size: 64px; font-weight: bold; }}
+            .vs {{ font-size: 20px; color: #666; padding: 0 20px; }}
+            .stats-section {{
+                background: rgba(255,255,255,0.05);
+                border-radius: 16px;
+                padding: 20px;
+            }}
+            .section-title {{ 
+                font-size: 16px; 
+                color: #6366f1; 
+                margin-bottom: 15px;
+                font-weight: 600;
+            }}
+            .player-row {{
+                display: flex;
+                justify-content: space-between;
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }}
+            .player-row:last-child {{ border-bottom: none; }}
+            .player-name {{ font-weight: 600; flex: 1; }}
+            .stat {{ color: #a0a0a0; margin-left: 15px; font-size: 14px; }}
+            .refresh-note {{
+                text-align: center;
+                color: #666;
+                font-size: 12px;
+                margin-top: 20px;
+            }}
+            .powered {{ 
+                text-align: center; 
+                color: #444; 
+                font-size: 12px; 
+                margin-top: 30px; 
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">🏀 HoopStats</div>
+                <span class="status">{status_label}</span>
+            </div>
+            
+            <div class="scoreboard">
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-name">{home_team}</div>
+                        <div class="score">{our_score}</div>
+                    </div>
+                    <div class="vs">vs</div>
+                    <div class="team">
+                        <div class="team-name">{opponent}</div>
+                        <div class="score">{opp_score}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="section-title">Player Stats</div>
+                {player_stats_html if player_stats_html else '<div style="color:#666;text-align:center;">No player stats yet</div>'}
+            </div>
+            
+            <div class="refresh-note">
+                {'Page refreshes automatically every 30 seconds' if status == 'in_progress' else ''}
+            </div>
+            
+            <div class="powered">Powered by HoopStats</div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html)
+
 # ============ SEASON STATS ============
 
 @api_router.get("/season-stats")
