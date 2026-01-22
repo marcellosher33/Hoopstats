@@ -80,7 +80,7 @@ export default function StatsScreen() {
     if (!token) return;
     
     try {
-      const response = await fetch(`${API_URL}/season-stats`, {
+      const response = await fetch(`${API_URL}/api/season-stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
