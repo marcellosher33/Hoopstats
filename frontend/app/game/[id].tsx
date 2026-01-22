@@ -1920,60 +1920,66 @@ export default function LiveGameScreen() {
 
       {/* Final Score Modal - For Pro Mode End Game */}
       <Modal visible={showFinalScoreModal} animationType="fade" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
-          <View style={styles.finalScoreModal}>
-            <Text style={styles.modalTitle}>Enter Final Score</Text>
-            <Text style={styles.modalSubtitle}>Game Complete</Text>
-            
-            <View style={styles.finalScoreInputs}>
-              <View style={styles.finalScoreTeam}>
-                <Text style={styles.finalScoreLabel}>{currentGame?.home_team_name || 'Your Team'}</Text>
-                <TextInput
-                  style={styles.finalScoreInput}
-                  value={finalOurScore}
-                  onChangeText={setFinalOurScore}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  placeholderTextColor={colors.textSecondary}
-                  selectTextOnFocus
-                />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalOverlay}
+          >
+            <TouchableWithoutFeedback>
+              <View style={styles.finalScoreModal}>
+                <Text style={styles.modalTitle}>Enter Final Score</Text>
+                <Text style={styles.modalSubtitle}>Game Complete</Text>
+                
+                <View style={styles.finalScoreInputs}>
+                  <View style={styles.finalScoreTeam}>
+                    <Text style={styles.finalScoreLabel}>{currentGame?.home_team_name || 'Your Team'}</Text>
+                    <TextInput
+                      style={styles.finalScoreInput}
+                      value={finalOurScore}
+                      onChangeText={setFinalOurScore}
+                      keyboardType="number-pad"
+                      placeholder="0"
+                      placeholderTextColor={colors.textSecondary}
+                      selectTextOnFocus
+                      autoFocus={false}
+                    />
+                  </View>
+                  
+                  <Text style={styles.finalScoreVs}>vs</Text>
+                  
+                  <View style={styles.finalScoreTeam}>
+                    <Text style={styles.finalScoreLabel}>{currentGame?.opponent_name || 'Opponent'}</Text>
+                    <TextInput
+                      style={styles.finalScoreInput}
+                      value={finalOpponentScore}
+                      onChangeText={setFinalOpponentScore}
+                      keyboardType="number-pad"
+                      placeholder="0"
+                      placeholderTextColor={colors.textSecondary}
+                      selectTextOnFocus
+                      autoFocus={false}
+                    />
+                  </View>
+                </View>
+                
+                <View style={styles.finalScoreButtons}>
+                  <TouchableOpacity
+                    style={styles.finalScoreCancelBtn}
+                    onPress={() => setShowFinalScoreModal(false)}
+                  >
+                    <Text style={styles.finalScoreCancelText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.finalScoreConfirmBtn}
+                    onPress={handleConfirmFinalScore}
+                  >
+                    <Text style={styles.finalScoreConfirmText}>Save & End Game</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              
-              <Text style={styles.finalScoreVs}>vs</Text>
-              
-              <View style={styles.finalScoreTeam}>
-                <Text style={styles.finalScoreLabel}>{currentGame?.opponent_name || 'Opponent'}</Text>
-                <TextInput
-                  style={styles.finalScoreInput}
-                  value={finalOpponentScore}
-                  onChangeText={setFinalOpponentScore}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  placeholderTextColor={colors.textSecondary}
-                  selectTextOnFocus
-                />
-              </View>
-            </View>
-            
-            <View style={styles.finalScoreButtons}>
-              <TouchableOpacity
-                style={styles.finalScoreCancelBtn}
-                onPress={() => setShowFinalScoreModal(false)}
-              >
-                <Text style={styles.finalScoreCancelText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.finalScoreConfirmBtn}
-                onPress={handleConfirmFinalScore}
-              >
-                <Text style={styles.finalScoreConfirmText}>Save & End Game</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* Court Side Selection Modal */}
