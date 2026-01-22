@@ -1355,35 +1355,6 @@ export default function LiveGameScreen() {
           <ScrollView style={styles.statsArea} contentContainerStyle={styles.statsContent}>
             {selectedPlayer ? (
               <>
-                {/* Minutes Tracker */}
-                <View style={styles.minutesTracker}>
-                  <View style={styles.minutesDisplay}>
-                    <Ionicons name="time-outline" size={20} color={colors.text} />
-                    <Text style={styles.minutesText}>
-                      {formatTime(playerMinutes[selectedPlayer] || 0)}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    style={[
-                      styles.clockToggleBtn,
-                      isClockRunning && styles.clockToggleBtnActive
-                    ]}
-                    onPress={() => setIsClockRunning(!isClockRunning)}
-                  >
-                    <Ionicons 
-                      name={isClockRunning ? "pause" : "play"} 
-                      size={20} 
-                      color={isClockRunning ? colors.error : colors.success} 
-                    />
-                    <Text style={[
-                      styles.clockToggleText,
-                      isClockRunning && styles.clockToggleTextActive
-                    ]}>
-                      {isClockRunning ? 'OUT' : 'IN'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
                 {/* Period Filter for Stats */}
                 <View style={styles.periodFilter}>
                   <Text style={styles.periodFilterLabel}>View Stats:</Text>
