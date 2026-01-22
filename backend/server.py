@@ -1883,6 +1883,8 @@ async def generate_ai_summary(game_id: str, user: dict = Depends(get_current_use
     
     # Get the team name - use home_team_name if available, otherwise default
     team_name = game.get('home_team_name') or 'Our Team'
+    game_mode = game.get('game_mode', 'team')
+    is_pro_mode = game_mode == 'pro'
     
     # Build game context
     player_summaries = []
@@ -1893,7 +1895,39 @@ async def generate_ai_summary(game_id: str, user: dict = Depends(get_current_use
             f"{stats.get('assists', 0)} ast, {stats.get('steals', 0)} stl, {stats.get('blocks', 0)} blk"
         )
     
-    prompt = f"""Generate a comprehensive basketball game summary for social media sharing.
+    # Different prompts for single player mode vs team mode
+    if is_pro_mode:
+        # Single player mode - focus on the player's performance
+        player_name = game.get("player_stats", [{}])[0].get("player_name", "Player") if game.get("player_stats") else "Player"
+        our_score = game.get('our_score', 0)
+        opp_score = game.get('opponent_score', 0)
+        result = "won" if our_score > opp_score else "lost" if our_score < opp_score else "tied"
+        
+        prompt = f"""Generate a personalized basketball game summary focusing on a single player's performance.
+
+Player: {player_name}
+Team: {team_name}
+Opponent: {game.get('opponent_name', 'Opponent')}
+Game Result: {team_name} {result} {our_score}-{opp_score}
+Date: {game.get('game_date', 'Unknown')}
+
+Player's Statistics:
+{chr(10).join(player_summaries)}
+
+Pre-game Notes/Goals: {game.get('notes', 'None')}
+
+IMPORTANT: This is a SINGLE PLAYER mode summary. Focus ONLY on {player_name}'s individual performance.
+
+Please provide:
+1. A headline about {player_name}'s performance (1 sentence) - mention if the team won or lost
+2. Analysis of {player_name}'s key plays and standout moments
+3. Notable statistics and shooting efficiency
+4. Areas where {player_name} excelled
+5. A motivational social media ready recap (under 280 characters) highlighting {player_name}'s game
+"""
+    else:
+        # Team mode - full team summary
+        prompt = f"""Generate a comprehensive basketball game summary for social media sharing.
 
 Game Details:
 - {team_name} Score: {game.get('our_score', 0)}
@@ -1923,7 +1957,7 @@ Please provide:
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a sports journalist specializing in basketball game summaries."},
+                {"role": "system", "content": "You are a sports journalist specializing in basketball game summaries. For single player mode, focus entirely on the individual player's performance."},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=1000,
