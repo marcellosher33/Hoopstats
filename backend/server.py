@@ -1143,19 +1143,7 @@ async def view_public_game(share_token: str):
                 <span class="status">{status_label}</span>
             </div>
             
-            <div class="scoreboard">
-                <div class="teams">
-                    <div class="team">
-                        <div class="team-name">{home_team}</div>
-                        <div class="score">{our_score}</div>
-                    </div>
-                    <div class="vs">vs</div>
-                    <div class="team">
-                        <div class="team-name">{opponent}</div>
-                        <div class="score">{opp_score}</div>
-                    </div>
-                </div>
-            </div>
+            {scoreboard_html}
             
             <div class="stats-section">
                 <div class="section-title">Player Stats</div>
