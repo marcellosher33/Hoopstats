@@ -1102,6 +1102,26 @@ async def view_public_game(share_token: str):
             .player-row:last-child {{ border-bottom: none; }}
             .player-name {{ font-weight: 600; flex: 1; }}
             .stat {{ color: #a0a0a0; margin-left: 15px; font-size: 14px; }}
+            .mode-badge {{
+                background: #6366f1;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-block;
+                margin-bottom: 15px;
+            }}
+            .tracking-player {{
+                font-size: 14px;
+                color: #22c55e;
+                margin-top: 8px;
+            }}
+            .score-note {{
+                font-size: 12px;
+                color: #666;
+                margin-top: 15px;
+            }}
             .refresh-note {{
                 text-align: center;
                 color: #666;
