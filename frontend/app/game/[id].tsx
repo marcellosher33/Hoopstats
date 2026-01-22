@@ -976,6 +976,15 @@ export default function LiveGameScreen() {
             <Text style={styles.proModeSubtitle}>
               {currentGame.home_team_name} vs {currentGame.opponent_name}
             </Text>
+            {/* Period Display */}
+            <View style={styles.proModePeriodBadge}>
+              <Text style={styles.proModePeriodText}>
+                {currentGame.period_type === 'halves' 
+                  ? `${currentGame.current_period === 1 ? '1st' : '2nd'} Half`
+                  : `Q${currentGame.current_period}`
+                }
+              </Text>
+            </View>
           </View>
           
           {/* Player Minutes Clock - The main clock in pro mode */}
