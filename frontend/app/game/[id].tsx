@@ -833,6 +833,9 @@ export default function LiveGameScreen() {
   const handleEndGame = async () => {
     if (!token || !id || !currentGame) return;
     
+    // Close the end game modal first
+    setShowEndGameModal(false);
+    
     // For Pro Mode, show final score modal first
     if (isProModeGame) {
       setFinalOurScore((currentGame.our_score || 0).toString());
@@ -848,7 +851,6 @@ export default function LiveGameScreen() {
       opponent_score: currentGame.opponent_score,
       player_minutes: playerMinutes, // Save all player minutes
     }, token);
-    setShowEndGameModal(false);
     router.replace(`/game/summary/${id}`);
   };
 
