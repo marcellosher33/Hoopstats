@@ -1602,7 +1602,7 @@ export default function LiveGameScreen() {
           <Ionicons name="camera" size={24} color={colors.text} />
           <Text style={styles.actionBtnText}>Photo</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.endGameBtn} onPress={() => setShowEndGameModal(true)}>
+        <TouchableOpacity style={styles.endGameBtn} onPress={handleEndGame}>
           <Ionicons name="flag" size={24} color={colors.text} />
           <Text style={styles.endGameBtnText}>End</Text>
         </TouchableOpacity>
