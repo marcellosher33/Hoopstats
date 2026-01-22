@@ -3285,6 +3285,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  proModePeriodBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.sm,
+  },
+  proModePeriodText: {
+    color: colors.background,
+    fontSize: 12,
+    fontWeight: '700',
+  },
   proModeClockSection: {
     alignItems: 'center',
     marginBottom: spacing.md,
