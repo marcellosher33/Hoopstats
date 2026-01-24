@@ -18,7 +18,9 @@ import { usePurchaseStore, formatPrice, ENTITLEMENTS } from '../../src/stores/pu
 import { Button } from '../../src/components/Button';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+import { requireApiBaseUrl } from '../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 
 interface PriceOption {
   price: number;
