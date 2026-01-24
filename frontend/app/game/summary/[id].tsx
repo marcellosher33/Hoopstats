@@ -86,7 +86,9 @@ export default function GameSummaryScreen() {
   const [savingNotes, setSavingNotes] = useState(false);
 
   // API URL with fallback
-  const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8001';
+  import { requireApiBaseUrl } from '../../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 
   useEffect(() => {
     if (token && id) {
