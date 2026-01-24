@@ -17,7 +17,9 @@ import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { Game, ShotAttempt } from '../../src/types';
 import { FullCourtShotChart } from '../../src/components/FullCourtShotChart';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+import { requireApiBaseUrl } from '../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 const { width: screenWidth } = Dimensions.get('window');
 
 // Play-by-play action interface
