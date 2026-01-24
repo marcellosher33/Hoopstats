@@ -14,8 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../src/stores/authStore';
 import { colors, spacing, borderRadius } from '../src/utils/theme';
-
-import { requireApiBaseUrl } from '../../src/services/apiBase';
+import { requireApiBaseUrl } from '../src/services/apiBase';
 
 const API_URL = requireApiBaseUrl();
 
