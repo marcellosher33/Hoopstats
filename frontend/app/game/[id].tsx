@@ -1657,7 +1657,7 @@ export default function LiveGameScreen() {
                 <Text style={styles.selectPlayerText}>Select a player above</Text>
                 <Text style={styles.selectPlayerSubtext}>to start recording stats</Text>
               </View>
-            )}}
+            )}
           </ScrollView>
         </>
       )}
