@@ -17,7 +17,9 @@ import { colors, spacing, borderRadius } from '../../src/utils/theme';
 import { LineChart, BarChart } from 'react-native-gifted-charts';
 
 const screenWidth = Dimensions.get('window').width;
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+import { requireApiBaseUrl } from '../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 
 interface PlayerSeasonStats {
   player_id: string;
