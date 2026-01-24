@@ -78,6 +78,10 @@ export default function LiveGameViewer() {
     if (!token) return;
     
     try {
+      console.log('[LiveView] token param:', token);
+      console.log('[LiveView] API_URL:', API_URL);
+      console.log('[LiveView] fetching:', `${API_URL}/api/live/${token}`);
+      
       const response = await fetch(`${API_URL}/api/live/${token}`);
       if (!response.ok) {
         if (response.status === 404) {
