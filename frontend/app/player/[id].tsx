@@ -14,7 +14,9 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { useGameStore } from '../../src/stores/gameStore';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+import { requireApiBaseUrl } from '../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 const screenWidth = Dimensions.get('window').width;
 
 interface PlayerFullStats {
