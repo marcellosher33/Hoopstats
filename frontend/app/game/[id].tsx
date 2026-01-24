@@ -3141,24 +3141,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: spacing.lg,
   },
-  finalScoreTeam: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  finalScoreLabel: {
-    color: colors.textSecondary,
-    fontSize: 12,
-  },
-  finalScore: {
-    color: colors.text,
-    fontSize: 48,
-    fontWeight: 'bold',
-  },
-  finalScoreVs: {
-    color: colors.textSecondary,
-    fontSize: 24,
-    marginHorizontal: spacing.md,
-  },
   modalButtons: {
     flexDirection: 'row',
     gap: spacing.md,
