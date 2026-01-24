@@ -15,7 +15,9 @@ import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
 import { colors, spacing, borderRadius } from '../../src/utils/theme';
 
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+import { requireApiBaseUrl } from '../../src/services/apiBase';
+
+const API_URL = requireApiBaseUrl();
 
 const TEAM_COLORS = [
   '#FF6B35', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6',
