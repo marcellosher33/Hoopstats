@@ -85,11 +85,6 @@ export default function GameSummaryScreen() {
   const [notesText, setNotesText] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
-  // API URL with fallback
-  import { requireApiBaseUrl } from '../../../src/services/apiBase';
-
-const API_URL = requireApiBaseUrl();
-
   useEffect(() => {
     if (token && id) {
       fetchGame(id, token);
