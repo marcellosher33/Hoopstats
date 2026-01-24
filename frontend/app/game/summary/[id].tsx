@@ -29,7 +29,9 @@ import { Button } from '../../../src/components/Button';
 import { FullCourtShotChart } from '../../../src/components/FullCourtShotChart';
 import { colors, spacing, borderRadius } from '../../../src/utils/theme';
 import { GameMedia } from '../../../src/types';
+import { requireApiBaseUrl } from '../../../src/services/apiBase';
 
+const API_URL = requireApiBaseUrl();
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
